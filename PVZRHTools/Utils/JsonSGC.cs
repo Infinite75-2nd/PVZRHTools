@@ -15,6 +15,7 @@ namespace PVZRHTools.Utils;
 [JsonSerializable(typeof(Snapshot))]
 [JsonSerializable(typeof(SettingsData))]
 [JsonSerializable(typeof(FlagWaveBuffSettings))]
+[JsonSerializable(typeof(UpdateInfo))]
 public partial class JsonSGC : JsonSerializerContext
 {
 }
