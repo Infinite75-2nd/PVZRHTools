@@ -1,0 +1,18 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:CompileBindings="True"
+             x:DataType="vm:LaunchSettingsViewModel"
+             x:Class="PVZRHTools.Views.LaunchSettingsView">
+    <StackPanel Orientation="Vertical">
+        <ToggleSwitch OnContent="是否启用BepInEx"
+                      OffContent="{Binding OnContent, RelativeSource={RelativeSource Self}}"
+                      IsChecked="{Binding Info.BepInExEnabled, Mode=TwoWay}" />
+        <ToggleSwitch OnContent="是否启用PVZRHTools"
+                      OffContent="{Binding OnContent, RelativeSource={RelativeSource Self}}"
+                      IsChecked="{Binding Info.ModifierEnabled, Mode=TwoWay}" />
+    </StackPanel>
+</UserControl>

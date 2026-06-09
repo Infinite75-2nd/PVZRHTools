@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:converters="using:PVZRHTools.Converters"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:DataType="vm:ZombiesListViewModel"
+             x:Class="PVZRHTools.Views.ZombiesListView">
+    <UserControl.Resources>
+        <converters:Tuple3Converter x:Key="Tuple3Converter" />
+        <converters:WaveHeaderConverter x:Key="WaveHeaderConverter" />
+    </UserControl.Resources>
+    <Border>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Spacing="20">
+                <u:IconButton Content="获取/刷新出怪列表"
+                              Command="{Binding GetZombiesListCommand}"
+                              IsLoading="{Binding IsLoading}"
+                              Classes="Colorful Primary"
+                              Theme="{DynamicResource SolidIconButton}"
+                              Icon="{DynamicResource SemiIconRedoStroked}" />
+                <Label
+                    Content="{Binding CurrentWaveString}"
+                    Theme="{DynamicResource TitleLabel}"
+                    Classes="H5"
+                    Foreground="{DynamicResource SemiLightBlue7}" />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding ZombiesList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Expander Tag="{Binding Wave}"
+                                  IsExpanded="{Binding IsCurrentWave,Mode=OneWay}">
+                            <Expander.Header>
+                                <MultiBinding Converter="{StaticResource WaveHeaderConverter}">
+                                    <Binding Path="Wave" />
+                                    <Binding
+                                        Path="$parent[UserControl].((vm:ZombiesListViewModel)DataContext).CurrentWave" />
+                                </MultiBinding>
+                            </Expander.Header>
+                            <ItemsControl ItemsSource="{Binding Zombies}"
+                                          Padding="4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="20">
+                                            <Label Content="{Binding Key }"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   HorizontalContentAlignment="Center"
+                                                   Classes="Colorful Gradient"
+                                                   MinWidth="40"
+                                                   MaxWidth="40"
+                                                   Theme="{DynamicResource TagLabel}" />
+                                            <ComboBox Name="ZombieComboBox"
+                                                      SelectedValue="{Binding Value}"
+                                                      ItemsSource="{Binding $parent[UserControl].((vm:ZombiesListViewModel)DataContext).InitDataService.InitData.Zombies}"
+                                                      Width="150"
+                                                      DisplayMemberBinding="{Binding Value}"
+                                                      SelectedValueBinding="{Binding Key}" />
+                                            <Button Content="应用"
+                                                    Command="{Binding $parent[UserControl].((vm:ZombiesListViewModel)DataContext).ChangeZombiesListCommand}">
+                                                <Button.CommandParameter>
+                                                    <MultiBinding Converter="{StaticResource Tuple3Converter}">
+                                                        <Binding Path="Tag"
+                                                                 RelativeSource="{RelativeSource AncestorType=Expander}" />
+                                                        <Binding Path="Key" />
+                                                        <Binding Path="SelectedValue"
+                                                                 ElementName="ZombieComboBox" />
+                                                    </MultiBinding>
+                                                </Button.CommandParameter>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Expander>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</UserControl>

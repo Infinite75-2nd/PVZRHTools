@@ -1,0 +1,43 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:semi="https://irihi.tech/semi"
+             x:Class="PVZRHTools.App"
+             xmlns:viewModels="clr-namespace:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             RequestedThemeVariant="Default">
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <viewModels:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <semi:SemiTheme Locale="zh-CN" />
+        <semi:UrsaSemiTheme Locale="zh-CN" />
+        <semi:SemiPopupAnimations />
+        <Style Selector="CheckBox">
+            <Setter Property="Theme" Value="{DynamicResource CardCheckBox}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="u|Divider">
+            <Setter Property="Margin" Value="20,0,20,0" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate x:DataType="sys:String">
+                        <TextBlock Text="{Binding }"
+                                   Classes="H6"
+                                   Theme="{DynamicResource TitleTextBlock}"
+                                   Foreground="{DynamicResource SemiViolet6}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style Selector="WrapPanel> Border">
+            <Setter Property="Theme" Value="{DynamicResource CardBorder}" />
+            <Setter Property="BorderThickness" Value="5" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SemiAIGeneral3}" />
+        </Style>
+    </Application.Styles>
+</Application>

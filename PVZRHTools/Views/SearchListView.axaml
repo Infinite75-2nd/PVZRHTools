@@ -1,0 +1,161 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.SearchListView"
+             x:DataType="vm:SearchListViewModel">
+    <StackPanel Orientation="Vertical" Spacing="10" Margin="10">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button Content="生成音效"
+                    Command="{Binding PlaySoundCommand}" />
+            <u:NumericIntUpDown Value="{Binding SoundID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                MinWidth="200"
+                                MaxWidth="200" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button Content="生成特效"
+                    Command="{Binding PlayParticleCommand}" />
+            <u:NumericIntUpDown Value="{Binding ParticleID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                MinWidth="200"
+                                MaxWidth="200" />
+        </StackPanel>
+        <!-- 搜索框 -->
+        <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="输入关键词搜索..."
+                 Margin="0,0,0,10" />
+
+        <!-- 植物 -->
+        <Expander Header="植物 (Plants)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding Plants}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 僵尸 -->
+        <Expander Header="僵尸 (Zombies)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding Zombies}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 一层护甲 -->
+        <Expander Header="一类防具 (FirstArmors)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding FirstArmors}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 二层护甲 -->
+        <Expander Header="二类防具 (SecondArmors)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding SecondArmors}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 子弹 -->
+        <Expander Header="子弹 (Bullets)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding Bullets}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 高级Buff -->
+        <Expander Header="普通词条 (AdvBuffs)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding AdvBuffs}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 终极Buff -->
+        <Expander Header="强究词条 (UltiBuffs)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding UltiBuffs}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- Debuff -->
+        <Expander Header="僵尸词条 (Debuffs)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding Debuffs}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 投资Buff -->
+        <Expander Header="投资词条 (InvestBuffs)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding InvestBuffs}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+
+        <!-- 物品 -->
+        <Expander Header="物品 (Items)" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   IsVisible="{Binding IsVisible}"
+                                   Margin="5,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+    </StackPanel>
+</UserControl>

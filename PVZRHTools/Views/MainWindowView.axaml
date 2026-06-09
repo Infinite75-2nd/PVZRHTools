@@ -1,0 +1,90 @@
+<u:ReactiveUrsaWindow x:TypeArguments="vm:MainWindowViewModel"
+                      xmlns="https://github.com/avaloniaui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:vm="using:PVZRHTools.ViewModels"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:v="using:PVZRHTools.Views"
+                      xmlns:u="https://irihi.tech/ursa"
+                      xmlns:i="using:Avalonia.Xaml.Interactivity"
+                      mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                      x:Class="PVZRHTools.Views.MainWindowView"
+                      x:DataType="vm:MainWindowViewModel"
+                      x:CompileBindings="True"
+                      IsCloseButtonVisible="False"
+                      IsFullScreenButtonVisible="False"
+                      CanMaximize="False"
+                      IsManagedResizerVisible="False"
+                      Background="{DynamicResource SemiColorAIBackgroundBottomActive}"
+                      Title="PVZRHTools by Infinite75"
+                      RenderTransformOrigin="0.5,0.5">
+
+    <u:ReactiveUrsaWindow.RightContent>
+        <u:ThemeToggleButton IsThreeState="True" Mode="Controller" />
+    </u:ReactiveUrsaWindow.RightContent>
+
+    <i:Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Closing">
+            <InvokeCommandAction Command="{Binding ClosingCommand}" />
+        </EventTriggerBehavior>
+    </i:Interaction.Behaviors>
+
+    <Border
+        Padding="1"
+        Theme="{DynamicResource CardBorder}">
+        <Panel>
+            <Panel.Styles>
+                <Style Selector="Grid.Blur">
+                    <Setter Property="Effect" Value="blur(10)" />
+                </Style>
+            </Panel.Styles>
+            <Grid Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}"
+                  ColumnDefinitions="Auto, *" ColumnSpacing="10">
+
+                <u:NavMenu
+                    Name="MainMenu"
+                    ExpandWidth="200"
+                    ItemsSource="{Binding MenuItems}"
+                    CommandBinding="{Binding NavigateCommand}"
+                    Margin="10,10,0,0">
+                    <u:NavMenu.Header>
+                        <Grid HorizontalAlignment="Center" ColumnDefinitions="Auto, Auto">
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Classes="H3"
+                                Text="PVZRHTools"
+                                Theme="{DynamicResource TitleTextBlock}" />
+                        </Grid>
+                    </u:NavMenu.Header>
+                    <u:NavMenu.HeaderTemplate>
+                        <DataTemplate x:DataType="vm:MenuItemViewModel">
+                            <TextBlock HorizontalAlignment="Left"
+                                       Text="{Binding MenuHeader}"
+                                       Theme="{DynamicResource TitleTextBlock}"
+                                       Classes="H6"
+                                       Foreground="{DynamicResource SemiAIGeneral8}" />
+                        </DataTemplate>
+                    </u:NavMenu.HeaderTemplate>
+                    <u:NavMenu.Footer>
+                        <v:ModifierAuthorsView DataContext="{Binding ModifierAuthors}" />
+                    </u:NavMenu.Footer>
+                </u:NavMenu>
+                <ScrollViewer Grid.Column="1"
+                              Margin="0,30,0,0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto"
+                              u:ScrollTo.Direction="Top">
+                    <ContentControl Content="{Binding CurrentPage}">
+                        <ContentControl.ContentTemplate>
+                            <vm:ViewLocator />
+                        </ContentControl.ContentTemplate>
+                        <i:Interaction.Behaviors>
+                            <v:SlideInOnContentChangeBehavior Duration="0:0:0.2" FromX="30" />
+                        </i:Interaction.Behaviors>
+                    </ContentControl>
+                </ScrollViewer>
+            </Grid>
+        </Panel>
+    </Border>
+</u:ReactiveUrsaWindow>

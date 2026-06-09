@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.MiscsView"
+             x:DataType="vm:MiscsViewModel">
+    <WrapPanel>
+        <Border>
+            <StackPanel>
+                <CheckBox Content="关闭时保存现有设置"
+                          IsChecked="{Binding SaveAllSettings}" />
+                <CheckBox Content="显示悬浮窗"
+                          IsChecked="{Binding ShowFloatingWindow}" />
+            </StackPanel>
+        </Border>
+    </WrapPanel>
+</UserControl>

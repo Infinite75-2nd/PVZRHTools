@@ -1,0 +1,82 @@
+﻿<u:ReactiveUrsaWindow x:TypeArguments="vm:GameBootstrapViewModel" xmlns="https://github.com/avaloniaui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:vm="using:PVZRHTools.ViewModels"
+                      xmlns:v="using:PVZRHTools.Views"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:u="https://irihi.tech/ursa"
+                      mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                      x:Class="PVZRHTools.Views.GameBootstrapView"
+                      x:DataType="vm:GameBootstrapViewModel"
+                      x:CompileBindings="True"
+                      IsFullScreenButtonVisible="False"
+                      CanMaximize="False"
+                      Background="{DynamicResource SemiColorAIBackgroundBottomActive}"
+                      Title="PVZRHTools by Infinite75">
+
+    <u:ReactiveUrsaWindow.RightContent>
+        <StackPanel Orientation="Horizontal">
+            <u:IconButton Icon="{DynamicResource SemiIconGithubLogo}"
+                          Command="{Binding OpenGithubCommand}"
+                          Theme="{DynamicResource BorderlessIconButton}"
+                          Classes="Tertiary" />
+            <u:ThemeToggleButton IsThreeState="True" Mode="Controller" />
+        </StackPanel>
+    </u:ReactiveUrsaWindow.RightContent>
+
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Closing">
+            <InvokeCommandAction Command="{Binding ClosingCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    
+    <Border
+        Padding="1"
+        Theme="{DynamicResource CardBorder}">
+        <Panel>
+            <Panel.Styles>
+                <Style Selector="Grid.Blur">
+                    <Setter Property="Effect" Value="blur(10)" />
+                </Style>
+            </Panel.Styles>
+            <Grid Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}"
+                  ColumnDefinitions="Auto, *" ColumnSpacing="10">
+                <u:NavMenu
+                    Name="MainMenu"
+                    ExpandWidth="200"
+                    ItemsSource="{Binding MenuItems}"
+                    CommandBinding="{Binding NavigateCommand}"
+                    Margin="10,10,0,0">
+                    <u:NavMenu.Header>
+                        <Grid HorizontalAlignment="Center" ColumnDefinitions="Auto, Auto">
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Classes="H3"
+                                Text="PVZRHTools"
+                                Theme="{DynamicResource TitleTextBlock}" />
+                        </Grid>
+                    </u:NavMenu.Header>
+                    <u:NavMenu.HeaderTemplate>
+                        <DataTemplate x:DataType="vm:MenuItemViewModel">
+                            <TextBlock HorizontalAlignment="Left" Text="{Binding MenuHeader}" />
+                        </DataTemplate>
+                    </u:NavMenu.HeaderTemplate>
+                    <u:NavMenu.Footer>
+                        <v:ModifierAuthorsView DataContext="{Binding ModifierAuthors}" />
+                    </u:NavMenu.Footer>
+                </u:NavMenu>
+                <ScrollViewer Grid.Column="1"
+                              Margin="0,30,0,0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto">
+                    <ContentControl Content="{Binding CurrentPage}">
+                        <ContentControl.ContentTemplate>
+                            <vm:ViewLocator />
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </ScrollViewer>
+            </Grid>
+        </Panel>
+    </Border>
+</u:ReactiveUrsaWindow>

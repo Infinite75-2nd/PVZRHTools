@@ -1,0 +1,365 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:converters="using:PVZRHTools.Converters"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.TravelBuffView"
+             x:DataType="vm:TravelBuffViewModel">
+    <UserControl.Resources>
+        <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+        </Style>
+        <Style Selector="u|NumericUpDown">
+            <Setter Property="MaxWidth" Value="120" />
+        </Style>
+    </UserControl.Styles>
+
+    <WrapPanel Orientation="Vertical">
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="普通词条(Advanced Buffs)"
+                           MinWidth="850" />
+                <Expander Header="初始词条设置">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding AdvBuffChooseAllCommand}" />
+                            <Button Content="全不选" Command="{Binding AdvBuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding AdvBuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        VerticalContentAlignment="Center"
+                                        Tag="{Binding ID}">
+                                        <StackPanel Orientation="Horizontal"
+                                                    VerticalAlignment="Center">
+                                            <u:NumericIntUpDown
+                                                Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
+                                                Minimum="0"
+                                                Maximum="2"
+                                                InnerLeftContent="等级"
+                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
+                                                <Interaction.Behaviors>
+                                                    <EventTrigger EventName="ValueChanged">
+                                                        <InvokeCommandAction
+                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).AdvBuffLevelChangedCommand}"
+                                                            PassEventArgsToCommand="True" />
+                                                    </EventTrigger>
+                                                </Interaction.Behaviors>
+                                            </u:NumericIntUpDown>
+                                            <TextBlock Text="{Binding Name}"
+                                                       TextAlignment="Left"
+                                                       HorizontalAlignment="Left"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).AdvBuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="实时词条修改">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding InGameAdvBuffChooseAllCommand}" />
+                            <Button Content="全不选" Command="{Binding InGameAdvBuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding InGameAdvBuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        VerticalContentAlignment="Center"
+                                        Tag="{Binding ID}">
+                                        <StackPanel Orientation="Horizontal"
+                                                    VerticalAlignment="Center">
+                                            <u:NumericIntUpDown
+                                                Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
+                                                Minimum="0"
+                                                Maximum="2"
+                                                InnerLeftContent="等级"
+                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
+                                                <Interaction.Behaviors>
+                                                    <EventTrigger EventName="ValueChanged">
+                                                        <InvokeCommandAction
+                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameAdvBuffLevelChangedCommand}"
+                                                            PassEventArgsToCommand="True" />
+                                                    </EventTrigger>
+                                                </Interaction.Behaviors>
+                                            </u:NumericIntUpDown>
+                                            <TextBlock Text="{Binding Name}"
+                                                       TextAlignment="Left"
+                                                       HorizontalAlignment="Left"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameAdvBuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="强究词条(Ultimate Buffs)" />
+                <Expander Header="初始词条设置">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding UltiBuffChooseAllCommand}" />
+                            <Button Content="全不选" Command="{Binding UltiBuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding UltiBuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        VerticalContentAlignment="Center"
+                                        Tag="{Binding ID}">
+                                        <StackPanel Orientation="Horizontal"
+                                                    VerticalAlignment="Center">
+                                            <u:NumericIntUpDown
+                                                Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
+                                                Minimum="0"
+                                                Maximum="2"
+                                                InnerLeftContent="等级"
+                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
+                                                <Interaction.Behaviors>
+                                                    <EventTrigger EventName="ValueChanged">
+                                                        <InvokeCommandAction
+                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).UltiBuffLevelChangedCommand}"
+                                                            PassEventArgsToCommand="True" />
+                                                    </EventTrigger>
+                                                </Interaction.Behaviors>
+                                            </u:NumericIntUpDown>
+                                            <TextBlock Text="{Binding Name}"
+                                                       TextAlignment="Left"
+                                                       HorizontalAlignment="Left"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).UltiBuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="实时词条修改">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding InGameUltiBuffChooseAllCommand}" />
+                            <Button Content="全不选" Command="{Binding InGameUltiBuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding InGameUltiBuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        VerticalContentAlignment="Center"
+                                        Tag="{Binding ID}">
+                                        <StackPanel Orientation="Horizontal"
+                                                    VerticalAlignment="Center">
+                                            <u:NumericIntUpDown
+                                                Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
+                                                Minimum="0"
+                                                Maximum="2"
+                                                InnerLeftContent="等级"
+                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
+                                                <Interaction.Behaviors>
+                                                    <EventTrigger EventName="ValueChanged">
+                                                        <InvokeCommandAction
+                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameUltiBuffLevelChangedCommand}"
+                                                            PassEventArgsToCommand="True" />
+                                                    </EventTrigger>
+                                                </Interaction.Behaviors>
+                                            </u:NumericIntUpDown>
+                                            <TextBlock Text="{Binding Name}"
+                                                       TextAlignment="Left"
+                                                       HorizontalAlignment="Left"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameUltiBuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="僵尸词条(Debuffs)" />
+                <Expander Header="初始词条设置">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding DebuffChooseAllCommand}" />
+                            <Button Content="全不选"
+                                    Command="{Binding DebuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding Debuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VerticalContentAlignment="Center">
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).DebuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextAlignment="Left"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="实时词条修改">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding InGameDebuffChooseAllCommand}" />
+                            <Button Content="全不选"
+                                    Command="{Binding InGameDebuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding InGameDebuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VerticalContentAlignment="Center">
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameDebuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextAlignment="Left"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="投资词条(Invest Buffs)" />
+                <Expander Header="初始词条设置">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding InGameInvestBuffChooseAllCommand}" />
+                            <Button Content="全不选"
+                                    Command="{Binding InGameInvestBuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding InGameInvestBuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VerticalContentAlignment="Center">
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InvestBuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextAlignment="Left"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="实时词条修改">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding InGameInvestBuffChooseAllCommand}" />
+                            <Button Content="全不选"
+                                    Command="{Binding InGameInvestBuffDeselectAllCommand}" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding InvestBuffs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VerticalContentAlignment="Center">
+                                        <Interaction.Behaviors>
+                                            <EventTrigger EventName="IsCheckedChanged">
+                                                <InvokeCommandAction
+                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameInvestBuffEnabledChangedCommand}"
+                                                    PassEventArgsToCommand="True" />
+                                            </EventTrigger>
+                                        </Interaction.Behaviors>
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextAlignment="Left"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </Border>
+    </WrapPanel>
+</UserControl>

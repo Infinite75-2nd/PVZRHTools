@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="PVZRHTools/App.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/AboutView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/AddGameInstance.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/AddGameInstanceView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/CommonSettings.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/CommonSettingsView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/FieldReadWriteView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/FlagWaveBuffs.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/FlagWaveBuffsView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/FloatingWindow.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/GameBootstrap.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/GameBootstrapView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/GameInstanceItemView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/GameInstancesView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/InGameHotkeysView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/JumpToPaths.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/LaunchSettingsView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/LinksView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/MainWindow.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/MainWindowView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/MiscsView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/ModListView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/ModifierAuthors.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/ModifierAuthorsView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/PropertySettingsView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/SearchListView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/SnapshotView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/TravelBuffView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/ZombiesListItemView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/ZombiesListView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

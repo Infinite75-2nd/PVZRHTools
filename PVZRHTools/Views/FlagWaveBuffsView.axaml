@@ -1,0 +1,164 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.FlagWaveBuffsView"
+             x:DataType="vm:FlagWaveBuffsViewModel">
+
+    <UserControl.Styles>
+        <Style Selector="ItemsControl >ContentPresenter> Border">
+            <Setter Property="Theme" Value="{DynamicResource CardBorder}" />
+            <Setter Property="BorderThickness" Value="5" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SemiAIGeneral3}" />
+        </Style>
+        <Style Selector="Label">
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+        </Style>
+    </UserControl.Styles>
+
+    <WrapPanel Orientation="Vertical">
+        <CheckBox Content="启用旗帜波词条功能"
+                  HorizontalAlignment="Left"
+                  IsChecked="{Binding FlagWaveBuffsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ItemsControl ItemsSource="{Binding FlagWaveBuffs}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border>
+                        <StackPanel Orientation="Vertical">
+                            <u:Divider Content="{Binding Wave, StringFormat='第 {0} 旗'}" />
+                            <u:MultiComboBox
+                                ItemsSource="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).InitDataService.InitData.AdvBuffs}"
+                                SelectedItems="{Binding AdvBuffs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                MinWidth="850"
+                                MaxWidth="850"
+                                WrapSelection="True">
+                                <u:MultiComboBox.SelectedItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.SelectedItemTemplate>
+                                <u:MultiComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.ItemTemplate>
+                                <u:MultiComboBox.InnerLeftContent>
+                                    <Label Content="普通词条"
+                                           Classes="Ghost Blue" />
+                                </u:MultiComboBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <EventTrigger EventName="SelectionChanged">
+                                        <InvokeCommandAction
+                                            Command="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).FlagWaveBuffInfoChangedCommand}"
+                                            CommandParameter="{Binding Wave}" />
+                                    </EventTrigger>
+                                </Interaction.Behaviors>
+                            </u:MultiComboBox>
+                            <u:MultiComboBox
+                                ItemsSource="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).InitDataService.InitData.UltiBuffs}"
+                                SelectedItems="{Binding UltiBuffs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                MinWidth="850"
+                                MaxWidth="850"
+                                WrapSelection="True">
+                                <u:MultiComboBox.SelectedItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.SelectedItemTemplate>
+                                <u:MultiComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.ItemTemplate>
+                                <u:MultiComboBox.InnerLeftContent>
+                                    <Label Content="强究词条"
+                                           Classes="Ghost Purple" />
+                                </u:MultiComboBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <EventTrigger EventName="SelectionChanged">
+                                        <InvokeCommandAction
+                                            Command="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).FlagWaveBuffInfoChangedCommand}"
+                                            CommandParameter="{Binding Wave}" />
+                                    </EventTrigger>
+                                </Interaction.Behaviors>
+                            </u:MultiComboBox>
+                            <u:MultiComboBox
+                                ItemsSource="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).InitDataService.InitData.Debuffs}"
+                                SelectedItems="{Binding Debuffs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                MinWidth="850"
+                                MaxWidth="850"
+                                WrapSelection="True">
+                                <u:MultiComboBox.SelectedItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.SelectedItemTemplate>
+                                <u:MultiComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.ItemTemplate>
+                                <u:MultiComboBox.InnerLeftContent>
+                                    <Label Content="僵尸词条"
+                                           Classes="Ghost Red" />
+                                </u:MultiComboBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <EventTrigger EventName="SelectionChanged">
+                                        <InvokeCommandAction
+                                            Command="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).FlagWaveBuffInfoChangedCommand}"
+                                            CommandParameter="{Binding Wave}" />
+                                    </EventTrigger>
+                                </Interaction.Behaviors>
+                            </u:MultiComboBox>
+                            <u:MultiComboBox
+                                ItemsSource="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).InitDataService.InitData.InvestBuffs}"
+                                SelectedItems="{Binding InvestBuffs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                MinWidth="850"
+                                MaxWidth="850"
+                                WrapSelection="True">
+                                <u:MultiComboBox.SelectedItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.SelectedItemTemplate>
+                                <u:MultiComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}" />
+                                    </DataTemplate>
+                                </u:MultiComboBox.ItemTemplate>
+                                <u:MultiComboBox.InnerLeftContent>
+                                    <Label Content="投资词条"
+                                           Classes="Ghost Orange" />
+                                </u:MultiComboBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <EventTrigger EventName="SelectionChanged">
+                                        <InvokeCommandAction
+                                            Command="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).FlagWaveBuffInfoChangedCommand}"
+                                            CommandParameter="{Binding Wave}" />
+                                    </EventTrigger>
+                                </Interaction.Behaviors>
+                            </u:MultiComboBox>
+                            <TextBox InnerLeftContent="自定义字幕"
+                                     MinWidth="850"
+                                     MaxWidth="850"
+                                     Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <Interaction.Behaviors>
+                                    <EventTrigger EventName="TextChanged">
+                                        <InvokeCommandAction
+                                            Command="{Binding $parent[UserControl].((vm:FlagWaveBuffsViewModel)DataContext).FlagWaveBuffInfoChangedCommand}"
+                                            CommandParameter="{Binding Wave}" />
+                                    </EventTrigger>
+                                </Interaction.Behaviors>
+                            </TextBox>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </WrapPanel>
+</UserControl>

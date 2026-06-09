@@ -1,0 +1,102 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:utils="using:PVZRHTools.Utils"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.InGameHotkeysView"
+             x:DataType="vm:InGameHotkeysViewModel">
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+            <Setter Property="MinWidth" Value="130" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="u|EnumSelector">
+            <Setter Property="MinWidth" Value="300" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+
+    <WrapPanel Orientation="Vertical">
+        <Border>
+            <StackPanel Orientation="Vertical" Spacing="10">
+                <u:Divider Content="游戏内按键绑定"
+                           MinWidth="500" />
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="高级时停"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector Value="{Binding KeySpeedStop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="显示游戏信息"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector Value="{Binding KeyShowGameInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="置顶卡槽"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector
+                        Value="{Binding KeyTopMostCardBank, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="随机卡牌"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector Value="{Binding KeyRandomCard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="图鉴种植植物"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector
+                        Value="{Binding KeyAlmanacCreatePlant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="图鉴种植植物(花瓶)"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector
+                        Value="{Binding KeyAlmanacCreatePlantVase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="图鉴种植僵尸"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector
+                        Value="{Binding KeyAlmanacCreateZombie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="图鉴种植僵尸(花瓶)"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector
+                        Value="{Binding KeyAlmanacCreateZombieVase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
+                    <Label Content="图鉴僵尸魅惑控制"
+                           Classes="Colorful Gradient Solid" />
+                    <u:EnumSelector
+                        Value="{Binding KeyAlmanacZombieMindCtrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        EnumType="{x:Type utils:KeyCode}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </WrapPanel>
+</UserControl>

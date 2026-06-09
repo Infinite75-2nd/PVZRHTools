@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.SnapshotView"
+             x:DataType="vm:SnapshotViewModel">
+
+    <WrapPanel Orientation="Vertical">
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="局内存档/回溯" />
+                <u:ButtonGroup>
+                    <Button Content="立即保存快照"
+                            Command="{Binding GetSnapshotCommand}" />
+                    <Button Content="恢复最近快照"
+                            Command="{Binding RestoreSnapshotCommand}" />
+                    <Button Content="刷新快照信息"
+                            Command="{Binding RefreshSnapshotInfoCommand}" />
+                </u:ButtonGroup>
+                <TextBlock Text="{Binding SnapshotString}" />
+            </StackPanel>
+        </Border>
+    </WrapPanel>
+</UserControl>

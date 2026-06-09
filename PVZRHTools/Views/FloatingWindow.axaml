@@ -1,0 +1,31 @@
+<u:ReactiveUrsaWindow x:TypeArguments="vm:FloatingWindowViewModel" xmlns="https://github.com/avaloniaui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:vm="using:PVZRHTools.ViewModels"
+                      xmlns:u="https://irihi.tech/ursa"
+                      mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="200"
+                      x:Class="PVZRHTools.Views.FloatingWindow"
+                      x:DataType="vm:FloatingWindowViewModel"
+                      x:CompileBindings="True"
+                      Width="70"
+                      Height="70"
+                      Topmost="True"
+                      CanResize="False"
+                      IsTitleBarVisible="False"
+                      WindowStartupLocation="Manual"
+                      ExtendClientAreaToDecorationsHint="True"
+                      Background="Transparent"
+                      ShowInTaskbar="False"
+                      WindowDecorations="None"
+                      IsCloseButtonVisible="False"
+                      CanMinimize="False">
+
+    <Panel Background="Transparent">
+        <Image Stretch="Uniform"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Source="../Assets/MKHkro1.png" />
+    </Panel>
+
+</u:ReactiveUrsaWindow>

@@ -1,0 +1,112 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:converters="using:PVZRHTools.Converters"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:models="clr-namespace:PVZRHTools.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:CompileBindings="True"
+             x:DataType="vm:GameInstancesViewModel"
+             x:Class="PVZRHTools.Views.GameInstancesView">
+
+    <UserControl.Resources>
+        <converters:PathToFolderConverter x:Key="PathToFolderConverter" />
+    </UserControl.Resources>
+    
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+        </Style>
+    </UserControl.Styles>
+    
+    <StackPanel Orientation="Vertical"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                Spacing="10">
+        <StackPanel Orientation="Horizontal">
+            <Label Content="添加游戏实例"
+                   VerticalAlignment="Center"
+                   Classes="Colorful Gradient Light"
+                   MinHeight="30"/>
+            <u:IconButton Content="检测修改器所在目录"
+                          Icon="{DynamicResource SemiIconAIFile}"
+                          Classes="Success"
+                          Theme="{DynamicResource SolidIconButton}"
+                          Command="{Binding DetectModifierDirectoryCommand}" />
+            <u:IconButton Content="检测正在运行的游戏进程"
+                          Icon="{DynamicResource SemiIconLightningStroked}"
+                          Classes="Primary"
+                          Theme="{DynamicResource SolidIconButton}"
+                          Command="{Binding DetectRunningGameCommand}" />
+            <u:IconButton Content="选择游戏位置"
+                          Icon="{DynamicResource SemiIconFolderStroked}"
+                          Classes="Warning"
+                          Theme="{DynamicResource SolidIconButton}"
+                          Command="{Binding SelectGameDirectoryCommand}"
+                          CommandParameter="{Binding $self}" />
+        </StackPanel>
+        <u:Divider HorizontalAlignment="Stretch"/>
+        <ListBox u:ScrollTo.ButtonTheme="{DynamicResource PrimaryScrollToButton}"
+                 u:ScrollTo.Direction="Top"
+                 ItemsSource="{Binding MenuItems}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="models:GameInstanceInfo">
+                    <StackPanel Orientation="Vertical" Spacing="10">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Label Content="{Binding GameRootPath, Converter={StaticResource PathToFolderConverter}}" />
+                            <Label Content="{Binding GameVersion}"
+                                   Theme="{DynamicResource TagLabel}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <u:IconButton Content="启动游戏"
+                                          Icon="{DynamicResource SemiIconSendStroked}"
+                                          Classes="Colorful Primary"
+                                          Theme="{DynamicResource SolidIconButton}"
+                                          Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).RunGameCommand}"
+                                          CommandParameter="{Binding}" />
+                            <u:IconDropDownButton Content="路径跳转"
+                                                  Icon="{DynamicResource SemiIconForwardStroked}"
+                                                  Theme="{DynamicResource SolidIconDropDownButton}"
+                                                  Classes="Secondary">
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuItem Header="游戏根目录"
+                                                  Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).OpenGameRootFolderCommand}"
+                                                  CommandParameter="{Binding}" />
+                                        <MenuItem Header="模组文件夹"
+                                                  Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).OpenPluginsFolderCommand}"
+                                                  CommandParameter="{Binding}" />
+                                        <MenuItem Header="游戏存档文件夹"
+                                                  Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).OpenGameSaveFolderCommand}" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </u:IconDropDownButton>
+                            <u:IconButton Content="模组管理"
+                                          Theme="{DynamicResource SolidIconButton}"
+                                          Icon="{DynamicResource SemiIconChecklistStroked}"
+                                          Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).ShowModListCommand}"
+                                          CommandParameter="{Binding}"
+                                          Classes="Warning" />
+                            <u:IconButton Content="启动设置"
+                                          Icon="{DynamicResource SemiIconSettingStroked}"
+                                          Theme="{DynamicResource SolidIconButton}"
+                                          Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).ShowLaunchSettingsCommand}"
+                                          CommandParameter="{Binding}"
+                                          Classes="Success" />
+                            <u:IconButton Content="删除实例"
+                                          Icon="{DynamicResource SemiIconDeleteStroked}"
+                                          Theme="{DynamicResource SolidIconButton}"
+                                          Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).RemoveGameInstanceCommand}"
+                                          CommandParameter="{Binding}"
+                                          Classes="Danger" />
+                        </StackPanel>
+
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>

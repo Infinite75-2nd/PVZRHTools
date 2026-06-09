@@ -1,0 +1,348 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="950"
+             x:Class="PVZRHTools.Views.CommonSettingsView"
+             x:CompileBindings="True"
+             x:DataType="vm:CommonSettingsViewModel">
+
+    <StackPanel Orientation="Horizontal">
+        <WrapPanel Orientation="Vertical">
+            <Border>
+                <StackPanel Orientation="Vertical">
+                    <u:Divider Content="全局属性修改" />
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <CheckBox Content="开发者模式"
+                                  IsChecked="{Binding DevMode,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Content="排山倒海"
+                                  IsChecked="{Binding ColumnPlanting}" />
+                        <CheckBox Content="种子雨"
+                                  IsChecked="{Binding SeedRain}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <CheckBox Content="启用游戏速度修改"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding GameSpeedEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <u:NumericDoubleUpDown InnerLeftContent="游戏速度倍率"
+                                               MinWidth="200"
+                                               Minimum="0"
+                                               Maximum="16"
+                                               Step="0.05"
+                                               FormatString="F3"
+                                               EmptyInputValue="1"
+                                               Value="{Binding GameSpeed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="手套无CD"
+                                  IsChecked="{Binding GloveNoCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                        <CheckBox Content="修改手套CD"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding GloveFullCDEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <u:NumericDoubleUpDown MinWidth="100"
+                                               Minimum="0"
+                                               Maximum="300"
+                                               Step="0.5"
+                                               FormatString="F1"
+                                               EmptyInputValue="30"
+                                               InnerRightContent="秒"
+                                               IsEnabled="{Binding GloveFullCDEnabled}"
+                                               Value="{Binding GloveFullCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="锤子无CD"
+                                  IsChecked="{Binding HammerNoCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                        <CheckBox Content="修改锤子CD"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding HammerFullCDEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <u:NumericDoubleUpDown MinWidth="100"
+                                               Minimum="0"
+                                               Maximum="300"
+                                               Step="0.5"
+                                               FormatString="F1"
+                                               EmptyInputValue="60"
+                                               InnerRightContent="秒"
+                                               IsEnabled="{Binding HammerFullCDEnabled}"
+                                               Value="{Binding HammerFullCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="自由种植"
+                                  IsChecked="{Binding FreePlanting,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Content="卡槽无CD"
+                                  IsChecked="{Binding CardFreeCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Content="解除融合限制"
+                                  IsChecked="{Binding RemoveFusionLimit,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="修改两波间刷怪间隔"
+                                  IsChecked="{Binding NewZombieUpdateCDEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <u:NumericDoubleUpDown MinWidth="100"
+                                               Minimum="0"
+                                               Maximum="300"
+                                               Step="0.5"
+                                               FormatString="F1"
+                                               EmptyInputValue="60"
+                                               InnerRightContent="秒"
+                                               IsEnabled="{Binding NewZombieUpdateCDEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                               Value="{Binding NewZombieUpdateCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="无限积分"
+                                  IsChecked="{Binding UnlimitedScore,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Content="词条无限刷新"
+                                  IsChecked="{Binding UnlimitedRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border>
+                <StackPanel Orientation="Vertical"
+                            Spacing="10">
+                    <u:Divider Content="游戏内属性调整" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="阳光修改"
+                                Command="{Binding SetSunCommand}" />
+                        <u:NumericUIntUpDown MinWidth="100"
+                                             Minimum="0"
+                                             Step="25"
+                                             EmptyInputValue="0"
+                                             Value="{Binding Sun,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Content="锁定阳光"
+                                  IsChecked="{Binding LockSun,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="钱币修改" Command="{Binding SetMoneyCommand}" />
+                        <u:NumericUIntUpDown MinWidth="100"
+                                             Minimum="0"
+                                             Step="10"
+                                             EmptyInputValue="0"
+                                             Value="{Binding Money,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Content="锁定钱币"
+                                  IsChecked="{Binding LockMoney,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="暂停出怪"
+                                  IsChecked="{Binding PauseSpawn,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox Content="僵尸进家不死"
+                                  IsChecked="{Binding NoFail,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="清除所有植物"
+                                Command="{Binding RemoveAllPlantsCommand}" />
+                        <Button Content="秒杀全部僵尸"
+                                Command="{Binding RemoveAllZombiesCommand}" />
+                        <Button Content="魅惑全部僵尸"
+                                Command="{Binding MindCtrlAllZombiesCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="清除全部冰道" Command="{Binding RemoveAllIceRoadsCommand}" />
+                        <Button Content="清除全部坑洞" Command="{Binding RemoveAllHolesCommand}" />
+                        <Button Content="清除全部墓碑" Command="{Binding RemoveAllGravesCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="修改关卡名称"
+                                Command="{Binding SetLevelNameCommand}" />
+                        <TextBox MinWidth="200"
+                                 Classes="clearButton"
+                                 Text="{Binding LevelName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="僵尸全员站桩"
+                                Command="{Binding SetZombiesIdleCommand}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </WrapPanel>
+        <WrapPanel Orientation="Vertical">
+            <Border>
+                <StackPanel Orientation="Vertical" Spacing="10">
+                    <u:Divider Content="游戏内生成操作" />
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <u:NumericIntUpDown InnerLeftContent="行"
+                                            MinWidth="100"
+                                            Minimum="0"
+                                            Maximum="16"
+                                            Step="1"
+                                            EmptyInputValue="0"
+                                            Value="{Binding Row,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <u:NumericIntUpDown InnerLeftContent="列"
+                                            MinWidth="100"
+                                            Minimum="0"
+                                            Maximum="20"
+                                            Step="1"
+                                            EmptyInputValue="0"
+                                            Value="{Binding Column,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <Label Content="0为整行或整列"
+                               Classes="Colorful Gradient"
+                               Theme="{DynamicResource TagLabel}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <u:NumericIntUpDown InnerLeftContent="重复操作次数"
+                                            HorizontalAlignment="Left"
+                                            MinWidth="200"
+                                            MaxWidth="200"
+                                            Minimum="1"
+                                            Maximum="100"
+                                            Step="1"
+                                            EmptyInputValue="1"
+                                            Value="{Binding RepeatTimes,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                        <CheckBox Content="砸罐子全屏"
+                                  IsChecked="{Binding PvPPotRange,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="植物类型"
+                               Classes="Ghost LightBlue"
+                               Theme="{DynamicResource TagLabel}" />
+                        <ComboBox ItemsSource="{Binding InitDataService.InitData.Plants}"
+                                  SelectedValueBinding="{Binding Key}"
+                                  MinWidth="160"
+                                  VerticalAlignment="Center"
+                                  SelectedValue="{Binding CreatePlantID}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Value}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <CheckBox Content="随机植物"
+                                  IsChecked="{Binding CreateRandomPlant,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="生成植物"
+                                Command="{Binding CreatePlantCommand}" />
+                        <Button Content="生成植物卡片"
+                                Command="{Binding CreatePlantCardCommand}" />
+                        <Button Content="生成植物罐子"
+                                Command="{Binding CreatePlantVaseCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="僵尸类型"
+                               Classes="Ghost Orange"
+                               Theme="{DynamicResource TagLabel}" />
+                        <ComboBox ItemsSource="{Binding InitDataService.InitData.Zombies}"
+                                  SelectedValueBinding="{Binding Key}"
+                                  MinWidth="160"
+                                  VerticalAlignment="Center"
+                                  SelectedValue="{Binding CreateZombieID}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Value}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <CheckBox Content="随机僵尸"
+                                  IsChecked="{Binding CreateRandomZombie,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="生成僵尸"
+                                Command="{Binding CreateZombieCommand}" />
+                        <Button Content="生成魅惑僵尸"
+                                Command="{Binding CreateMindControlledZombieCommand}" />
+                        <Button Content="生成僵尸罐子"
+                                Command="{Binding CreateZombieVaseCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="物品类型"
+                               Classes="Ghost Purple"
+                               Theme="{DynamicResource TagLabel}" />
+                        <ComboBox ItemsSource="{Binding InitDataService.Items}"
+                                  SelectedValueBinding="{Binding Key}"
+                                  MinWidth="160"
+                                  SelectedValue="{Binding CreateItemID}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Value}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+
+                        </ComboBox>
+                        <Button Content="生成物品"
+                                Command="{Binding CreateItemCommand}" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="普通陨星"
+                                Command="{Binding CreatePassiveMeteoriteCommand}" />
+                        <Button Content="充能陨星"
+                                Command="{Binding CreateActiveMeteoriteCommand}" />
+                        <Button Content="究级陨星"
+                                Command="{Binding CreateUltimateMeteoriteCommand}" />
+                        <Button Content="阳光陨星"
+                                Command="{Binding CreateSolarMeteoriteCommand}" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="生成下一波僵尸"
+                                Command="{Binding NextWaveCommand}" />
+                        <Button Content="生成奖杯"
+                                Command="{Binding SetAwardCommand}" />
+                        <Button Content="销毁奖杯"
+                                Command="{Binding DestroyAwardCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="显示字幕"
+                                Command="{Binding ShowTextCommand}" />
+                        <TextBox MinWidth="200"
+                                 Classes="clearButton"
+                                 Text="{Binding Text,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="启动所有小推车"
+                                Command="{Binding StartMowerCommand}" />
+                        <Button Content="生成小推车"
+                                Command="{Binding CreateMowerCommand}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border>
+                <StackPanel Orientation="Vertical">
+                    <u:Divider Content="僵尸海设置" />
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="极限僵尸海(帧生成型)"
+                                  IsChecked="{Binding ZombieSeaEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <u:NumericIntUpDown InnerLeftContent="生成间隔帧数"
+                                            Minimum="1"
+                                            Maximum="4000"
+                                            Step="1"
+                                            EmptyInputValue="40"
+                                            MinWidth="160"
+                                            Value="{Binding ZombieSeaCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="普通僵尸海(改出怪列表型)"
+                                  IsChecked="{Binding ZombieSeaLowEnabled}" />
+                    </StackPanel>
+                    <u:MultiComboBox ItemsSource="{Binding InitDataService.InitData.Zombies}"
+                                     MinWidth="350"
+                                     WrapSelection="True"
+                                     SelectedItems="{Binding ZombieSeaTypes,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                     MaxWidth="350">
+                        <u:MultiComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Value}" />
+                            </DataTemplate>
+                        </u:MultiComboBox.ItemTemplate>
+                        <u:MultiComboBox.SelectedItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Value}" />
+                            </DataTemplate>
+                        </u:MultiComboBox.SelectedItemTemplate>
+                        <u:MultiComboBox.InnerLeftContent>
+                            <Label Content="僵尸海类型"
+                                   Classes="Ghost Red"
+                                   Theme="{DynamicResource TagLabel}" />
+                        </u:MultiComboBox.InnerLeftContent>
+                    </u:MultiComboBox>
+                </StackPanel>
+            </Border>
+        </WrapPanel>
+    </StackPanel>
+</UserControl>

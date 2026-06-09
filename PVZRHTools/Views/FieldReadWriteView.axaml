@@ -1,0 +1,227 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.FieldReadWriteView"
+             x:DataType="vm:FieldReadWriteViewModel">
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinWidth" Value="160" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="u|NumericUpDown">
+            <Setter Property="MinWidth" Value="100" />
+        </Style>
+    </UserControl.Styles>
+
+    <WrapPanel Orientation="Vertical">
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="常规布阵" />
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="植物布阵"
+                           Classes="Colorful Gradient" />
+                    <u:IconButton Content="获取当前阵容码"
+                                  Icon="{DynamicResource SemiIconEditStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Success"
+                                  Command="{Binding GetPlantFormationCodeCommand}" />
+                    <u:IconButton Content="根据代码布阵"
+                                  Icon="{DynamicResource SemiIconSendStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Colorful Primary"
+                                  Command="{Binding ApplyPlantFormationCommand}" />
+                    <CheckBox Content="布阵时清空场地"
+                              IsChecked="{Binding PlantFormationClearField}" />
+                    <CheckBox Content="使用高数阵容码格式"
+                              IsChecked="{Binding PlantFormationUseAdvancedFormat}" />
+                </StackPanel>
+                <TextBox Classes="clearButton"
+                         Text="{Binding PlantFormationCode}" />
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="僵尸布阵"
+                           Classes="Colorful Gradient" />
+                    <u:IconButton Content="获取当前阵容码"
+                                  Icon="{DynamicResource SemiIconEditStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Success"
+                                  Command="{Binding GetZombieFormationCodeCommand}" />
+                    <u:IconButton Content="根据代码布阵"
+                                  Icon="{DynamicResource SemiIconSendStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Colorful Primary"
+                                  Command="{Binding ApplyZombieFormationCommand}" />
+                    <CheckBox Content="布阵时清空场地"
+                              IsChecked="{Binding ZombieFormationClearField}" />
+                    <CheckBox Content="使用高数阵容码格式"
+                              IsChecked="{Binding ZombieFormationUseAdvancedFormat}" />
+                </StackPanel>
+                <TextBox Classes="clearButton"
+                         Text="{Binding ZombieFormationCode}" />
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="混合布阵"
+                           Classes="Colorful Gradient" />
+                    <u:IconButton Content="获取当前阵容码"
+                                  Icon="{DynamicResource SemiIconEditStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Success"
+                                  Command="{Binding GetMixedFormationCodeCommand}" />
+                    <u:IconButton Content="根据代码布阵"
+                                  Icon="{DynamicResource SemiIconSendStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Colorful Primary"
+                                  Command="{Binding ApplyMixedFormationCommand}" />
+                    <CheckBox Content="布阵时清空场地"
+                              IsChecked="{Binding MixedFormationClearField}" />
+                    <Label Content="仅使用高数阵容码格式"
+                           Classes="Ghost Pink" />
+                </StackPanel>
+                <TextBox Classes="clearButton"
+                         Text="{Binding MixedFormationCode}" />
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="罐子布阵"
+                           Classes="Colorful Gradient" />
+                    <u:IconButton Content="获取当前阵容码"
+                                  Icon="{DynamicResource SemiIconEditStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Success"
+                                  Command="{Binding GetPotFormationCodeCommand}" />
+                    <u:IconButton Content="根据代码布阵"
+                                  Icon="{DynamicResource SemiIconSendStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Colorful Primary"
+                                  Command="{Binding ApplyPotFormationCommand}" />
+                    <CheckBox Content="布阵时清空场地"
+                              IsChecked="{Binding PotFormationClearField}" />
+                </StackPanel>
+                <TextBox Classes="clearButton"
+                         Text="{Binding PotFormationCode}" />
+            </StackPanel>
+        </Border>
+
+        <Border>
+            <StackPanel Orientation="Vertical" Spacing="5">
+                <u:Divider Content="斗蛐蛐布阵" />
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="第1个礼盒"
+                           Classes="Colorful Gradient Solid" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.PlantsWithRandom}"
+                              SelectedValue="{Binding GiftBox1PlantIndex}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="第2个礼盒"
+                           Classes="Colorful Gradient Solid" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.PlantsWithRandom}"
+                              SelectedValue="{Binding GiftBox2PlantIndex}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="第3个礼盒"
+                           Classes="Colorful Gradient Solid" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.PlantsWithRandom}"
+                              SelectedValue="{Binding GiftBox3PlantIndex}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="第4个礼盒"
+                           Classes="Colorful Gradient Solid" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.PlantsWithRandom}"
+                              SelectedValue="{Binding GiftBox4PlantIndex}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="第5个礼盒"
+                           Classes="Colorful Gradient Solid" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.PlantsWithRandom}"
+                              SelectedValue="{Binding GiftBox5PlantIndex}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="槽1 钻石盲盒僵尸"
+                           Classes="Colorful Gradient Ghost" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.ZombiesWithRandom}"
+                              SelectedValue="{Binding ZombieSlot1Index}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="槽2 黄金盲盒僵尸"
+                           Classes="Colorful Gradient Ghost" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.ZombiesWithRandom}"
+                              SelectedValue="{Binding ZombieSlot2Index}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="槽3 黄金盲盒僵尸"
+                           Classes="Colorful Gradient Ghost" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.ZombiesWithRandom}"
+                              SelectedValue="{Binding ZombieSlot3Index}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="槽4 黄金盲盒僵尸"
+                           Classes="Colorful Gradient Ghost" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.ZombiesWithRandom}"
+                              SelectedValue="{Binding ZombieSlot4Index}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="槽5 黄金盲盒僵尸"
+                           Classes="Colorful Gradient Ghost" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.ZombiesWithRandom}"
+                              SelectedValue="{Binding ZombieSlot5Index}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="槽6 巨人盲盒僵尸"
+                           Classes="Colorful Gradient Ghost" />
+                    <ComboBox MinWidth="600"
+                              ItemsSource="{Binding InitDataService.ZombiesWithRandom}"
+                              SelectedValue="{Binding ZombieSlot6Index}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <u:IconButton Content="一键放置5植物6僵尸"
+                                  Icon="{DynamicResource SemiIconSendStroked}"
+                                  Theme="{DynamicResource SolidIconButton}"
+                                  Classes="Colorful Primary"
+                                  Command="{Binding ApplyBattleFormationCommand}" />
+                    <CheckBox Content="击杀升级"
+                              IsChecked="{Binding KillUpgrade}" />
+                    <CheckBox Content="随机升级模式"
+                              IsChecked="{Binding RandomUpgradeMode}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </WrapPanel>
+</UserControl>

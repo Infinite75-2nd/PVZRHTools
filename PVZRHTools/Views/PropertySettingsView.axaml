@@ -1,0 +1,277 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
+             x:CompileBindings="True"
+             x:Class="PVZRHTools.Views.PropertySettingsView"
+             x:DataType="vm:PropertySettingsViewModel">
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinWidth" Value="160" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="u|NumericUpDown">
+            <Setter Property="MinWidth" Value="100" />
+        </Style>
+    </UserControl.Styles>
+
+    <WrapPanel Orientation="Vertical">
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="礼盒修改" />
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="超级礼盒"
+                              IsChecked="{Binding SuperPresent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="礼盒快速打开"
+                              IsChecked="{Binding PresentFastOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="盒子僵尸概率出究极僵尸"
+                              IsChecked="{Binding UltimateRandomZombie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="锁定礼盒植物"
+                              IsChecked="{Binding LockPresentEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <ComboBox ItemsSource="{Binding InitDataService.InitData.Plants}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"
+                              SelectedValue="{Binding LockPresent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical" Spacing="10">
+                <u:Divider Content="数值修改(设为-1以还原数值)" />
+                <StackPanel Orientation="Horizontal"
+                            Spacing="10">
+                    <Label Content="僵尸初始血量修改" />
+                    <ComboBox ItemsSource="{Binding InitDataService.InitData.Zombies}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"
+                              SelectedValue="{Binding ZombieHPType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericIntUpDown MinWidth="100"
+                                        Minimum="-1"
+                                        Step="1"
+                                        EmptyInputValue="-1"
+                                        Value="{Binding ZombieHPValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="修改" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Label Content="一类防具血量修改" />
+                    <ComboBox ItemsSource="{Binding InitDataService.InitData.FirstArmors}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"
+                              SelectedValue="{Binding FirstArmorHPType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericIntUpDown MinWidth="100"
+                                        Minimum="-1"
+                                        Step="1"
+                                        EmptyInputValue="-1"
+                                        Value="{Binding FirstArmorHPValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="修改" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Label Content="二类防具血量修改" />
+                    <ComboBox ItemsSource="{Binding InitDataService.InitData.SecondArmors}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"
+                              SelectedValue="{Binding SecondArmorHPType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericIntUpDown MinWidth="100"
+                                        Minimum="-1"
+                                        Step="1"
+                                        EmptyInputValue="-1"
+                                        Value="{Binding SecondArmorHPValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="修改" />
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Label Content="子弹伤害数值修改" />
+                    <ComboBox ItemsSource="{Binding InitDataService.InitData.Bullets}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"
+                              SelectedValue="{Binding BulletDamageType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericIntUpDown MinWidth="100"
+                                        Minimum="-1"
+                                        Step="1"
+                                        EmptyInputValue="-1"
+                                        Value="{Binding BulletDamageValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="修改" />
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Label Content="锁定全部子弹类型" />
+                    <ComboBox ItemsSource="{Binding InitDataService.BulletsWithRandom}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"
+                              SelectedValue="{Binding LockBulletType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="修改" />
+
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="场地特性" />
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="不生成冰道"
+                              IsChecked="{Binding NoIceRoad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="不生成坑洞"
+                              IsChecked="{Binding NoHole, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="物品不消失"
+                              IsChecked="{Binding ItemExistForever, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="小丑盒子不爆炸"
+                              IsChecked="{Binding JackboxNotExplode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="大蒜天"
+                              IsChecked="{Binding GarlicDay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="阳光无上限"
+                              IsChecked="{Binding UnlimitedSunlight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="取消红卡种植限制"
+                              IsChecked="{Binding UnlockRedCardPlants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="砸罐子修复"
+                              IsChecked="{Binding PotSmashingFix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="取消冰冻特效"
+                              IsChecked="{Binding DisableIceEffect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="植物特性" />
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="植物攻击无间隔"
+                              IsChecked="{Binding FastShooting, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物无敌"
+                              IsChecked="{Binding HardPlant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="免疫强制扣血"
+                              IsChecked="{Binding ImmuneForceDeduct, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物免疫诅咒"
+                              IsChecked="{Binding CurseImmunity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物免疫踩踏"
+                              IsChecked="{Binding TrampleImmunity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物免疫矿镐"
+                              IsChecked="{Binding PickaxeImmunity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="植物免疫碾压"
+                              IsChecked="{Binding CrushImmunity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="子弹无限穿透"
+                              IsChecked="{Binding UndeadBullet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="强化黑曜石子弹"
+                              IsChecked="{Binding OldObsidianBullet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="超级机枪射手无限开大"
+                              IsChecked="{Binding UltimateSuperGatling, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="磁力坚果无限"
+                              IsChecked="{Binding MagnetNutUnlimited, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="魅帝菇无CD"
+                              IsChecked="{Binding HyponoEmperorNoCD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="地雷无CD"
+                              IsChecked="{Binding MineNoCD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="大嘴花无CD"
+                              IsChecked="{Binding ChomperNoCD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="玉米加农炮无CD"
+                              IsChecked="{Binding CobCannonNoCD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="超桃无CD"
+                              IsChecked="{Binding SuperStarNoCD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物升级"
+                              IsChecked="{Binding PlantUpgrade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="锁定大麦变植物"
+                              IsChecked="{Binding LockWheatEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <ComboBox ItemsSource="{Binding InitDataService.InitData.Plants}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"
+                              SelectedValue="{Binding LockWheat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="僵尸特性" />
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="僵尸限伤"
+                              IsChecked="{Binding ZombieDamageLimitEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericIntUpDown
+                        Minimum="0"
+                        EmptyInputValue="100"
+                        Value="{Binding ZombieDamageLimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="僵尸速度倍率"
+                              IsChecked="{Binding ZombieSpeedMultiplierEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericDoubleUpDown InnerRightContent="x"
+                                           Minimum="0.1"
+                                           EmptyInputValue="1"
+                                           Value="{Binding ZombieSpeedMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="僵尸攻击力倍率"
+                              IsChecked="{Binding ZombieAttackMultiplierEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericDoubleUpDown InnerRightContent="x"
+                                           Minimum="0.1"
+                                           EmptyInputValue="1"
+                                           Value="{Binding ZombieAttackMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="僵尸反弹子弹概率"
+                              IsChecked="{Binding ZombieBulletReflectEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericIntUpDown InnerRightContent="%"
+                                        Minimum="0"
+                                        Maximum="100"
+                                        EmptyInputValue="10"
+                                        Value="{Binding ZombieBulletReflect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="僵尸状态并存"
+                              IsChecked="{Binding ZombieStatusCoexist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="僵尸免疫全部状态"
+                              IsChecked="{Binding ZombieImmuneAllDebuffs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="效果免疫" />
+                    <CheckBox Content="冻结"
+                              IsChecked="{Binding ZombieImmuneFreeze, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="减速"
+                              IsChecked="{Binding ZombieImmuneCold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="黄油定身"
+                              IsChecked="{Binding ZombieImmuneButter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="蒜毒"
+                              IsChecked="{Binding ZombieImmunePoison, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="红温"
+                              IsChecked="{Binding ZombieImmuneJalaed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="余烬"
+                              IsChecked="{Binding ZombieImmuneEmbered, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="击退"
+                              IsChecked="{Binding ZombieImmuneKnockback, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="魅惑"
+                              IsChecked="{Binding ZombieImmuneMindControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="吞噬"
+                              IsChecked="{Binding ZombieImmuneDevour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </StackPanel>
+
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="其他特性" />
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="水果落地自动切"
+                              IsChecked="{Binding AutoCutFruit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="随机卡槽"
+                              IsChecked="{Binding RandomCard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="手套动一排"
+                              IsChecked="{Binding ColumnGlove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="卡片无限制"
+                              IsChecked="{Binding UnlimitedCardSlots, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="随机子弹"
+                              IsChecked="{Binding RandomBullet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="自动音游"
+                              IsChecked="{Binding AutoRhythmGame, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="星辉buff"
+                              IsChecked="{Binding StarUpBuff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </WrapPanel>
+</UserControl>
