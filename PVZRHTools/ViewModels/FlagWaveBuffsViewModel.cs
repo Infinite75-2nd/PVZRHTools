@@ -75,40 +75,39 @@ public partial class FlagWaveBuffsViewModel : ModifierPageViewModelBase
 
                 // 还原AdvBuffs
 
-                    foreach (var advId in fb.AdvBuffs)
-                    {
-                        var name = InitDataService.InitData.AdvBuffs.FirstOrDefault(x => x.Key == advId).Value ?? "";
-                        info.AdvBuffs.Add(new KeyValuePair<int, string>(advId, name));
-                    }
-                
+                foreach (var advId in fb.AdvBuffs)
+                {
+                    var name = InitDataService.InitData.AdvBuffs.FirstOrDefault(x => x.Key == advId).Value ?? "";
+                    info.AdvBuffs.Add(new KeyValuePair<int, string>(advId, name));
+                }
+
 
                 // 还原UltiBuffs
-                
-                    foreach (var ultiId in fb.UltiBuffs)
-                    {
-                        var name = InitDataService.InitData.UltiBuffs.FirstOrDefault(x => x.Key == ultiId).Value ?? "";
-                        info.UltiBuffs.Add(new KeyValuePair<int, string>(ultiId, name));
-                    
+
+                foreach (var ultiId in fb.UltiBuffs)
+                {
+                    var name = InitDataService.InitData.UltiBuffs.FirstOrDefault(x => x.Key == ultiId).Value ?? "";
+                    info.UltiBuffs.Add(new KeyValuePair<int, string>(ultiId, name));
                 }
 
                 // 还原Debuffs
-                
-                    foreach (var debuffId in fb.Debuffs)
-                    {
-                        var name = InitDataService.InitData.Debuffs.FirstOrDefault(x => x.Key == debuffId).Value ?? "";
-                        info.Debuffs.Add(new KeyValuePair<int, string>(debuffId, name));
-                    }
-                
+
+                foreach (var debuffId in fb.Debuffs)
+                {
+                    var name = InitDataService.InitData.Debuffs.FirstOrDefault(x => x.Key == debuffId).Value ?? "";
+                    info.Debuffs.Add(new KeyValuePair<int, string>(debuffId, name));
+                }
+
 
                 // 还原InvestBuffs
-                
-                    foreach (var investId in fb.InvestBuffs)
-                    {
-                        var name = InitDataService.InitData.InvestBuffs.FirstOrDefault(x => x.Key == investId).Value ??
-                                   "";
-                        info.InvestBuffs.Add(new KeyValuePair<int, string>(investId, name));
-                    }
-                
+
+                foreach (var investId in fb.InvestBuffs)
+                {
+                    var name = InitDataService.InitData.InvestBuffs.FirstOrDefault(x => x.Key == investId).Value ??
+                               "";
+                    info.InvestBuffs.Add(new KeyValuePair<int, string>(investId, name));
+                }
+
 
                 FlagWaveBuffs.Add(info);
             }

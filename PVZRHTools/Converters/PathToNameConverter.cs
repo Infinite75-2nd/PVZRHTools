@@ -11,10 +11,12 @@ public class PathToNameConverter : IValueConverter
     {
         if (value is string path)
         {
-            var modPath= Path.GetFileNameWithoutExtension(path);
-            return Path.HasExtension(modPath)&&Path.GetExtension(modPath) is ".dll" ? Path.GetFileNameWithoutExtension(modPath) : modPath;
+            var modPath = Path.GetFileNameWithoutExtension(path);
+            return Path.HasExtension(modPath) && Path.GetExtension(modPath) is ".dll"
+                ? Path.GetFileNameWithoutExtension(modPath)
+                : modPath;
         }
-        
+
         return null;
     }
 

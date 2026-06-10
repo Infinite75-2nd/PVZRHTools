@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Core;
+using GameLevel.RogueShooting;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
@@ -68,6 +69,8 @@ public class DataProcessor : MonoBehaviour
         { Strings.HammerNoCD, SimpleSyncBool(() => HammerNoCD) },
         { Strings.HammerFullCD, SimpleSyncFloat(() => HammerFullCD) },
         { Strings.GloveFullCD, SimpleSyncFloat(() => GloveFullCD) },
+        { Strings.WheelNoCD, SimpleSyncBool(() => WheelNoCD) },
+        { Strings.WheelFullCD, SimpleSyncFloat(() => WheelFullCD) },
         { Strings.FreePlanting, SimpleSyncBool(() => FreePlanting) },
         { Strings.CardFreeCD, SimpleSyncBool(() => CardFreeCD) },
         { Strings.RemoveFusionLimit, SimpleSyncBool(() => RemoveFusionLimit) },
@@ -207,6 +210,28 @@ public class DataProcessor : MonoBehaviour
 
         #endregion
 
+        #region 诸神进化
+
+        { Strings.GodEvolutionUnlimitedRefresh, SimpleSyncBool(() => GodEvolutionUnlimitedRefresh,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionFreeUpgradeQuality, SimpleSyncBool(() => GodEvolutionFreeUpgradeQuality,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionLucky, SimpleSyncFloat(() => GodEvolutionLucky,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionDifficulty, SimpleSyncInt(() => GodEvolutionDifficulty,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionRefreshCount, SimpleSyncInt(() => GodEvolutionRefreshCount,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionMaxPlantCount, SimpleSyncInt(() => GodEvolutionMaxPlantCount,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionOptionCount, SimpleSyncInt(() => GodEvolutionOptionCount,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionUpgradeBuffChance, SimpleSyncInt(() => GodEvolutionUpgradeBuffChance,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionSuperUpgrade, SimpleSyncBool(() => GodEvolutionSuperUpgrade,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionForceSuperQuality, SimpleSyncBool(() => GodEvolutionForceSuperQuality,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionUncrashable, SimpleSyncBool(() => GodEvolutionUncrashable,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionQualityWeightEnabled, SimpleSyncBool(() => GodEvolutionQualityWeightEnabled,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionQualityDefault, SimpleSyncFloat(() => GodEvolutionQualityDefault,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionQualitySilver, SimpleSyncFloat(() => GodEvolutionQualitySilver,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionQualityGold, SimpleSyncFloat(() => GodEvolutionQualityGold,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionQualityDiamond, SimpleSyncFloat(() => GodEvolutionQualityDiamond,()=>GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionDamageMultiplier, SimpleSyncFloat(() => GodEvolutionDamageMultiplier,()=>GodEvolutionApplyQuality([])) },
+
+        #endregion
+
         #region 游戏内按键绑定
 
         { Strings.KeySpeedStop, SimpleSyncKeyCode(() => KeySpeedStop) },
@@ -261,6 +286,8 @@ public class DataProcessor : MonoBehaviour
         { Strings.PlayParticle, PlayParticle },
         { Strings.GetSnapshot, GetSnapshot },
         { Strings.RestoreSnapshot, RestoreSnapshot },
+        {Strings.GodEvolutionApplyQuality, GodEvolutionApplyQuality},
+        {Strings.GodEvolutionResetQuality, GodEvolutionResetQuality},
     };
 
     #region OverallCommands
@@ -1502,5 +1529,33 @@ public class DataProcessor : MonoBehaviour
             {
             }
         }
+    }
+
+    public static void GodEvolutionApplyQuality(List<string> _)
+    {
+        if(ShootingManager.Instance != null)
+            ApplySettings(ShootingManager.Instance);
+    }
+    
+    public static void GodEvolutionResetQuality(List<string> _)
+    {
+        GodEvolutionUnlimitedRefresh = false;
+        GodEvolutionFreeUpgradeQuality = false;
+        GodEvolutionLucky = -1f;
+        GodEvolutionDifficulty = -1;
+        GodEvolutionRefreshCount = -1;
+        GodEvolutionMaxPlantCount = -1;
+        GodEvolutionOptionCount = -1;
+        GodEvolutionUpgradeBuffChance = -1;
+        GodEvolutionSuperUpgrade = false;
+        GodEvolutionForceSuperQuality = false;
+        GodEvolutionUncrashable = false;
+        GodEvolutionQualityWeightEnabled = false;
+        GodEvolutionQualityDefault = 1f;
+        GodEvolutionQualitySilver = 1f;
+        GodEvolutionQualityGold = 1f;
+        GodEvolutionQualityDiamond = 1f;
+        GodEvolutionDamageMultiplier = -1f;
+        GodEvolutionApplyQuality(_);
     }
 }

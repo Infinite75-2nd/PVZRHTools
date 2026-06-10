@@ -9,7 +9,8 @@ public class BootstrapServicesModule : IModule
     public void Configure(IMutableDependencyResolver resolver)
     {
         //Services
-        resolver.RegisterLazySingleton(() => new RunGameService(Locator.Current.GetService<IModifierInfoService>()!), typeof(IRunGameService));
+        resolver.RegisterLazySingleton(() => new RunGameService(Locator.Current.GetService<IModifierInfoService>()!),
+            typeof(IRunGameService));
         resolver.RegisterLazySingleton(() => new NavigationService(), typeof(INavigationService));
         resolver.RegisterLazySingleton(() => new ModsManagementService(), typeof(IModsManagementService));
         resolver.RegisterLazySingleton(
@@ -17,7 +18,7 @@ public class BootstrapServicesModule : IModule
             typeof(IModifierInfoService));
         resolver.RegisterLazySingleton(() => new NotificationService(), typeof(INotificationService));
         resolver.RegisterLazySingleton(() =>
-            new GameBootstrapService(Locator.Current.GetService<IModifierInfoService>()!),
+                new GameBootstrapService(Locator.Current.GetService<IModifierInfoService>()!),
             typeof(IGameBootstrapService));
 
         //ViewModels
@@ -28,7 +29,9 @@ public class BootstrapServicesModule : IModule
                 Locator.Current.GetService<INotificationService>()!));
         resolver.RegisterLazySingleton(() =>
             new GameBootstrapViewModel(Locator.Current.GetService<INavigationService>()!,
-                Locator.Current.GetService<IModifierInfoService>()!));
+                Locator.Current.GetService<IModifierInfoService>()!,
+                Locator.Current.GetService<IGameBootstrapService>()!,
+                Locator.Current.GetService<INotificationService>()!));
         resolver.RegisterLazySingleton(() =>
             new LinksViewModel());
         resolver.RegisterLazySingleton(() =>

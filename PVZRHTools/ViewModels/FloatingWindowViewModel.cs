@@ -10,7 +10,7 @@ public partial class FloatingWindowViewModel : ViewModelBase
     private Window? _floatingWindow;
     private Point _startPoint;
     private PixelPoint _windowStartPosition;
-    
+
     [ReactiveCommand]
     private void StartDrag()
     {

@@ -46,7 +46,7 @@ public static class HammerPatch
     [HarmonyPatch(nameof(Hammer.Start))]
     public static void PostStart(Hammer __instance)
     {
-        //OriginalFullCD = __instance.fullCD;
+        OriginalFullCD = __instance.fullCD;
         GameObject obj = new("ModifierHammerCD");
         var text = obj.AddComponent<TextMeshProUGUI>();
         text.font = Resources.Load<TMP_FontAsset>("Fonts/ContinuumBold SDF");

@@ -14,14 +14,14 @@
     <UserControl.Resources>
         <converters:PathToFolderConverter x:Key="PathToFolderConverter" />
     </UserControl.Resources>
-    
+
     <UserControl.Styles>
         <Style Selector="Label">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
         </Style>
     </UserControl.Styles>
-    
+
     <StackPanel Orientation="Vertical"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -30,7 +30,7 @@
             <Label Content="添加游戏实例"
                    VerticalAlignment="Center"
                    Classes="Colorful Gradient Light"
-                   MinHeight="30"/>
+                   MinHeight="30" />
             <u:IconButton Content="检测修改器所在目录"
                           Icon="{DynamicResource SemiIconAIFile}"
                           Classes="Success"
@@ -48,7 +48,7 @@
                           Command="{Binding SelectGameDirectoryCommand}"
                           CommandParameter="{Binding $self}" />
         </StackPanel>
-        <u:Divider HorizontalAlignment="Stretch"/>
+        <u:Divider HorizontalAlignment="Stretch" />
         <ListBox u:ScrollTo.ButtonTheme="{DynamicResource PrimaryScrollToButton}"
                  u:ScrollTo.Direction="Top"
                  ItemsSource="{Binding MenuItems}">

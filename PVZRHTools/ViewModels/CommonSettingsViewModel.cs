@@ -28,6 +28,9 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool HammerFullCDEnabled { get; set; }
     [Reactive] public partial double GloveFullCD { get; set; } = 10;
     [Reactive] public partial bool GloveFullCDEnabled { get; set; }
+    [Reactive] public partial bool WheelNoCD { get; set; }
+    [Reactive] public partial double WheelFullCD { get; set; } = 30;
+    [Reactive] public partial bool WheelFullCDEnabled { get; set; }
     [Reactive] public partial bool FreePlanting { get; set; }
     [Reactive] public partial bool CardFreeCD { get; set; }
     [Reactive] public partial bool RemoveFusionLimit { get; set; }
@@ -329,6 +332,8 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.HammerNoCD, Strings.HammerNoCD);
         this.SimpleSyncFlaggedDouble(x => x.HammerFullCD, x => x.HammerFullCDEnabled, Strings.HammerFullCD);
         this.SimpleSyncFlaggedDouble(x => x.GloveFullCD, x => x.GloveFullCDEnabled, Strings.GloveFullCD);
+        this.SimpleOneWaySync(x => x.WheelNoCD, Strings.WheelNoCD);
+        this.SimpleSyncFlaggedDouble(x => x.WheelFullCD, x => x.WheelFullCDEnabled, Strings.WheelFullCD);
         this.SimpleOneWaySync(x => x.FreePlanting, Strings.FreePlanting);
         this.SimpleOneWaySync(x => x.CardFreeCD, Strings.CardFreeCD);
         this.SimpleOneWaySync(x => x.RemoveFusionLimit, Strings.RemoveFusionLimit);
@@ -381,6 +386,9 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         settings.HammerFullCDEnabled = HammerFullCDEnabled;
         settings.GloveFullCD = GloveFullCD;
         settings.GloveFullCDEnabled = GloveFullCDEnabled;
+        settings.WheelNoCD = WheelNoCD;
+        settings.WheelFullCD = WheelFullCD;
+        settings.WheelFullCDEnabled = WheelFullCDEnabled;
         settings.FreePlanting = FreePlanting;
         settings.CardFreeCD = CardFreeCD;
         settings.RemoveFusionLimit = RemoveFusionLimit;
@@ -430,6 +438,9 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         HammerFullCDEnabled = settings.HammerFullCDEnabled;
         GloveFullCD = settings.GloveFullCD;
         GloveFullCDEnabled = settings.GloveFullCDEnabled;
+        WheelNoCD = settings.WheelNoCD;
+        WheelFullCD = settings.WheelFullCD;
+        WheelFullCDEnabled = settings.WheelFullCDEnabled;
         FreePlanting = settings.FreePlanting;
         CardFreeCD = settings.CardFreeCD;
         RemoveFusionLimit = settings.RemoveFusionLimit;
@@ -463,12 +474,11 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         ZombieSeaCD = settings.ZombieSeaCD;
         ZombieSeaLowEnabled = settings.ZombieSeaLowEnabled;
 
-            ZombieSeaTypes.Clear();
-            foreach (var typeId in settings.ZombieSeaTypes)
-            {
-                var name = InitDataService.InitData.Zombies.FirstOrDefault(z => z.Key == typeId).Value ?? "";
-                ZombieSeaTypes.Add(new KeyValuePair<int, string>(typeId, name));
-            }
-        
+        ZombieSeaTypes.Clear();
+        foreach (var typeId in settings.ZombieSeaTypes)
+        {
+            var name = InitDataService.InitData.Zombies.FirstOrDefault(z => z.Key == typeId).Value ?? "";
+            ZombieSeaTypes.Add(new KeyValuePair<int, string>(typeId, name));
+        }
     }
 }

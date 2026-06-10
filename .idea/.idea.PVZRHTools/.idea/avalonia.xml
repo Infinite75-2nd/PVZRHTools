@@ -17,6 +17,7 @@
         <entry key="PVZRHTools/Views/GameBootstrapView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/GameInstanceItemView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/GameInstancesView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/GodEvolutionView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/InGameHotkeysView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/JumpToPaths.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/LaunchSettingsView.axaml" value="PVZRHTools/PVZRHTools.csproj" />

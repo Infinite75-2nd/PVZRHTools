@@ -44,7 +44,7 @@
                                         Tag="{Binding ID}">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <u:NumericIntUpDown
+                                            <!--<u:NumericIntUpDown
                                                 Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
                                                 Minimum="0"
                                                 Maximum="2"
@@ -57,7 +57,7 @@
                                                             PassEventArgsToCommand="True" />
                                                     </EventTrigger>
                                                 </Interaction.Behaviors>
-                                            </u:NumericIntUpDown>
+                                            </u:NumericIntUpDown>-->
                                             <TextBlock Text="{Binding Name}"
                                                        TextAlignment="Left"
                                                        HorizontalAlignment="Left"
@@ -92,7 +92,7 @@
                                         Tag="{Binding ID}">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <u:NumericIntUpDown
+                                            <!--<u:NumericIntUpDown
                                                 Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
                                                 Minimum="0"
                                                 Maximum="2"
@@ -105,7 +105,7 @@
                                                             PassEventArgsToCommand="True" />
                                                     </EventTrigger>
                                                 </Interaction.Behaviors>
-                                            </u:NumericIntUpDown>
+                                            </u:NumericIntUpDown>-->
                                             <TextBlock Text="{Binding Name}"
                                                        TextAlignment="Left"
                                                        HorizontalAlignment="Left"

@@ -29,7 +29,7 @@ public static class InitBoardPatch
                     card.GetChild(0).gameObject.GetComponent<CardUI>().fullCD;
             }
 
-        HammerPatch.OriginalFullCD = Hammer.Instance.fullCD;
+        //HammerPatch.OriginalFullCD = Hammer.Instance.fullCD;
     }
 
     [HarmonyPrefix]

@@ -3,14 +3,14 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.7";
-        public const string ModifierVersion = "5.0.0";
+        public const string ModifierVersion = "5.0.2";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
         public static string GetGameVersion(string gameHash) => gameHash switch
         {
             "a9d8b12bb519944f35aa83ba3f20ef24abc15e672071db605129e98a68759240" => "3.6.1",
-            "a436fd03e084010b4d5c19896f12b10ebb1e44d3172534cda335f1c20b591281"=>"3.7",
+            "a436fd03e084010b4d5c19896f12b10ebb1e44d3172534cda335f1c20b591281" => "3.7",
             _ => "<internal alpha>"
         };
 
@@ -26,6 +26,8 @@ namespace ToolData
         public const string HammerNoCD = "HammerNoCD";
         public const string HammerFullCD = "HammerFullCD";
         public const string GloveFullCD = "GloveFullCD";
+        public const string WheelNoCD = "WheelNoCD";
+        public const string WheelFullCD = "WheelFullCD";
         public const string FreePlanting = "FreePlanting";
         public const string CardFreeCD = "CardFreeCD";
         public const string RemoveFusionLimit = "RemoveFusionLimit";
@@ -136,6 +138,30 @@ namespace ToolData
         public const string RandomBullet = "RandomBullet";
         public const string AutoRhythmGame = "AutoRhythmGame";
         public const string StarUpBuff = "StarUpBuff";
+
+        #endregion
+
+        #region 诸神进化
+
+        public const string GodEvolutionUnlimitedRefresh = "GodEvolutionUnlimitedRefresh";
+        public const string GodEvolutionFreeUpgradeQuality = "GodEvolutionFreeUpgradeQuality";
+        public const string GodEvolutionLucky = "GodEvolutionLucky";
+        public const string GodEvolutionDifficulty = "GodEvolutionDifficulty";
+        public const string GodEvolutionRefreshCount = "GodEvolutionRefreshCount";
+        public const string GodEvolutionMaxPlantCount = "GodEvolutionMaxPlantCount";
+        public const string GodEvolutionOptionCount = "GodEvolutionOptionCount";
+        public const string GodEvolutionUpgradeBuffChance = "GodEvolutionUpgradeBuffChance";
+        public const string GodEvolutionSuperUpgrade = "GodEvolutionSuperUpgrade";
+        public const string GodEvolutionForceSuperQuality = "GodEvolutionForceSuperQuality";
+        public const string GodEvolutionUncrashable = "GodEvolutionUncrashable";
+        public const string GodEvolutionQualityWeightEnabled = "GodEvolutionQualityWeightEnabled";
+        public const string GodEvolutionQualityDefault = "GodEvolutionQualityDefault";
+        public const string GodEvolutionQualitySilver = "GodEvolutionQualitySilver";
+        public const string GodEvolutionQualityGold = "GodEvolutionQualityGold";
+        public const string GodEvolutionQualityDiamond = "GodEvolutionQualityDiamond";
+        public const string GodEvolutionDamageMultiplier = "GodEvolutionDamageMultiplier";
+        public const string GodEvolutionApplyQuality = "GodEvolutionApplyQuality";
+        public const string GodEvolutionResetQuality = "GodEvolutionResetQuality";
 
         #endregion
 

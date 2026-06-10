@@ -8,9 +8,11 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using Core;
+using GameLevel.RogueShooting;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using ToolData;
+using UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using static ToolMod.Components.PatchDataCache;
@@ -27,23 +29,43 @@ public static class Utils
     public static Action<List<string>> SimpleSyncEnum<T>(Expression<Func<T>> propertyExpression) where T : Enum
         => args => CreateSetter(propertyExpression)(GetEnumFromInt<T>(Convert.ToInt32(args[0])));
 
-    public static Action<List<string>> SimpleSyncBool(Expression<Func<bool>> propertyExpression)
-        => args => CreateSetter(propertyExpression)(Convert.ToBoolean(args[0]));
+    public static Action<List<string>> SimpleSyncBool(Expression<Func<bool>> propertyExpression,Action? callBack=null) =>
+        args =>
+        {
+            CreateSetter(propertyExpression)(Convert.ToBoolean(args[0]));
+            callBack?.Invoke();
+        };
 
-    public static Action<List<string>> SimpleSyncFloat(Expression<Func<float>> propertyExpression)
-        => args => CreateSetter(propertyExpression)(Convert.ToSingle(args[0]));
+    public static Action<List<string>> SimpleSyncFloat(Expression<Func<float>> propertyExpression,Action? callBack=null)
+        => args =>
+        {
+            CreateSetter(propertyExpression)(Convert.ToSingle(args[0]));
+            callBack?.Invoke();
+        };
 
-    public static Action<List<string>> SimpleSyncInt(Expression<Func<int>> propertyExpression)
-        => args => CreateSetter(propertyExpression)(Convert.ToInt32(args[0]));
+    public static Action<List<string>> SimpleSyncInt(Expression<Func<int>> propertyExpression,Action? callBack=null)
+        => args =>
+        {
+            CreateSetter(propertyExpression)(Convert.ToInt32(args[0]));
+            callBack?.Invoke();
+        };
 
-    public static Action<List<string>> SimpleSyncString(Expression<Func<string>> propertyExpression)
-        => args => CreateSetter(propertyExpression)(args[0]);
+    public static Action<List<string>> SimpleSyncString(Expression<Func<string>> propertyExpression,Action? callBack=null)
+        => args =>
+        {
+            CreateSetter(propertyExpression)(args[0]);
+            callBack?.Invoke();
+        };
 
-    public static Action<List<string>> SimpleSyncKeyCode(Expression<Func<KeyCode>> propertyExpression)
-        => args => CreateSetter(propertyExpression)((KeyCode)Enum.Parse(typeof(KeyCode), args[0]));
+    public static Action<List<string>> SimpleSyncKeyCode(Expression<Func<KeyCode>> propertyExpression,Action? callBack=null)
+        => args =>
+        {
+            CreateSetter(propertyExpression)((KeyCode)Enum.Parse(typeof(KeyCode), args[0]));
+            callBack?.Invoke();
+        };
 
     public static T GetEnumFromInt<T>(int value) where T : Enum => (T)Enum.ToObject(typeof(T), value);
-    public static T GetRandomItem<T>(this IList<T> list) => list[UnityEngine.Random.RandomRangeInt(0, list.Count)];
+    public static T GetRandomItem<T>(this IList<T> list) => list[Random.RandomRangeInt(0, list.Count)];
 
     public static Action<T> CreateSetter<T>(Expression<Func<T>> propertyExpression)
     {
@@ -1583,7 +1605,7 @@ public static class Utils
         {
         }
     }
-    
+
     internal static List<CardUI> GetInGameCards(InGameUI? ui)
     {
         var list = new List<CardUI>();
@@ -1605,7 +1627,8 @@ public static class Utils
         {
             var field = typeof(Zombie).GetField(
                 "cursedPlants",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic);
             if (field?.GetValue(zombie) is Il2CppSystem.Collections.Generic.List<Plant> cursedPlants &&
                 cursedPlants.Count > 0)
             {
@@ -1616,6 +1639,56 @@ public static class Utils
         {
             // ignored
         }
+    }
+
+    public static void ApplySettings(ShootingManager mgr)
+    {
+        if (mgr == null) return;
+        try
+        {
+            if (GodEvolutionLucky >= 0)
+                mgr.Lucky = (int)GodEvolutionLucky;
+            if (GodEvolutionDifficulty >= 0)
+                mgr.difficulty = GodEvolutionDifficulty;
+            if (ShouldFixGodEvolutionRefreshButton)
+                mgr.refreshCount = GetGodEvolutionMenuRefreshCount();
+            if (GodEvolutionMaxPlantCount >= 0)
+                mgr.maxPlantCount = GodEvolutionMaxPlantCount;
+            if (GodEvolutionOptionCount >= 0)
+                mgr.optionCount = GodEvolutionOptionCount;
+            if (GodEvolutionUpgradeBuffChance >= 0 || GodEvolutionFreeUpgradeQuality)
+                mgr.upgradeBuffChance = GodEvolutionFreeUpgradeQuality ? 999999 : GodEvolutionUpgradeBuffChance;
+            if (GodEvolutionSuperUpgrade)
+                mgr.superUpgrade = true;
+            if (GodEvolutionForceSuperQuality)
+                (_appearSuperQualitativeField ??= typeof(ShootingManager).GetField("appearSuperQualitative",
+                    BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(mgr, true);
+            if (GodEvolutionUncrashable)
+                (_uncrashableField ??= typeof(ShootingManager).GetField("uncrashable",
+                    BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(mgr, true);
+        }
+        catch
+        {
+        }
+    }
+    public static int GetGodEvolutionMenuRefreshCount()
+    {
+        if (IsRefreshUnlimited) return 9999999;
+        if (GodEvolutionRefreshOverrideActive) return GodEvolutionRefreshCount;
+        return 0;
+    }
+    public static Quality RollQuality()
+    {
+        float total = GodEvolutionQualityDefault + GodEvolutionQualitySilver + GodEvolutionQualityGold +
+                      GodEvolutionQualityDiamond;
+        if (total <= 0f) return Quality.Default;
+        var r = Random.Range(0f, total);
+        if (r < GodEvolutionQualityDefault) return Quality.Default;
+        r -= GodEvolutionQualityDefault;
+        if (r < GodEvolutionQualitySilver) return Quality.silver;
+        r -= GodEvolutionQualitySilver;
+        if (r < GodEvolutionQualityGold) return Quality.gold;
+        return Quality.diamond;
     }
 
     public static string GetInvestBuffChineseName(int id)

@@ -21,6 +21,7 @@ namespace PVZRHTools.ViewModels;
 public partial class GameInstancesViewModel : ViewModelBase
 {
     [Reactive] public partial ObservableCollection<GameInstanceInfo> MenuItems { get; set; }
+
     //public string Title { get; init; } = $"当前适配版本：{Strings.GameVersion}";
     private IRunGameService _runGameService { get; set; }
     private IModifierInfoService _modifierInfoService { get; set; }
@@ -83,7 +84,8 @@ public partial class GameInstancesViewModel : ViewModelBase
             icon: MessageBoxIcon.Question,
             button: MessageBoxButton.YesNo);
         if (result != MessageBoxResult.Yes) return;
-        _notificationService.NotificationManager?.Show($"已移除游戏实例 {new DirectoryInfo(info.GameRootPath).Name}", NotificationType.Success);
+        _notificationService.NotificationManager?.Show($"已移除游戏实例 {new DirectoryInfo(info.GameRootPath).Name}",
+            NotificationType.Success);
         _modifierInfoService.RemoveGamePath(info.GameRootPath);
         MenuItems = _modifierInfoService.InitGameInstanceInfos();
     }

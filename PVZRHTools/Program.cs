@@ -1,13 +1,22 @@
-﻿using Avalonia;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
+using Avalonia;
+using PVZRHTools.Services;
 using ReactiveUI.Avalonia;
 using Splat.Builder;
-using System;
-using System.Diagnostics;
-using System.Threading;
-using Avalonia.Input;
-using PVZRHTools.Services;
 using ToolData;
 using AppBuilder = Avalonia.AppBuilder;
+
+[assembly: AssemblyFileVersion(Strings.ModifierVersion)]
+[assembly: AssemblyMetadata("IsTrimmable", "True")]
+[assembly: AssemblyMetadata("IsAotCompatible", "True")]
+[assembly: AssemblyCompany("PVZRHTools")]
+[assembly: AssemblyConfiguration("Debug")]
+[assembly: AssemblyProduct("PVZRHTools")]
+[assembly: AssemblyTitle("PVZRHTools")]
+[assembly: AssemblyVersion(Strings.ModifierVersion)]
 
 namespace PVZRHTools;
 
@@ -19,7 +28,7 @@ public static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        using var mutex = new Mutex(true, Program.Mutex, out bool createdNew);
+        using var mutex = new Mutex(true, Mutex, out bool createdNew);
         if (createdNew)
         {
             App.Bootstrap = !(args.Length is 2 && args[0] is Strings.RunModifierArgument);

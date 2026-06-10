@@ -594,36 +594,32 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
 
     public override void LoadSettings(SettingsData settings)
     {
-
-            foreach (var adv in AdvBuffs)
-            {
-                if (settings.TravelAdvBuffs.TryGetValue(adv.ID, out var level))
-                    adv.Level = level;
-            }
-        
+        foreach (var adv in AdvBuffs)
+        {
+            if (settings.TravelAdvBuffs.TryGetValue(adv.ID, out var level))
+                adv.Level = level;
+        }
 
 
-            foreach (var ulti in UltiBuffs)
-            {
-                if (settings.TravelUltiBuffs.TryGetValue(ulti.ID, out var level))
-                    ulti.Level = level;
-            }
-        
+        foreach (var ulti in UltiBuffs)
+        {
+            if (settings.TravelUltiBuffs.TryGetValue(ulti.ID, out var level))
+                ulti.Level = level;
+        }
 
 
-            foreach (var debuff in Debuffs)
-            {
-                if (settings.TravelDebuffs.TryGetValue(debuff.ID, out var enabled))
-                    debuff.Enabled = enabled;
-            }
-        
+        foreach (var debuff in Debuffs)
+        {
+            if (settings.TravelDebuffs.TryGetValue(debuff.ID, out var enabled))
+                debuff.Enabled = enabled;
+        }
 
-            foreach (var invest in InvestBuffs)
-            {
-                if (settings.TravelInvestBuffs.TryGetValue(invest.ID, out var enabled))
-                    invest.Enabled = enabled;
-            }
-        
+
+        foreach (var invest in InvestBuffs)
+        {
+            if (settings.TravelInvestBuffs.TryGetValue(invest.ID, out var enabled))
+                invest.Enabled = enabled;
+        }
     }
 
     public TravelBuffViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(

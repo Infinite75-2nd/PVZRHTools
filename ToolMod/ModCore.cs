@@ -5,16 +5,13 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using AlmanacData;
 using BepInEx;
-using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using TMPro;
 using ToolMod.Components;
 using ToolData;
 using UnityEngine;
@@ -33,6 +30,20 @@ namespace ToolMod
             var bootConfigString = File.ReadAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.BootConfigPath));
             BootConfig = JsonSerializer.Deserialize<BootConfig>(bootConfigString);
             if (!BootConfig.ModifierEnabled) return;
+            if (File.Exists(Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName)))
+            {
+                ModifierPath = Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName);
+            }
+            else if (File.Exists(BootConfig.ModifierPath))
+            {
+                ModifierPath = BootConfig.ModifierPath;
+            }
+
+            if (string.IsNullOrEmpty(ModifierPath))
+            {
+                Log.LogFatal("PVZRHTools.exe不存在，修改器已禁用");
+                return;
+            }
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
             ClassInjector.RegisterTypeInIl2Cpp<DataProcessor>();
@@ -61,9 +72,10 @@ namespace ToolMod
                 Environment.Exit(0);
             };
             DataSync.Start();
+
             var startInfo = new ProcessStartInfo()
             {
-                FileName = BootConfig.ModifierPath,
+                FileName = ModifierPath,
                 ArgumentList = { Strings.RunModifierArgument, BepInEx.Paths.GameRootPath },
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -326,6 +338,7 @@ namespace ToolMod
         private DataSync DataSync { get; set; }
         public GameObject ModifierObject { get; set; }
         public BootConfig BootConfig { get; set; }
+        public string ModifierPath { get; set; }
         public bool Inited { get; private set; } = false;
         public InitData InitData { get; private set; }
     }

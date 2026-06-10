@@ -29,7 +29,7 @@
             <InvokeCommandAction Command="{Binding ClosingCommand}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    
+
     <Border
         Padding="1"
         Theme="{DynamicResource CardBorder}">
@@ -59,7 +59,11 @@
                     </u:NavMenu.Header>
                     <u:NavMenu.HeaderTemplate>
                         <DataTemplate x:DataType="vm:MenuItemViewModel">
-                            <TextBlock HorizontalAlignment="Left" Text="{Binding MenuHeader}" />
+                            <TextBlock HorizontalAlignment="Left"
+                                       Text="{Binding MenuHeader}"
+                                       Theme="{DynamicResource TitleTextBlock}"
+                                       Classes="H6"
+                                       Foreground="{DynamicResource SemiAIGeneral8}" />
                         </DataTemplate>
                     </u:NavMenu.HeaderTemplate>
                     <u:NavMenu.Footer>

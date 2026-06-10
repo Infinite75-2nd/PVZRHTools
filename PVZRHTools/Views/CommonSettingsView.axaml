@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -69,6 +69,23 @@
                                                InnerRightContent="秒"
                                                IsEnabled="{Binding HammerFullCDEnabled}"
                                                Value="{Binding HammerFullCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="推车无CD"
+                                  IsChecked="{Binding WheelNoCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                        <CheckBox Content="修改推车CD"
+                                  VerticalAlignment="Center"
+                                  IsChecked="{Binding WheelFullCDEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <u:NumericDoubleUpDown MinWidth="100"
+                                            Minimum="0"
+                                            Maximum="300"
+                                            Step="0.5"
+                                            EmptyInputValue="30"
+                                            FormatString="F1"
+                                            InnerRightContent="秒"
+                                            IsEnabled="{Binding WheelFullCDEnabled}"
+                                            Value="{Binding WheelFullCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Content="自由种植"

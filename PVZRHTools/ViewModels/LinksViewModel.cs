@@ -1,7 +1,5 @@
-﻿
-namespace PVZRHTools.ViewModels;
+﻿namespace PVZRHTools.ViewModels;
 
 public class LinksViewModel : ViewModelBase
 {
-    
 }

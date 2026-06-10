@@ -148,11 +148,11 @@ public static class BoardPatch
 
             try
             {
-                if (!FlagWaveBuffsEnabled || __instance == null || !InGame) 
+                if (!FlagWaveBuffsEnabled || __instance == null || !InGame)
                     return;
 
                 // 检测旗帜波状态变化（从非旗帜波变为旗帜波）
-                bool currentHugeWave = __instance.theWave%10 is 0;
+                bool currentHugeWave = __instance.theWave % 10 is 0;
                 bool wasHugeWave = LastHugeWaveState;
                 LastHugeWaveState = currentHugeWave;
 

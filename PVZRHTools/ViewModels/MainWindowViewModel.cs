@@ -65,7 +65,7 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
         HideFloatingWindowInternal();
         Locator.Current.GetService<ISettingsService>()?.SaveAllViewModelSettings();
     }
-    
+
 
     public MainWindowViewModel(INavigationService navigationService, IDataSyncService dataSyncService,
         IInitDataService initDataService) :
@@ -76,7 +76,7 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
         _initDataService = initDataService;
         _initDataService.Initialize();
         ModifierAuthors = new();
-        
+
         this.WhenAnyValue(x => x._navigationService.CurrentViewModel)
             .ToProperty(this, nameof(CurrentPage), out _currentPage);
         AppDomain.CurrentDomain.ProcessExit += (sender, e) => Exit();
@@ -92,6 +92,7 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
             //new(_navigationService) { MenuHeader = "全局按键绑定", PageType = typeof(CommonSettingsViewModel) },
             new(_navigationService) { MenuHeader = "检索分区", PageType = typeof(SearchListViewModel) },
             new(_navigationService) { MenuHeader = "局内存档/回溯", PageType = typeof(SnapshotViewModel) },
+            new(_navigationService) { MenuHeader = "诸神进化", PageType = typeof(GodEvolutionViewModel) },
             new(_navigationService) { MenuHeader = "其他设置", PageType = typeof(MiscsViewModel) },
         };
 

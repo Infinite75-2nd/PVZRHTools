@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -105,6 +107,63 @@ public class ModifierInfoService : IModifierInfoService
 
     public void RemoveGamePath(string gameRootPath) => ModifierInfo.GamePaths.Remove(gameRootPath);
 
+    public void ValidateAndCleanGamePaths()
+    {
+        ModifierInfo.GamePaths.RemoveAll(path => !ToolUtils.ValidateGameDirectory(path));
+    }
+
+    public void SaveModifierInfo()
+    {
+        Directory.CreateDirectory(Paths.GameDataPath);
+        File.WriteAllText(Paths.ModifierDataPath,
+            JsonSerializer.Serialize(ModifierInfo, JsonSGC.Default.ModifierInfo));
+    }
+
+    public List<string> GetOutdatedGamePaths()
+    {
+        var outdatedPaths = new List<string>();
+        var currentVersion = Strings.ModifierVersion;
+        var savedVersion = ModifierInfo.ModifierVersion;
+
+        if (savedVersion == currentVersion)
+            return outdatedPaths;
+
+        if (Version.TryParse(savedVersion, out var savedVer) &&
+            Version.TryParse(currentVersion, out var currentVer) &&
+            savedVer >= currentVer)
+        {
+            ModifierInfo.ModifierVersion = currentVersion;
+            return outdatedPaths;
+        }
+
+        foreach (var gamePath in ModifierInfo.GamePaths)
+        {
+            var gameAssemblyPath = Path.Combine(gamePath, Paths.GameAssemblyName);
+            if (!File.Exists(gameAssemblyPath)) continue;
+
+            var hash = Convert.ToHexStringLower(
+                SHA256.HashData(File.ReadAllBytes(gameAssemblyPath)));
+            var gameVersion = Strings.GetGameVersion(hash);
+            if (gameVersion != Strings.GameVersion) continue;
+
+            var modifierExePath = Path.Combine(gamePath, Paths.ModifierExeName);
+            if (!File.Exists(modifierExePath)) continue;
+
+            var fileVersion = FileVersionInfo.GetVersionInfo(modifierExePath).FileVersion;
+            if (fileVersion == null) continue;
+
+            if (Version.TryParse(fileVersion, out var fileVer) &&
+                Version.TryParse(currentVersion, out var curVer) &&
+                fileVer < curVer)
+            {
+                outdatedPaths.Add(gamePath);
+            }
+        }
+
+        ModifierInfo.ModifierVersion = currentVersion;
+        return outdatedPaths;
+    }
+
     public void WriteBootConfig(GameInstanceInfo info) =>
         WriteBootConfig(info.GameRootPath, info.ModifierEnabled);
 
@@ -149,4 +208,7 @@ public interface IModifierInfoService
     void WriteBootConfig(GameInstanceInfo info);
     AddGamePathResult TryAddGamePath(string gameRootPath);
     void RemoveGamePath(string gameRootPath);
+    void ValidateAndCleanGamePaths();
+    void SaveModifierInfo();
+    List<string> GetOutdatedGamePaths();
 }

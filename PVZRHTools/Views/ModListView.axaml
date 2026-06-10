@@ -14,14 +14,14 @@
         <converters:PathToNameConverter x:Key="PathToNameConverter" />
         <converters:PathToFolderConverter x:Key="PathToFolderConverter" />
     </UserControl.Resources>
-    
+
     <UserControl.Styles>
         <Style Selector="CheckBox">
-            <Setter Property="Theme" Value="{DynamicResource SimpleCheckBox}"/>
+            <Setter Property="Theme" Value="{DynamicResource SimpleCheckBox}" />
         </Style>
     </UserControl.Styles>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto"
                   u:ScrollTo.Direction="Top">
         <StackPanel Orientation="Vertical" Spacing="10" MinWidth="300">
@@ -46,8 +46,8 @@
                 </Interaction.Behaviors>
             </u:IconButton>
             <ItemsControl ItemsSource="{Binding Info.Mods}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2">
@@ -55,18 +55,17 @@
                                       IsChecked="{Binding IsEnabled, Mode=TwoWay}"
                                       VerticalAlignment="Center"
                                       Command="{Binding $parent[ItemsControl].((vm:ModListViewModel)DataContext).ToggleModCommand}"
-                                      CommandParameter="{Binding}"
-                                      />
+                                      CommandParameter="{Binding}" />
                             <TextBlock Grid.Column="1"
                                        Text="{Binding ModFilePath, Converter={StaticResource PathToNameConverter}}"
                                        VerticalAlignment="Center"
                                        Margin="6,0,0,0" />
                             <u:IconButton Grid.Column="2"
-                                    Icon="{DynamicResource SemiIconFolderStroked}"
-                                    VerticalAlignment="Center"
-                                    Margin="6,0,0,0"
-                                    Command="{Binding $parent[ItemsControl].((vm:ModListViewModel)DataContext).ShowInExplorerCommand}"
-                                    CommandParameter="{Binding}" />
+                                          Icon="{DynamicResource SemiIconFolderStroked}"
+                                          VerticalAlignment="Center"
+                                          Margin="6,0,0,0"
+                                          Command="{Binding $parent[ItemsControl].((vm:ModListViewModel)DataContext).ShowInExplorerCommand}"
+                                          CommandParameter="{Binding}" />
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

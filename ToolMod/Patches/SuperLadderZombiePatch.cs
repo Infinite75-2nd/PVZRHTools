@@ -20,7 +20,8 @@ public static class SuperLadderZombiePatch
             if (__instance is not SuperLadderZombie) return true;
 
             _ladderField ??= typeof(SuperLadderZombie).GetField("ladder",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Public);
             if (_ladderField?.GetValue(__instance) != null)
             {
                 return false; // 阻止原方法执行
@@ -34,5 +35,6 @@ public static class SuperLadderZombiePatch
 
         return true;
     }
+
     private static System.Reflection.FieldInfo? _ladderField;
 }

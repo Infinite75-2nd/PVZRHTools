@@ -23,6 +23,9 @@ public class SettingsData
     public bool HammerFullCDEnabled { get; set; }
     public double GloveFullCD { get; set; } = 10;
     public bool GloveFullCDEnabled { get; set; }
+    public bool WheelNoCD { get; set; }
+    public double WheelFullCD { get; set; } = 30;
+    public bool WheelFullCDEnabled { get; set; }
     public bool FreePlanting { get; set; }
     public bool CardFreeCD { get; set; }
     public bool RemoveFusionLimit { get; set; }
@@ -185,6 +188,32 @@ public class SettingsData
     public int KeyAlmanacCreateZombie { get; set; } = 110; // KeyCode.N
     public int KeyAlmanacCreateZombieVase { get; set; } = 107; // KeyCode.K
     public int KeyAlmanacZombieMindCtrl { get; set; } = 306; // KeyCode.LeftControl
+
+    // GodEvolutionViewModel - 神明进化
+    public bool GodEvolutionUnlimitedRefresh { get; set; }
+    public bool GodEvolutionFreeUpgradeQuality { get; set; }
+    public bool GodEvolutionLuckyEnabled { get; set; }
+    public double GodEvolutionLucky { get; set; } = 1.0;
+    public bool GodEvolutionDifficultyEnabled { get; set; }
+    public int GodEvolutionDifficulty { get; set; }
+    public bool GodEvolutionRefreshCountEnabled { get; set; }
+    public int GodEvolutionRefreshCount { get; set; }
+    public bool GodEvolutionMaxPlantCountEnabled { get; set; }
+    public int GodEvolutionMaxPlantCount { get; set; }
+    public bool GodEvolutionOptionCountEnabled { get; set; }
+    public int GodEvolutionOptionCount { get; set; }
+    public bool GodEvolutionUpgradeBuffChanceEnabled { get; set; }
+    public int GodEvolutionUpgradeBuffChance { get; set; }
+    public bool GodEvolutionSuperUpgrade { get; set; }
+    public bool GodEvolutionForceSuperQuality { get; set; }
+    public bool GodEvolutionUncrashable { get; set; }
+    public bool GodEvolutionQualityWeightEnabled { get; set; }
+    public double GodEvolutionQualityDefault { get; set; } = 1.0;
+    public double GodEvolutionQualitySilver { get; set; } = 1.0;
+    public double GodEvolutionQualityGold { get; set; } = 1.0;
+    public double GodEvolutionQualityDiamond { get; set; } = 1.0;
+    public bool GodEvolutionDamageMultiplierEnabled { get; set; }
+    public double GodEvolutionDamageMultiplier { get; set; } = 1.0;
 }
 
 /// <summary>

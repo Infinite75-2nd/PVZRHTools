@@ -45,7 +45,7 @@
             <HintPath>..\..\..\rh\BepInEx\core\BepInEx.Unity.IL2CPP.dll</HintPath>
         </Reference>
         <Reference Include="Core">
-          <HintPath>..\..\..\rh\BepInEx\interop\Core.dll</HintPath>
+            <HintPath>..\..\..\rh\BepInEx\interop\Core.dll</HintPath>
         </Reference>
         <Reference Include="Cpp2IL.Core">
             <HintPath>..\..\..\rh\BepInEx\core\Cpp2IL.Core.dll</HintPath>

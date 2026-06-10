@@ -11,6 +11,7 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
         <ApplicationIcon>Assets\MKHkro1.ico</ApplicationIcon>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,30 +22,30 @@
 
     <ItemGroup>
         <PackageReference Include="2ndLAB.ANGLE.Static" Version="7151.0.0-10.0.26100.0-1.79e529b"/>
-        <PackageReference Include="2ndLAB.SkiaSharp.Static" Version="3.119.0-10.0.26100.0-1.1c7d845" />
-        <PackageReference Include="Avalonia" Version="12.0.4" />
-        <PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
-        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.2" />
+        <PackageReference Include="2ndLAB.SkiaSharp.Static" Version="3.119.0-10.0.26100.0-1.1c7d845"/>
+        <PackageReference Include="Avalonia" Version="12.0.4"/>
+        <PackageReference Include="Avalonia.Desktop" Version="12.0.4"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4"/>
+        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.2"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Include="Irihi.Ursa" Version="2.0.0" />
-        <PackageReference Include="Irihi.Ursa.ReactiveUIExtension" Version="2.0.0" />
-        <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="2.0.0" />
+        <PackageReference Include="Irihi.Ursa" Version="2.0.0"/>
+        <PackageReference Include="Irihi.Ursa.ReactiveUIExtension" Version="2.0.0"/>
+        <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="2.0.0"/>
         <PackageReference Include="Mono.Cecil" Version="0.11.6"/>
-        <PackageReference Include="ReactiveUI.Avalonia" Version="12.0.3" />
+        <PackageReference Include="ReactiveUI.Avalonia" Version="12.0.3"/>
         <PackageReference Include="ReactiveUI.SourceGenerators" Version="3.1.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Semi.Avalonia" Version="12.0.3" />
-        <PackageReference Include="Semi.Avalonia.DataGrid" Version="12.0.0" />
-        <PackageReference Include="SharpCompress" Version="0.49.1" />
+        <PackageReference Include="Semi.Avalonia" Version="12.0.3"/>
+        <PackageReference Include="Semi.Avalonia.DataGrid" Version="12.0.0"/>
+        <PackageReference Include="SharpCompress" Version="0.49.1"/>
         <PackageReference Include="StaticViewLocator" Version="0.4.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Xaml.Behaviors.Avalonia" Version="12.0.0.1" />
+        <PackageReference Include="Xaml.Behaviors.Avalonia" Version="12.0.0.1"/>
     </ItemGroup>
 
     <ItemGroup>

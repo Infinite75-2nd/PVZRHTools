@@ -1,6 +1,5 @@
 ﻿namespace PVZRHTools.ViewModels;
 
-public class AboutViewModel:ViewModelBase
+public class AboutViewModel : ViewModelBase
 {
-    
 }

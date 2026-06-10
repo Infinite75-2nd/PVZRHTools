@@ -114,7 +114,7 @@ public partial class SearchListViewModel : ModifierPageViewModelBase
             }
             else
             {
-                item.IsVisible = item.Name.ToLower().Contains(searchText)||
+                item.IsVisible = item.Name.ToLower().Contains(searchText) ||
                                  item.ID.ToString().Contains(searchText);
             }
         }

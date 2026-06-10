@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
 using ToolData;
@@ -37,6 +38,8 @@ public class PatchDataCache
     public static float GloveFullCD { get; set; }
     public static bool HammerNoCD { get; set; }
     public static float HammerFullCD { get; set; }
+    public static bool WheelNoCD { get; set; }
+    public static float WheelFullCD { get; set; } = -1f;
     public static bool FreePlanting { get; set; }
     public static bool CardFreeCD { get; set; }
     public static bool RemoveFusionLimit { get; set; }
@@ -163,6 +166,38 @@ public class PatchDataCache
 
     #endregion
 
+    #region 诸神进化
+
+    public static bool GodEvolutionUnlimitedRefresh { get; set; }
+    public static bool GodEvolutionFreeUpgradeQuality { get; set; }
+    public static float GodEvolutionLucky { get; set; } = 1.0f;
+    public static int GodEvolutionDifficulty { get; set; } = -1;
+    public static int GodEvolutionRefreshCount { get; set; } = -1;
+    public static int GodEvolutionMaxPlantCount { get; set; } = -1;
+    public static int GodEvolutionOptionCount { get; set; } = -1;
+    public static int GodEvolutionUpgradeBuffChance { get; set; } = -1;
+    public static bool GodEvolutionSuperUpgrade { get; set; }
+    public static bool GodEvolutionForceSuperQuality { get; set; }
+    public static bool GodEvolutionUncrashable { get; set; }
+    public static bool GodEvolutionQualityWeightEnabled { get; set; }
+    public static float GodEvolutionQualityDefault { get; set; } = 1.0f;
+    public static float GodEvolutionQualitySilver { get; set; } = 1.0f;
+    public static float GodEvolutionQualityGold { get; set; } = 1.0f;
+    public static float GodEvolutionQualityDiamond { get; set; } = 1.0f;
+    public static float GodEvolutionDamageMultiplier { get; set; } = 1.0f;
+    public static bool IsRefreshUnlimited =>
+        UnlimitedRefresh ||  GodEvolutionUnlimitedRefresh;
+
+    /// <summary>诸神进化「锁定刷新次数」生效且次数大于 0</summary>
+    public static bool GodEvolutionRefreshOverrideActive =>
+        GodEvolutionRefreshCount >= 0 && GodEvolutionRefreshCount > 0;
+
+    /// <summary>需要修复诸神进化刷新按钮可点击性（无限刷新或锁定刷新次数）</summary>
+    public static bool ShouldFixGodEvolutionRefreshButton =>
+        IsRefreshUnlimited || GodEvolutionRefreshOverrideActive;
+
+    #endregion
+
     #region 对象缓存
 
     public static GameObject? SeedGroup =>
@@ -218,6 +253,8 @@ public class PatchDataCache
     public static PlantType AlmanacSeedType = PlantType.Nothing;
     public static bool AlmanacZombieMindCtrl = false;
     public static ZombieType AlmanacZombieType = ZombieType.Nothing;
+    public static FieldInfo? _appearSuperQualitativeField;
+    public static FieldInfo? _uncrashableField;
 
     #endregion
 }

@@ -35,8 +35,14 @@ public class UpdateCheckService(INotificationService notificationService)
             }
             catch
             {
-                try { await Task.Delay(100, cts.Token); }
-                catch (OperationCanceledException) { break; }
+                try
+                {
+                    await Task.Delay(100, cts.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
             }
         }
 
@@ -52,7 +58,8 @@ public class UpdateCheckService(INotificationService notificationService)
             return;
         }
 
-        if (IsRemoteNewer(Strings.GameVersion, info.Value.GameVersion) || IsRemoteNewer(Strings.ModifierVersion, info.Value.ModifierVersion))
+        if (IsRemoteNewer(Strings.GameVersion, info.Value.GameVersion) ||
+            IsRemoteNewer(Strings.ModifierVersion, info.Value.ModifierVersion))
         {
             NotifyUpdate(info.Value);
         }

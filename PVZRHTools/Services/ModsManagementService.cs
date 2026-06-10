@@ -161,6 +161,7 @@ public class ModsManagementService : IModsManagementService
                     Locator.Current.GetService<INotificationService>()?.NotificationManager
                         ?.Show("权限不足无法操作，请尝试以管理员身份启动", NotificationType.Error));
             }
+
             mod.ModFilePath = newPath;
             SyncModsInfo(info);
         }

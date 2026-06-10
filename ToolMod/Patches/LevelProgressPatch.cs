@@ -19,7 +19,7 @@ public static class ProgressMgrPatch
         text.color = new Color(0, 1, 1);
         obj.transform.SetParent(__instance.GameObject().transform);
         obj.transform.localScale = new Vector3(0.4f, 0.2f, 0.2f);
-        obj.transform.localPosition = new Vector3(100f, 2.2f, 0);
+        obj.transform.localPosition = new Vector3(9f,15f,0);
         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 50);
     }
 

@@ -221,19 +221,19 @@ public static class SettingsLoader
             #endregion
 
             #region 旅行词条
-            
-                foreach (var kvp in settings.TravelAdvBuffs)
-                    PatchDataCache.AdvBuffs[(AdvBuff)kvp.Key] = kvp.Value;
 
-                foreach (var kvp in settings.TravelUltiBuffs)
-                    PatchDataCache.UltiBuffs[(UltiBuff)kvp.Key] = kvp.Value;
+            foreach (var kvp in settings.TravelAdvBuffs)
+                PatchDataCache.AdvBuffs[(AdvBuff)kvp.Key] = kvp.Value;
 
-                foreach (var kvp in settings.TravelDebuffs)
-                    PatchDataCache.Debuffs[(TravelDebuff)kvp.Key] = kvp.Value;
+            foreach (var kvp in settings.TravelUltiBuffs)
+                PatchDataCache.UltiBuffs[(UltiBuff)kvp.Key] = kvp.Value;
 
-                foreach (var kvp in settings.TravelInvestBuffs)
-                    PatchDataCache.InvestBuffs[(InvestBuff)kvp.Key] = kvp.Value;
-                
+            foreach (var kvp in settings.TravelDebuffs)
+                PatchDataCache.Debuffs[(TravelDebuff)kvp.Key] = kvp.Value;
+
+            foreach (var kvp in settings.TravelInvestBuffs)
+                PatchDataCache.InvestBuffs[(InvestBuff)kvp.Key] = kvp.Value;
+
             #endregion
         }
         catch (Exception ex)
