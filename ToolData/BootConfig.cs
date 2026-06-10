@@ -14,6 +14,6 @@ public struct BootConfig
 public struct UpdateInfo
 {
     public string GameVersion { get; set; }
-    public string ModVersion { get; set; }
+    public string ModifierVersion { get; set; }
     public string Description { get; set; }
 }

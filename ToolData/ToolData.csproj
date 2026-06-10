@@ -1,9 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
     </PropertyGroup>
+
+    <Target Name="SyncVersionToUpdateJson" AfterTargets="Build">
+        <PropertyGroup>
+            <_StringsFile>$(MSBuildThisFileDirectory)Strings.cs</_StringsFile>
+            <_Content>$([System.IO.File]::ReadAllText('$(_StringsFile)'))</_Content>
+            <_GameVersion>$([System.Text.RegularExpressions.Regex]::Match('$(_Content)', 'GameVersion = &quot;([^&quot;]*)&quot;').Groups[1].Value)</_GameVersion>
+            <_ModifierVersion>$([System.Text.RegularExpressions.Regex]::Match('$(_Content)', 'ModifierVersion = &quot;([^&quot;]*)&quot;').Groups[1].Value)</_ModifierVersion>
+            <_UpdateJson>{
+  &quot;GameVersion&quot;: &quot;$(_GameVersion)&quot;,
+  &quot;ModifierVersion&quot;: &quot;$(_ModifierVersion)&quot;,
+  &quot;Description&quot;: &quot;&quot;
+}</_UpdateJson>
+            <_UpdatePath>$(MSBuildThisFileDirectory)..\update.json</_UpdatePath>
+        </PropertyGroup>
+        <WriteLinesToFile File="$(_UpdatePath)" Lines="$(_UpdateJson)" Overwrite="true" Encoding="UTF-8" WriteOnlyWhenDifferent="true" />
+        <Message Text="update.json 已同步: GameVersion=$(_GameVersion), ModifierVersion=$(_ModifierVersion)" Importance="normal" />
+    </Target>
 
 </Project>

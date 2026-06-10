@@ -48,6 +48,9 @@ public partial class App : Application
 
                 // 加载保存的设置
                 Locator.Current.GetService<ISettingsService>()?.LoadAllViewModelSettings();
+
+                // 后台检查更新
+                _ = Locator.Current.GetService<UpdateCheckService>()?.CheckAsync();
             }
 
             Locator.Current.GetService<INotificationService>()?.NotificationManager = new(desktop.MainWindow)

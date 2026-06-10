@@ -13,6 +13,9 @@ public class ModifierServicesModule : IModule
         resolver.RegisterLazySingleton(() => new NotificationService(), typeof(INotificationService));
         resolver.RegisterLazySingleton(() => new InitDataService(App.GamePath), typeof(IInitDataService));
         resolver.RegisterLazySingleton(() => new SettingsService(App.GamePath), typeof(ISettingsService));
+        resolver.RegisterLazySingleton(
+            () => new UpdateCheckService(Locator.Current.GetService<INotificationService>()!),
+            typeof(UpdateCheckService));
 
         resolver.RegisterLazySingleton(() =>
             new MainWindowViewModel(Locator.Current.GetService<INavigationService>()!,

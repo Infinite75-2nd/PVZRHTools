@@ -2,7 +2,7 @@ namespace ToolData
 {
     public static class Strings
     {
-        public const string GameVersion = "3.6.1";
+        public const string GameVersion = "3.7";
         public const string ModifierVersion = "5.0.0";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";

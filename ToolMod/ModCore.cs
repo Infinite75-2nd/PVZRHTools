@@ -24,7 +24,7 @@ using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod
 {
-    [BepInPlugin("infinite75.toolmod", "PVZRHTools", "5.0.0")]
+    [BepInPlugin("infinite75.toolmod", "PVZRHTools", Strings.ModifierVersion)]
     public class ModCore : BasePlugin
     {
         public override void Load()
