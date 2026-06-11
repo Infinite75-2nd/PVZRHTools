@@ -71,6 +71,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void AdvBuffLevelChanged(ValueChangedEventArgs<int> e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = e.NewValue ?? 0;
         if (!((Control)e.Source!).IsVisible) return;
@@ -84,6 +85,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void AdvBuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
@@ -97,11 +99,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void AdvBuffChooseAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var advBuff in AdvBuffs)
         {
             advBuff.Level = 1;
         }
-
+        IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -119,11 +122,13 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void AdvBuffDeselectAll()
     {
-        DataSyncService.Lock(true);
+        DataSyncService.Lock(true); 
+        IsChangingAll = true;
         foreach (var advBuff in AdvBuffs)
         {
             advBuff.Level = 0;
         }
+        IsChangingAll = false;
 
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -142,6 +147,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameAdvBuffLevelChanged(ValueChangedEventArgs<int> e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = e.NewValue ?? 0;
         if (!((Control)e.Source!).IsVisible) return;
@@ -155,6 +161,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameAdvBuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
@@ -168,10 +175,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void InGameAdvBuffChooseAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var advBuff in InGameAdvBuffs)
         {
             advBuff.Level = 1;
         }
+        IsChangingAll = false;
 
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -190,11 +199,13 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameAdvBuffDeselectAll()
     {
+        IsChangingAll = true;
         DataSyncService.Lock(true);
         foreach (var advBuff in InGameAdvBuffs)
         {
             advBuff.Level = 0;
         }
+        IsChangingAll = false;
 
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -213,6 +224,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void UltiBuffLevelChanged(ValueChangedEventArgs<int> e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = e.NewValue ?? 0;
         if (!((Control)e.Source!).IsVisible) return;
@@ -226,6 +238,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void UltiBuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
@@ -239,11 +252,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void UltiBuffChooseAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var ultiBuff in UltiBuffs)
         {
             ultiBuff.Level = 1;
+        IsChangingAll = false;
         }
-
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -261,12 +275,13 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void UltiBuffDeselectAll()
     {
+        IsChangingAll = true;
         DataSyncService.Lock(true);
         foreach (var ultiBuff in UltiBuffs)
-        {
+        { 
             ultiBuff.Level = 0;
         }
-
+        IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -284,6 +299,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameUltiBuffLevelChanged(ValueChangedEventArgs<int> e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = e.NewValue ?? 0;
         if (!((Control)e.Source!).IsVisible) return;
@@ -297,6 +313,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameUltiBuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
@@ -309,11 +326,13 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameUltiBuffChooseAll()
     {
-        DataSyncService.Lock(true);
+        DataSyncService.Lock(true); 
+        IsChangingAll = true;
         foreach (var ultiBuff in InGameUltiBuffs)
         {
             ultiBuff.Level = 1;
         }
+        IsChangingAll = false;
 
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -333,11 +352,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void InGameUltiBuffDeselectAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var ultiBuff in InGameUltiBuffs)
         {
             ultiBuff.Level = 0;
         }
-
+        IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -355,6 +375,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void DebuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Enabled = ((CheckBox)e.Source).IsChecked ?? false;
         DataSyncService.SendCommand(new SyncData()
@@ -368,11 +389,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void DebuffChooseAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var debuff in Debuffs)
         {
             debuff.Enabled = true;
         }
-
+    IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -391,10 +413,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void DebuffDeselectAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var debuff in Debuffs)
         {
             debuff.Enabled = false;
         }
+        IsChangingAll = false;
 
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -413,6 +437,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameDebuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Enabled = ((CheckBox)e.Source).IsChecked ?? false;
         DataSyncService.SendCommand(new SyncData()
@@ -426,10 +451,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void InGameDebuffChooseAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var debuff in InGameDebuffs)
         {
             debuff.Enabled = true;
         }
+        IsChangingAll = false;
 
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -448,12 +475,13 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameDebuffDeselectAll()
     {
+        IsChangingAll = true;
         DataSyncService.Lock(true);
         foreach (var debuff in InGameDebuffs)
         {
             debuff.Enabled = false;
         }
-
+        IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -471,6 +499,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InvestBuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Enabled = ((CheckBox)e.Source).IsChecked ?? false;
         DataSyncService.SendCommand(new SyncData()
@@ -507,10 +536,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void InvestBuffDeselectAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var invest in InvestBuffs)
         {
             invest.Enabled = false;
         }
+        IsChangingAll = false;
 
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -529,6 +560,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     private void InGameInvestBuffEnabledChanged(RoutedEventArgs e)
     {
+        DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
         info.Enabled = ((CheckBox)e.Source).IsChecked ?? false;
         DataSyncService.SendCommand(new SyncData()
@@ -542,11 +574,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void InGameInvestBuffChooseAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var invest in InGameInvestBuffs)
         {
             invest.Enabled = true;
         }
-
+        IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -565,11 +598,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     private void InGameInvestBuffDeselectAll()
     {
         DataSyncService.Lock(true);
+        IsChangingAll = true;
         foreach (var invest in InGameInvestBuffs)
         {
             invest.Enabled = false;
         }
-
+        IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -584,6 +618,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         });
     }
 
+    private bool IsChangingAll=false;
     public override void SaveSettings(SettingsData settings)
     {
         settings.TravelAdvBuffs = AdvBuffs.ToDictionary(x => x.ID, x => x.Level);

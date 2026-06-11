@@ -722,39 +722,7 @@ public static class Utils
 
         return null;
     }
-
-    private static TravelMgr? ResolveTravelMgr()
-    {
-        try
-        {
-            if (TravelMgr.Instance != null)
-                return TravelMgr.Instance;
-        }
-        catch
-        {
-        }
-
-        try
-        {
-            if (GameAPP.Instance != null)
-                return GameAPP.Instance.GetComponent<TravelMgr>();
-        }
-        catch
-        {
-        }
-
-        try
-        {
-            if (GameAPP.board != null)
-                return GameAPP.board.GetComponent<TravelMgr>();
-        }
-        catch
-        {
-        }
-
-        return null;
-    }
-
+    
     /// <summary>
     /// 获取出怪列表数据
     /// </summary>

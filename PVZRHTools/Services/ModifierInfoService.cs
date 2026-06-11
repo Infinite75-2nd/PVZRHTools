@@ -102,10 +102,15 @@ public class ModifierInfoService : IModifierInfoService
         if (!ToolUtils.ValidateGameDirectory(gameRootPath)) return AddGamePathResult.InvalidDirectory;
         if (ModifierInfo.GamePaths.Contains(gameRootPath)) return AddGamePathResult.AlreadyExists;
         ModifierInfo.GamePaths.Add(gameRootPath);
+        SaveModifierInfo();
         return AddGamePathResult.Added;
     }
 
-    public void RemoveGamePath(string gameRootPath) => ModifierInfo.GamePaths.Remove(gameRootPath);
+    public void RemoveGamePath(string gameRootPath)
+    {
+        ModifierInfo.GamePaths.Remove(gameRootPath);
+        SaveModifierInfo();
+    }
 
     public void ValidateAndCleanGamePaths()
     {

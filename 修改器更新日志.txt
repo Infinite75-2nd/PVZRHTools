@@ -1,4 +1,4 @@
-3.7-5.0.0
+3.7-5.0.3
 1.修改窗口彻底重做，使用dotnet10+Avalonia+Ursa.Avalonia+Semi.Avalonia重做UI
 （1）开启Native AOT，不再需要安装dotnet框架，回归exe单文件发布，缩小文件体积
 （2）大部分页面调整排版
