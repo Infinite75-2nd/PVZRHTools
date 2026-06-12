@@ -128,18 +128,6 @@ public class ModifierInfoService : IModifierInfoService
     {
         var outdatedPaths = new List<string>();
         var currentVersion = Strings.ModifierVersion;
-        var savedVersion = ModifierInfo.ModifierVersion;
-
-        if (savedVersion == currentVersion)
-            return outdatedPaths;
-
-        if (Version.TryParse(savedVersion, out var savedVer) &&
-            Version.TryParse(currentVersion, out var currentVer) &&
-            savedVer >= currentVer)
-        {
-            ModifierInfo.ModifierVersion = currentVersion;
-            return outdatedPaths;
-        }
 
         foreach (var gamePath in ModifierInfo.GamePaths)
         {

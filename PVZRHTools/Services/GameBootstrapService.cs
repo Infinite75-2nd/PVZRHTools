@@ -7,6 +7,7 @@ using PVZRHTools.Utils;
 using SharpCompress.Archives;
 using SharpCompress.Archives.SevenZip;
 using SharpCompress.Common;
+using ToolData;
 
 namespace PVZRHTools.Services;
 
@@ -54,14 +55,17 @@ public class GameBootstrapService : IGameBootstrapService
     }
 
     public bool NeedsModifierInstallation(string gameRootPath) =>
-        !File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe"));
+        !File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe"))||
+        !File.Exists(Path.Combine(gameRootPath,Paths.PluginsPath, "ToolMod.dll"))||
+        !File.Exists(Path.Combine(gameRootPath,Paths.PluginsPath, "ToolData.dll"));
 
     public bool IsModifierInstalled(string gameRootPath) =>
         !NeedsModifierInstallation(gameRootPath);
 
     public void InstallModifier(string gameRootPath)
     {
-        File.Copy(Environment.ProcessPath!, Path.Combine(gameRootPath, "PVZRHTools.exe"), true);
+        if(!File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe"))) 
+            File.Copy(Environment.ProcessPath!, Path.Combine(gameRootPath, "PVZRHTools.exe"), true);
 
         var pluginsPath = Path.Combine(gameRootPath, "BepInEx", "plugins");
         using var assetStream = AssetLoader.Open(new Uri("avares://PVZRHTools/Assets/plugins.7z"));

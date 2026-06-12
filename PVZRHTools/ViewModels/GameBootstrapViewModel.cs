@@ -58,6 +58,8 @@ public partial class GameBootstrapViewModel : ViewModelBase
         try
         {
             var outdatedPaths = _modifierInfoService.GetOutdatedGamePaths();
+            if (outdatedPaths.Count == 0) return;
+            await Task.Delay(5000);
             foreach (var path in outdatedPaths)
             {
                 var dirName = new DirectoryInfo(path).Name;

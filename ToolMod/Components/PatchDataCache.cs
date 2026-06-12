@@ -230,10 +230,7 @@ public class PatchDataCache
     public static float CurseClearTimer = 0f;
     public const float CurseClearInterval = 1f;
     public static readonly HashSet<int> ModifiedPlants = [];
-
     public static readonly HashSet<int> InitializedPlants = [];
-
-    //public static Dictionary<int, (bool hadCold, float coldTimer, float freezeTimer, int freezeLevel)> ZombieStatusCoexistData = [];
     public static readonly List<GameObject> CopiedCards = [];
     public static bool AllowBuffRemoval = true;
     public static bool LastHugeWaveState = false;

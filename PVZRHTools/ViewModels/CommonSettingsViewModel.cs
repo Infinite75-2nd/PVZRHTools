@@ -314,6 +314,46 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
             Command = Strings.CreateMower,
             Parameters = []
         });
+    
+    [ReactiveCommand]
+    public void SpawnPetGargantuar() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SpawnPetGargantuar,
+            Parameters = []
+        });
+    
+    [ReactiveCommand]
+    public void SpawnPetFootball()=>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SpawnPetFootball,
+            Parameters = []
+        });
+    
+    [ReactiveCommand]
+    public void SpawnPetSnowBoss() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SpawnPetSnowBoss,
+            Parameters = []
+        });
+    
+    [ReactiveCommand]
+    public void SpawnPetJackbox() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SpawnPetJackbox,
+            Parameters = []
+        });
+    
+    [ReactiveCommand]
+    public void SpawnPetDrown() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SpawnPetDrown,
+            Parameters = []
+        });
 
     #endregion
 

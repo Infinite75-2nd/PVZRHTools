@@ -1,3 +1,8 @@
+3.7-5.0.4
+1.修复图鉴种植失效的问题
+2.修复把修改器放在游戏根目录安装修改器安装失败问题
+3.补上了生成迷你boss的条目
+
 3.7-5.0.3
 1.修改窗口彻底重做，使用dotnet10+Avalonia+Ursa.Avalonia+Semi.Avalonia重做UI
 （1）开启Native AOT，不再需要安装dotnet框架，回归exe单文件发布，缩小文件体积

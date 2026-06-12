@@ -288,6 +288,11 @@ public class DataProcessor : MonoBehaviour
         { Strings.RestoreSnapshot, RestoreSnapshot },
         {Strings.GodEvolutionApplyQuality, GodEvolutionApplyQuality},
         {Strings.GodEvolutionResetQuality, GodEvolutionResetQuality},
+        {Strings.SpawnPetGargantuar, SpawnPetGargantuar},
+        {Strings.SpawnPetFootball, SpawnPetFootball},
+        {Strings.SpawnPetSnowBoss, SpawnPetSnowBoss},
+        {Strings.SpawnPetJackbox, SpawnPetJackbox},
+        {Strings.SpawnPetDrown, SpawnPetDrown},
     };
 
     #region OverallCommands
@@ -1557,5 +1562,53 @@ public class DataProcessor : MonoBehaviour
         GodEvolutionQualityDiamond = 1f;
         GodEvolutionDamageMultiplier = -1f;
         GodEvolutionApplyQuality(_);
+    }
+
+    public static void SpawnPetGargantuar(List<string> _)
+    {
+
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetGargantuar);
+        }
+    }
+
+    public static void SpawnPetFootball(List<string> _)
+    {
+        
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetFootball);
+        }
+    }
+
+    public static void SpawnPetSnowBoss(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetSnowBoss);
+        }
+    }
+
+    public static void SpawnPetJackbox(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetJackbox);
+        }
+        
+    }
+
+    public static void SpawnPetDrown(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetDrown);
+        }
     }
 }

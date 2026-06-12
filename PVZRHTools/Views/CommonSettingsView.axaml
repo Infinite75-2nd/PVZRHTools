@@ -317,6 +317,19 @@
                         <Button Content="生成小推车"
                                 Command="{Binding CreateMowerCommand}" />
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="召唤迷你黑曜石巨人"
+                                Command="{Binding SpawnPetGargantuarCommand}"/>
+                        <Button Content="召唤迷你黑橄榄将军" Command="{Binding SpawnPetFootballCommand}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="召唤迷你雪皇"
+                                Command="{Binding SpawnPetSnowBossCommand}"/>
+                        <Button Content="召唤迷你玩偶匣皇后" Command="{Binding SpawnPetJackboxCommand}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="召唤迷你渊海三叉戟" Command="{Binding SpawnPetDrownCommand}"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             <Border>
