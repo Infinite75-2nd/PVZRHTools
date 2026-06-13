@@ -75,13 +75,15 @@ public static class SettingsLoader
             PatchDataCache.GameSpeedEnabled = settings.GameSpeedEnabled;
             PatchDataCache.GameSpeed = (float)settings.GameSpeed;
             PatchDataCache.GloveNoCD = settings.GloveNoCD;
-            PatchDataCache.GloveFullCD = (float)settings.GloveFullCD;
+            PatchDataCache.GloveFullCD = settings.GloveFullCDEnabled ? (float)settings.GloveFullCD : -1f;
             PatchDataCache.HammerNoCD = settings.HammerNoCD;
-            PatchDataCache.HammerFullCD = (float)settings.HammerFullCD;
+            PatchDataCache.HammerFullCD = settings.HammerFullCDEnabled ? (float)settings.HammerFullCD : -1f;
+            PatchDataCache.WheelNoCD = settings.WheelNoCD;
+            PatchDataCache.WheelFullCD = settings.WheelFullCDEnabled ? (float)settings.WheelFullCD : -1f;
             PatchDataCache.FreePlanting = settings.FreePlanting;
             PatchDataCache.CardFreeCD = settings.CardFreeCD;
             PatchDataCache.RemoveFusionLimit = settings.RemoveFusionLimit;
-            PatchDataCache.NewZombieUpdateCD = (float)settings.NewZombieUpdateCD;
+            PatchDataCache.NewZombieUpdateCD = settings.NewZombieUpdateCDEnabled ? (float)settings.NewZombieUpdateCD : -1f;
             PatchDataCache.UnlimitedScore = settings.UnlimitedScore;
             PatchDataCache.UnlimitedRefresh = settings.UnlimitedRefresh;
 

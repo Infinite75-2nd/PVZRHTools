@@ -41,7 +41,8 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
-                                        Tag="{Binding ID}">
+                                        Tag="{Binding ID}"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
                                             <!--<u:NumericIntUpDown
@@ -63,13 +64,6 @@
                                                        HorizontalAlignment="Left"
                                                        VerticalAlignment="Center" />
                                         </StackPanel>
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).AdvBuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -89,7 +83,8 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
-                                        Tag="{Binding ID}">
+                                        Tag="{Binding ID}"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
                                             <!--<u:NumericIntUpDown
@@ -111,13 +106,6 @@
                                                        HorizontalAlignment="Left"
                                                        VerticalAlignment="Center" />
                                         </StackPanel>
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameAdvBuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -142,7 +130,8 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
-                                        Tag="{Binding ID}">
+                                        Tag="{Binding ID}"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
                                             <u:NumericIntUpDown
@@ -150,27 +139,14 @@
                                                 Minimum="0"
                                                 Maximum="2"
                                                 InnerLeftContent="等级"
+                                                ValueChanged="OnNumericValueChanged"
                                                 IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
-                                                <Interaction.Behaviors>
-                                                    <EventTrigger EventName="ValueChanged">
-                                                        <InvokeCommandAction
-                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).UltiBuffLevelChangedCommand}"
-                                                            PassEventArgsToCommand="True" />
-                                                    </EventTrigger>
-                                                </Interaction.Behaviors>
                                             </u:NumericIntUpDown>
                                             <TextBlock Text="{Binding Name}"
                                                        TextAlignment="Left"
                                                        HorizontalAlignment="Left"
                                                        VerticalAlignment="Center" />
                                         </StackPanel>
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).UltiBuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -190,7 +166,8 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
-                                        Tag="{Binding ID}">
+                                        Tag="{Binding ID}"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
                                             <u:NumericIntUpDown
@@ -198,27 +175,14 @@
                                                 Minimum="0"
                                                 Maximum="2"
                                                 InnerLeftContent="等级"
+                                                ValueChanged="OnNumericValueChanged"
                                                 IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
-                                                <Interaction.Behaviors>
-                                                    <EventTrigger EventName="ValueChanged">
-                                                        <InvokeCommandAction
-                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameUltiBuffLevelChangedCommand}"
-                                                            PassEventArgsToCommand="True" />
-                                                    </EventTrigger>
-                                                </Interaction.Behaviors>
                                             </u:NumericIntUpDown>
                                             <TextBlock Text="{Binding Name}"
                                                        TextAlignment="Left"
                                                        HorizontalAlignment="Left"
                                                        VerticalAlignment="Center" />
                                         </StackPanel>
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameUltiBuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -243,14 +207,8 @@
                                 <DataTemplate>
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        VerticalContentAlignment="Center">
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).DebuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
+                                        VerticalContentAlignment="Center"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"
                                                    HorizontalAlignment="Left"
@@ -274,14 +232,8 @@
                                 <DataTemplate>
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        VerticalContentAlignment="Center">
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameDebuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
+                                        VerticalContentAlignment="Center"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"
                                                    HorizontalAlignment="Left"
@@ -310,14 +262,8 @@
                                 <DataTemplate>
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        VerticalContentAlignment="Center">
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InvestBuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
+                                        VerticalContentAlignment="Center"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"
                                                    HorizontalAlignment="Left"
@@ -341,14 +287,8 @@
                                 <DataTemplate>
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                        VerticalContentAlignment="Center">
-                                        <Interaction.Behaviors>
-                                            <EventTrigger EventName="IsCheckedChanged">
-                                                <InvokeCommandAction
-                                                    Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameInvestBuffEnabledChangedCommand}"
-                                                    PassEventArgsToCommand="True" />
-                                            </EventTrigger>
-                                        </Interaction.Behaviors>
+                                        VerticalContentAlignment="Center"
+                                        IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"
                                                    HorizontalAlignment="Left"

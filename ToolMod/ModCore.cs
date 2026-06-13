@@ -82,23 +82,6 @@ namespace ToolMod
                 UseShellExecute = false,
             };
             var process = Process.Start(startInfo);
-            process?.OutputDataReceived += (sender, e) =>
-            {
-                // 将子进程的每一行标准输出打印到父进程的控制台
-                if (!string.IsNullOrEmpty(e.Data))
-                {
-                    Console.WriteLine($"[Info: PVZRHTools] {e.Data}");
-                }
-            };
-
-            process?.ErrorDataReceived += (sender, e) =>
-            {
-                // 将子进程的每一行标准错误打印到父进程的控制台
-                if (!string.IsNullOrEmpty(e.Data))
-                {
-                    Console.WriteLine($"[Error: PVZRHTools] {e.Data}");
-                }
-            };
             Inited = true;
         }
 

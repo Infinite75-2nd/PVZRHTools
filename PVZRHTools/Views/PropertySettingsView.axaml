@@ -57,7 +57,8 @@
                                         Step="1"
                                         EmptyInputValue="-1"
                                         Value="{Binding ZombieHPValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Content="修改" />
+                    <Button Content="修改" 
+                            Command="{Binding SetZombieHPCommand}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <Label Content="一类防具血量修改" />
@@ -70,7 +71,7 @@
                                         Step="1"
                                         EmptyInputValue="-1"
                                         Value="{Binding FirstArmorHPValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Content="修改" />
+                    <Button Content="修改" Command="{Binding SetFirstArmorHPCommand}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <Label Content="二类防具血量修改" />
@@ -83,7 +84,7 @@
                                         Step="1"
                                         EmptyInputValue="-1"
                                         Value="{Binding SecondArmorHPValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Content="修改" />
+                    <Button Content="修改" Command="{Binding SetSecondArmorHPCommand}"/>
 
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="10">
@@ -97,7 +98,7 @@
                                         Step="1"
                                         EmptyInputValue="-1"
                                         Value="{Binding BulletDamageValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Content="修改" />
+                    <Button Content="修改" Command="{Binding SetBulletDamageCommand}"/>
 
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="10">
@@ -106,7 +107,7 @@
                               DisplayMemberBinding="{Binding Value}"
                               SelectedValueBinding="{Binding Key}"
                               SelectedValue="{Binding LockBulletType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Button Content="修改" />
+                    <Button Content="修改" Command="{Binding SetLockBulletCommand}"/>
 
                 </StackPanel>
 

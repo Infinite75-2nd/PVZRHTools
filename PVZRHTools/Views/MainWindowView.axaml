@@ -22,12 +22,6 @@
         <u:ThemeToggleButton IsThreeState="True" Mode="Controller" />
     </u:ReactiveUrsaWindow.RightContent>
 
-    <i:Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Closing">
-            <InvokeCommandAction Command="{Binding ClosingCommand}" />
-        </EventTriggerBehavior>
-    </i:Interaction.Behaviors>
-
     <Border
         Padding="1"
         Theme="{DynamicResource CardBorder}">

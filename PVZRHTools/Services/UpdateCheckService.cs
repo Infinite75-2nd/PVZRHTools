@@ -13,12 +13,13 @@ namespace PVZRHTools.Services;
 public class UpdateCheckService(INotificationService notificationService)
 {
     private const string UpdateUrl =
-        "https://raw.githubusercontent.com/Infinite75-2nd/PVZRHTools/alpha-dev/update.json";
+        "https://raw.githubusercontent.com/Infinite75-2nd/PVZRHTools/master/update.json";
 
     public async Task CheckAsync()
     {
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
+        using var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(2);
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("PVZRHTools-UpdateChecker/1.0");
 
         string? json = null;

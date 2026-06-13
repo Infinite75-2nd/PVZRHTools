@@ -64,8 +64,13 @@ public class GameBootstrapService : IGameBootstrapService
 
     public void InstallModifier(string gameRootPath)
     {
-        if(!File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe"))) 
+        try
+        {
             File.Copy(Environment.ProcessPath!, Path.Combine(gameRootPath, "PVZRHTools.exe"), true);
+        }
+        catch
+        {
+        }
 
         var pluginsPath = Path.Combine(gameRootPath, "BepInEx", "plugins");
         using var assetStream = AssetLoader.Open(new Uri("avares://PVZRHTools/Assets/plugins.7z"));

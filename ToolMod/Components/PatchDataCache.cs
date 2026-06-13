@@ -35,9 +35,9 @@ public class PatchDataCache
     public static bool TimeSlow { get; set; }
     public static bool ShowGameInfo { get; set; }
     public static bool GloveNoCD { get; set; }
-    public static float GloveFullCD { get; set; }
+    public static float GloveFullCD { get; set; }=-1;
     public static bool HammerNoCD { get; set; }
-    public static float HammerFullCD { get; set; }
+    public static float HammerFullCD { get; set; }=-1;
     public static bool WheelNoCD { get; set; }
     public static float WheelFullCD { get; set; } = -1f;
     public static bool FreePlanting { get; set; }

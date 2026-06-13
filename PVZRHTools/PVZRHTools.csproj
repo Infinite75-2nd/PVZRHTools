@@ -57,4 +57,12 @@
             <DependentUpon>FloatingWindow.axaml</DependentUpon>
         </Compile>
     </ItemGroup>
+    <ItemGroup>
+        <LinkerDescriptor Include="linker.xml" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="linker.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>
