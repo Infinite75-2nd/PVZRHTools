@@ -8,8 +8,8 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(Wheel))]
 public static class WheelPatch
 {
-    public static float OriginalFullCD{get; set;}
-    
+    public static float OriginalFullCD { get; set; }
+
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Wheel.OnUpdate))]
     public static void PostOnUpdate(Wheel __instance)

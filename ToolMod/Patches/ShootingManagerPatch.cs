@@ -41,7 +41,7 @@ public class ShootingManagerPatch
         if (GodEvolutionDamageMultiplier >= 0)
             __result = Mathf.RoundToInt(__result * GodEvolutionDamageMultiplier);
     }
-    
+
     [HarmonyPrefix]
     [HarmonyPatch(nameof(ShootingManager.ShowBuff))]
     public static void Prefix(ShootingManager __instance)

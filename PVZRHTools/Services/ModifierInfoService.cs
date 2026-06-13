@@ -157,8 +157,12 @@ public class ModifierInfoService : IModifierInfoService
         return outdatedPaths;
     }
 
-    public void WriteBootConfig(GameInstanceInfo info) =>
+    public void WriteBootConfig(GameInstanceInfo info)
+    {
         WriteBootConfig(info.GameRootPath, info.ModifierEnabled);
+        ToolUtils.SetBepInExEnabled(info.GameRootPath, info.BepInExEnabled);
+
+    }
 
     public ModifierInfoService(IModsManagementService modsManagementService)
     {

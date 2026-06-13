@@ -17,7 +17,7 @@ public static class GlovePatch
     {
         try
         {
-            if (__instance == null||Board.Instance.boardTag.isShooting) return;
+            if (__instance == null || Board.Instance.boardTag.isShooting) return;
             __instance.gameObject.transform.GetChild(0).gameObject.SetActive(!GloveNoCD);
             __instance.fullCD = GloveFullCD >= 0 ? GloveFullCD : OriginalFullCD;
             if (GloveNoCD) __instance.CD = __instance.fullCD;

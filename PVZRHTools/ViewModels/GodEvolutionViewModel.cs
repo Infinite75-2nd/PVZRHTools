@@ -51,7 +51,7 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
             Parameters = []
         });
     }
-    
+
 
     public GodEvolutionViewModel(IDataSyncService dataSyncService) : base(dataSyncService)
     {
@@ -62,7 +62,8 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
             Strings.GodEvolutionRefreshCount);
 
         // 局内属性
-        this.SimpleSyncFlaggedDouble(x => x.GodEvolutionLucky, x => x.GodEvolutionLuckyEnabled, Strings.GodEvolutionLucky);
+        this.SimpleSyncFlaggedDouble(x => x.GodEvolutionLucky, x => x.GodEvolutionLuckyEnabled,
+            Strings.GodEvolutionLucky);
         this.SimpleSyncFlaggedInt(x => x.GodEvolutionDifficulty, x => x.GodEvolutionDifficultyEnabled,
             Strings.GodEvolutionDifficulty);
         this.SimpleSyncFlaggedInt(x => x.GodEvolutionMaxPlantCount, x => x.GodEvolutionMaxPlantCountEnabled,

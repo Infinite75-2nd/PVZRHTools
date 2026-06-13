@@ -29,35 +29,39 @@ public static class Utils
     public static Action<List<string>> SimpleSyncEnum<T>(Expression<Func<T>> propertyExpression) where T : Enum
         => args => CreateSetter(propertyExpression)(GetEnumFromInt<T>(Convert.ToInt32(args[0])));
 
-    public static Action<List<string>> SimpleSyncBool(Expression<Func<bool>> propertyExpression,Action? callBack=null) =>
+    public static Action<List<string>> SimpleSyncBool(Expression<Func<bool>> propertyExpression,
+        Action? callBack = null) =>
         args =>
         {
             CreateSetter(propertyExpression)(Convert.ToBoolean(args[0]));
             callBack?.Invoke();
         };
 
-    public static Action<List<string>> SimpleSyncFloat(Expression<Func<float>> propertyExpression,Action? callBack=null)
+    public static Action<List<string>> SimpleSyncFloat(Expression<Func<float>> propertyExpression,
+        Action? callBack = null)
         => args =>
         {
             CreateSetter(propertyExpression)(Convert.ToSingle(args[0]));
             callBack?.Invoke();
         };
 
-    public static Action<List<string>> SimpleSyncInt(Expression<Func<int>> propertyExpression,Action? callBack=null)
+    public static Action<List<string>> SimpleSyncInt(Expression<Func<int>> propertyExpression, Action? callBack = null)
         => args =>
         {
             CreateSetter(propertyExpression)(Convert.ToInt32(args[0]));
             callBack?.Invoke();
         };
 
-    public static Action<List<string>> SimpleSyncString(Expression<Func<string>> propertyExpression,Action? callBack=null)
+    public static Action<List<string>> SimpleSyncString(Expression<Func<string>> propertyExpression,
+        Action? callBack = null)
         => args =>
         {
             CreateSetter(propertyExpression)(args[0]);
             callBack?.Invoke();
         };
 
-    public static Action<List<string>> SimpleSyncKeyCode(Expression<Func<KeyCode>> propertyExpression,Action? callBack=null)
+    public static Action<List<string>> SimpleSyncKeyCode(Expression<Func<KeyCode>> propertyExpression,
+        Action? callBack = null)
         => args =>
         {
             CreateSetter(propertyExpression)((KeyCode)Enum.Parse(typeof(KeyCode), args[0]));
@@ -722,7 +726,7 @@ public static class Utils
 
         return null;
     }
-    
+
     /// <summary>
     /// 获取出怪列表数据
     /// </summary>
@@ -1639,12 +1643,14 @@ public static class Utils
         {
         }
     }
+
     public static int GetGodEvolutionMenuRefreshCount()
     {
         if (IsRefreshUnlimited) return 9999999;
         if (GodEvolutionRefreshOverrideActive) return GodEvolutionRefreshCount;
         return 0;
     }
+
     public static Quality RollQuality()
     {
         float total = GodEvolutionQualityDefault + GodEvolutionQualitySilver + GodEvolutionQualityGold +

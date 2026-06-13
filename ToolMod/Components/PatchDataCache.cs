@@ -35,9 +35,9 @@ public class PatchDataCache
     public static bool TimeSlow { get; set; }
     public static bool ShowGameInfo { get; set; }
     public static bool GloveNoCD { get; set; }
-    public static float GloveFullCD { get; set; }=-1;
+    public static float GloveFullCD { get; set; } = -1;
     public static bool HammerNoCD { get; set; }
-    public static float HammerFullCD { get; set; }=-1;
+    public static float HammerFullCD { get; set; } = -1;
     public static bool WheelNoCD { get; set; }
     public static float WheelFullCD { get; set; } = -1f;
     public static bool FreePlanting { get; set; }
@@ -137,17 +137,17 @@ public class PatchDataCache
 
     public static bool KillUpgrade { get; set; }
     public static bool RandomUpgradeMode { get; set; }
-    public static PlantType Present1PlantIndex { get; set; }
-    public static PlantType Present2PlantIndex { get; set; }
-    public static PlantType Present3PlantIndex { get; set; }
-    public static PlantType Present4PlantIndex { get; set; }
-    public static PlantType Present5PlantIndex { get; set; }
-    public static ZombieType ZombieSlot1Index { get; set; }
-    public static ZombieType ZombieSlot2Index { get; set; }
-    public static ZombieType ZombieSlot3Index { get; set; }
-    public static ZombieType ZombieSlot4Index { get; set; }
-    public static ZombieType ZombieSlot5Index { get; set; }
-    public static ZombieType ZombieSlot6Index { get; set; }
+    public static PlantType Present1PlantIndex { get; set; } = PlantType.Nothing;
+    public static PlantType Present2PlantIndex { get; set; } = PlantType.Nothing;
+    public static PlantType Present3PlantIndex { get; set; } = PlantType.Nothing;
+    public static PlantType Present4PlantIndex { get; set; } = PlantType.Nothing;
+    public static PlantType Present5PlantIndex { get; set; } = PlantType.Nothing;
+    public static ZombieType ZombieSlot1Index { get; set; } = ZombieType.Nothing;
+    public static ZombieType ZombieSlot2Index { get; set; } = ZombieType.Nothing;
+    public static ZombieType ZombieSlot3Index { get; set; } = ZombieType.Nothing;
+    public static ZombieType ZombieSlot4Index { get; set; } = ZombieType.Nothing;
+    public static ZombieType ZombieSlot5Index { get; set; } = ZombieType.Nothing;
+    public static ZombieType ZombieSlot6Index { get; set; } = ZombieType.Nothing;
 
     #endregion
 
@@ -185,8 +185,9 @@ public class PatchDataCache
     public static float GodEvolutionQualityGold { get; set; } = 1.0f;
     public static float GodEvolutionQualityDiamond { get; set; } = 1.0f;
     public static float GodEvolutionDamageMultiplier { get; set; } = 1.0f;
+
     public static bool IsRefreshUnlimited =>
-        UnlimitedRefresh ||  GodEvolutionUnlimitedRefresh;
+        UnlimitedRefresh || GodEvolutionUnlimitedRefresh;
 
     /// <summary>诸神进化「锁定刷新次数」生效且次数大于 0</summary>
     public static bool GodEvolutionRefreshOverrideActive =>
@@ -252,6 +253,7 @@ public class PatchDataCache
     public static ZombieType AlmanacZombieType = ZombieType.Nothing;
     public static FieldInfo? _appearSuperQualitativeField;
     public static FieldInfo? _uncrashableField;
+    public static bool[] PVEPresentFlag = new bool[5];
 
     #endregion
 }

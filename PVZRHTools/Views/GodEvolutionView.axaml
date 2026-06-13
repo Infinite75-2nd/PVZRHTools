@@ -13,12 +13,12 @@
     <UserControl.Styles>
         <Style Selector="u|NumericIntUpDown">
             <Setter Property="MinWidth" Value="300" />
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
         <Style Selector="u|NumericDoubleUpDown">
             <Setter Property="MinWidth" Value="500" />
             <Setter Property="FormatString" Value="F1"></Setter>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
         <Style Selector="Label">
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -42,7 +42,7 @@
                 <u:Divider Content="局内属性" />
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Content="幸运值" IsChecked="{Binding GodEvolutionLuckyEnabled, Mode=TwoWay}" />
-                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionLucky, Mode=TwoWay}" FormatString="F2"/>
+                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionLucky, Mode=TwoWay}" FormatString="F2" />
                     <CheckBox Content="难度" IsChecked="{Binding GodEvolutionDifficultyEnabled, Mode=TwoWay}" />
                     <u:NumericIntUpDown Value="{Binding GodEvolutionDifficulty, Mode=TwoWay}" />
                     <CheckBox Content="最大植物数" IsChecked="{Binding GodEvolutionMaxPlantCountEnabled, Mode=TwoWay}" />
@@ -68,40 +68,36 @@
                 <u:Divider Content="词条品质权重" />
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Content="自定义品质权重" IsChecked="{Binding GodEvolutionQualityWeightEnabled, Mode=TwoWay}" />
-                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualityDefault, Mode=TwoWay}"
-                                           >
+                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualityDefault, Mode=TwoWay}">
                         <u:NumericDoubleUpDown.InnerLeftContent>
                             <Label Classes="Ghost LightGreen"
-                                   Content="普通"/>
+                                   Content="普通" />
                         </u:NumericDoubleUpDown.InnerLeftContent>
                     </u:NumericDoubleUpDown>
-                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualitySilver, Mode=TwoWay}"
-                                           >
+                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualitySilver, Mode=TwoWay}">
                         <u:NumericDoubleUpDown.InnerLeftContent>
                             <Label Classes="Ghost Grey"
-                                   Content="白银"/>
+                                   Content="白银" />
                         </u:NumericDoubleUpDown.InnerLeftContent>
                     </u:NumericDoubleUpDown>
-                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualityGold, Mode=TwoWay}"
-                                           >
+                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualityGold, Mode=TwoWay}">
                         <u:NumericDoubleUpDown.InnerLeftContent>
                             <Label Classes="Ghost Amber"
-                                   Content="黄金"/>
+                                   Content="黄金" />
                         </u:NumericDoubleUpDown.InnerLeftContent>
                     </u:NumericDoubleUpDown>
-                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualityDiamond, Mode=TwoWay}"
-                                           >
+                    <u:NumericDoubleUpDown Value="{Binding GodEvolutionQualityDiamond, Mode=TwoWay}">
                         <u:NumericDoubleUpDown.InnerLeftContent>
                             <Label Classes="Ghost Blue"
-                                   Content="钻石"/>
+                                   Content="钻石" />
                         </u:NumericDoubleUpDown.InnerLeftContent>
                     </u:NumericDoubleUpDown>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="立即应用"
-                            Command="{Binding GodEvolutionApplyQualityCommand}"/>
+                            Command="{Binding GodEvolutionApplyQualityCommand}" />
                     <Button Content="恢复默认"
-                            Command="{Binding GodEvolutionResetQualityCommand}"/>
+                            Command="{Binding GodEvolutionResetQualityCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>

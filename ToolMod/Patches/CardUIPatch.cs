@@ -42,6 +42,10 @@ public static class CardUIPatch
             {
                 __instance.maxUsedTimes = 9999;
             }
+            if(CardFreeCD)
+            {
+                __instance.CD = __instance.fullCD;
+            }
 
             var child = __instance.transform.FindChild("ModifierCardCD");
             if (child == null) return;

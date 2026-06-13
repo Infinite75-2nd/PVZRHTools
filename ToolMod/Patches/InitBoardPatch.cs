@@ -16,22 +16,6 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(InitBoard))]
 public static class InitBoardPatch
 {
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(InitBoard.ShowBottom))]
-    public static void PostShowBottom()
-    {
-        if (CardFreeCD && SeedGroup != null)
-            for (var i = SeedGroup.transform.childCount - 1; i >= 0; i--)
-            {
-                var card = SeedGroup.transform.GetChild(i);
-                if (card is null || card.childCount is 0) continue;
-                card.GetChild(0).gameObject.GetComponent<CardUI>().CD =
-                    card.GetChild(0).gameObject.GetComponent<CardUI>().fullCD;
-            }
-
-        //HammerPatch.OriginalFullCD = Hammer.Instance.fullCD;
-    }
-
     [HarmonyPrefix]
     [HarmonyPatch(nameof(InitBoard.RightMoveCamera))]
     public static void PreRightMoveCamera(InitBoard __instance)
@@ -125,8 +109,6 @@ public static class InitBoardPatch
             ModCore.Instance.Log?.LogWarning("[PVZRHTools] PostInitBoard: 无法找到 TravelMgr 组件");
             yield break;
         }
-
-        Board.Instance.freeCD = CardFreeCD;
         // 已移除：不再在游戏开局自动生成小推车
         yield return null;
         if (!(GameAPP.theBoardType == (LevelType)3 && Board.Instance.theCurrentSurvivalRound != 1))

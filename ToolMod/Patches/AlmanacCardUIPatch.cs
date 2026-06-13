@@ -3,7 +3,6 @@ using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Patches;
 
-
 [HarmonyPatch(typeof(AlmanacCardUI))]
 public static class AlmanacCardUIPatch
 {
@@ -40,6 +39,8 @@ public static class AlmanacCardUIPatch
                 }
             }
         }
-        catch { }
+        catch
+        {
+        }
     }
 }

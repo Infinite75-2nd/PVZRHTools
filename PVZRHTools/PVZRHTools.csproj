@@ -58,11 +58,11 @@
         </Compile>
     </ItemGroup>
     <ItemGroup>
-        <LinkerDescriptor Include="linker.xml" />
+        <LinkerDescriptor Include="linker.xml"/>
     </ItemGroup>
     <ItemGroup>
-      <None Update="linker.xml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="linker.xml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 </Project>

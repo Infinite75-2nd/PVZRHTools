@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.7";
-        public const string ModifierVersion = "5.0.5";
+        public const string ModifierVersion = "5.0.6";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -72,6 +72,9 @@ namespace ToolData
         public const string SpawnPetSnowBoss = "SpawnPetSnowBoss";
         public const string SpawnPetJackbox = "SpawnPetJackbox";
         public const string SpawnPetDrown = "SpawnPetDrown";
+        public const string SpawnPetHorse = "SpawnPetHorse";
+        public const string SpawnPetImp = "SpawnPetImp";
+        public const string SpawnPetKirov = "SpawnPetKirov";
         public const string ZombieSea = "ZombieSea";
 
         #endregion

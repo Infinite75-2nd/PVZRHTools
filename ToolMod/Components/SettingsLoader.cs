@@ -83,7 +83,8 @@ public static class SettingsLoader
             PatchDataCache.FreePlanting = settings.FreePlanting;
             PatchDataCache.CardFreeCD = settings.CardFreeCD;
             PatchDataCache.RemoveFusionLimit = settings.RemoveFusionLimit;
-            PatchDataCache.NewZombieUpdateCD = settings.NewZombieUpdateCDEnabled ? (float)settings.NewZombieUpdateCD : -1f;
+            PatchDataCache.NewZombieUpdateCD =
+                settings.NewZombieUpdateCDEnabled ? (float)settings.NewZombieUpdateCD : -1f;
             PatchDataCache.UnlimitedScore = settings.UnlimitedScore;
             PatchDataCache.UnlimitedRefresh = settings.UnlimitedRefresh;
 

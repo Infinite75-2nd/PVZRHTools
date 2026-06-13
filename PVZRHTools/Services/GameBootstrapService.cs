@@ -55,9 +55,9 @@ public class GameBootstrapService : IGameBootstrapService
     }
 
     public bool NeedsModifierInstallation(string gameRootPath) =>
-        !File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe"))||
-        !File.Exists(Path.Combine(gameRootPath,Paths.PluginsPath, "ToolMod.dll"))||
-        !File.Exists(Path.Combine(gameRootPath,Paths.PluginsPath, "ToolData.dll"));
+        !File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe")) ||
+        !File.Exists(Path.Combine(gameRootPath, Paths.PluginsPath, "ToolMod.dll")) ||
+        !File.Exists(Path.Combine(gameRootPath, Paths.PluginsPath, "ToolData.dll"));
 
     public bool IsModifierInstalled(string gameRootPath) =>
         !NeedsModifierInstallation(gameRootPath);

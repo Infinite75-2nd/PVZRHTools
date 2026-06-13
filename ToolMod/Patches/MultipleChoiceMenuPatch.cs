@@ -30,7 +30,9 @@ public static class MultipleChoiceMenuRefreshPatch
             if (__instance?.refreshButton != null)
                 __instance.refreshButton.Interactable = true;
         }
-        catch { }
+        catch
+        {
+        }
     }
 
     [HarmonyPrefix]
@@ -44,7 +46,9 @@ public static class MultipleChoiceMenuRefreshPatch
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             _refreshCountField?.SetValue(__instance, GetGodEvolutionMenuRefreshCount());
         }
-        catch { }
+        catch
+        {
+        }
     }
 
     [HarmonyPostfix]
@@ -61,8 +65,8 @@ public static class MultipleChoiceMenuRefreshPatch
             if (__instance?.refreshButton != null)
                 __instance.refreshButton.Interactable = true;
         }
-        catch{}
+        catch
+        {
+        }
     }
-
-
 }

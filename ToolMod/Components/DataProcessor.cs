@@ -212,23 +212,71 @@ public class DataProcessor : MonoBehaviour
 
         #region 诸神进化
 
-        { Strings.GodEvolutionUnlimitedRefresh, SimpleSyncBool(() => GodEvolutionUnlimitedRefresh,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionFreeUpgradeQuality, SimpleSyncBool(() => GodEvolutionFreeUpgradeQuality,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionLucky, SimpleSyncFloat(() => GodEvolutionLucky,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionDifficulty, SimpleSyncInt(() => GodEvolutionDifficulty,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionRefreshCount, SimpleSyncInt(() => GodEvolutionRefreshCount,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionMaxPlantCount, SimpleSyncInt(() => GodEvolutionMaxPlantCount,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionOptionCount, SimpleSyncInt(() => GodEvolutionOptionCount,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionUpgradeBuffChance, SimpleSyncInt(() => GodEvolutionUpgradeBuffChance,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionSuperUpgrade, SimpleSyncBool(() => GodEvolutionSuperUpgrade,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionForceSuperQuality, SimpleSyncBool(() => GodEvolutionForceSuperQuality,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionUncrashable, SimpleSyncBool(() => GodEvolutionUncrashable,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionQualityWeightEnabled, SimpleSyncBool(() => GodEvolutionQualityWeightEnabled,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionQualityDefault, SimpleSyncFloat(() => GodEvolutionQualityDefault,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionQualitySilver, SimpleSyncFloat(() => GodEvolutionQualitySilver,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionQualityGold, SimpleSyncFloat(() => GodEvolutionQualityGold,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionQualityDiamond, SimpleSyncFloat(() => GodEvolutionQualityDiamond,()=>GodEvolutionApplyQuality([])) },
-        { Strings.GodEvolutionDamageMultiplier, SimpleSyncFloat(() => GodEvolutionDamageMultiplier,()=>GodEvolutionApplyQuality([])) },
+        {
+            Strings.GodEvolutionUnlimitedRefresh,
+            SimpleSyncBool(() => GodEvolutionUnlimitedRefresh, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionFreeUpgradeQuality,
+            SimpleSyncBool(() => GodEvolutionFreeUpgradeQuality, () => GodEvolutionApplyQuality([]))
+        },
+        { Strings.GodEvolutionLucky, SimpleSyncFloat(() => GodEvolutionLucky, () => GodEvolutionApplyQuality([])) },
+        {
+            Strings.GodEvolutionDifficulty,
+            SimpleSyncInt(() => GodEvolutionDifficulty, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionRefreshCount,
+            SimpleSyncInt(() => GodEvolutionRefreshCount, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionMaxPlantCount,
+            SimpleSyncInt(() => GodEvolutionMaxPlantCount, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionOptionCount,
+            SimpleSyncInt(() => GodEvolutionOptionCount, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionUpgradeBuffChance,
+            SimpleSyncInt(() => GodEvolutionUpgradeBuffChance, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionSuperUpgrade,
+            SimpleSyncBool(() => GodEvolutionSuperUpgrade, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionForceSuperQuality,
+            SimpleSyncBool(() => GodEvolutionForceSuperQuality, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionUncrashable,
+            SimpleSyncBool(() => GodEvolutionUncrashable, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionQualityWeightEnabled,
+            SimpleSyncBool(() => GodEvolutionQualityWeightEnabled, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionQualityDefault,
+            SimpleSyncFloat(() => GodEvolutionQualityDefault, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionQualitySilver,
+            SimpleSyncFloat(() => GodEvolutionQualitySilver, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionQualityGold,
+            SimpleSyncFloat(() => GodEvolutionQualityGold, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionQualityDiamond,
+            SimpleSyncFloat(() => GodEvolutionQualityDiamond, () => GodEvolutionApplyQuality([]))
+        },
+        {
+            Strings.GodEvolutionDamageMultiplier,
+            SimpleSyncFloat(() => GodEvolutionDamageMultiplier, () => GodEvolutionApplyQuality([]))
+        },
 
         #endregion
 
@@ -286,13 +334,16 @@ public class DataProcessor : MonoBehaviour
         { Strings.PlayParticle, PlayParticle },
         { Strings.GetSnapshot, GetSnapshot },
         { Strings.RestoreSnapshot, RestoreSnapshot },
-        {Strings.GodEvolutionApplyQuality, GodEvolutionApplyQuality},
-        {Strings.GodEvolutionResetQuality, GodEvolutionResetQuality},
-        {Strings.SpawnPetGargantuar, SpawnPetGargantuar},
-        {Strings.SpawnPetFootball, SpawnPetFootball},
-        {Strings.SpawnPetSnowBoss, SpawnPetSnowBoss},
-        {Strings.SpawnPetJackbox, SpawnPetJackbox},
-        {Strings.SpawnPetDrown, SpawnPetDrown},
+        { Strings.GodEvolutionApplyQuality, GodEvolutionApplyQuality },
+        { Strings.GodEvolutionResetQuality, GodEvolutionResetQuality },
+        { Strings.SpawnPetGargantuar, SpawnPetGargantuar },
+        { Strings.SpawnPetFootball, SpawnPetFootball },
+        { Strings.SpawnPetSnowBoss, SpawnPetSnowBoss },
+        { Strings.SpawnPetJackbox, SpawnPetJackbox },
+        { Strings.SpawnPetDrown, SpawnPetDrown },
+        { Strings.SpawnPetHorse, SpawnPetHorse },
+        { Strings.SpawnPetImp, SpawnPetImp },
+        { Strings.SpawnPetKirov, SpawnPetKirov }
     };
 
     #region OverallCommands
@@ -1267,12 +1318,17 @@ public class DataProcessor : MonoBehaviour
         ZombieSlot6Index = (ZombieType)int.Parse(args[10]);
 
         // 放置5个礼盒在第3行（row=2），第1-5列（column=0-4）
-        // 礼盒打开时会通过 PresentPatchA 检查 LockPresent1-5 来决定生成什么植物
+        // 礼盒打开时会通过 PresentPatch 检查 LockPresent1-5 来决定生成什么植物
         global::CreatePlant.Instance.SetPlant(0, 2, PlantType.Present);
         global::CreatePlant.Instance.SetPlant(1, 2, PlantType.Present);
         global::CreatePlant.Instance.SetPlant(2, 2, PlantType.Present);
         global::CreatePlant.Instance.SetPlant(3, 2, PlantType.Present);
         global::CreatePlant.Instance.SetPlant(4, 2, PlantType.Present);
+        PVEPresentFlag[0] = true;
+        PVEPresentFlag[1] = true;
+        PVEPresentFlag[2] = true;
+        PVEPresentFlag[3] = true;
+        PVEPresentFlag[4] = true;
 
         // 放置僵尸：1个巨人盲盒 + 1个钻石盲盒 + 4个黄金盲盒，并记录实例ID用于死亡时生成指定僵尸
         var zg = global::CreateZombie.Instance.SetZombie(2, ZombieType.RandomGargantuar, 8);
@@ -1538,10 +1594,10 @@ public class DataProcessor : MonoBehaviour
 
     public static void GodEvolutionApplyQuality(List<string> _)
     {
-        if(ShootingManager.Instance != null)
+        if (ShootingManager.Instance != null)
             ApplySettings(ShootingManager.Instance);
     }
-    
+
     public static void GodEvolutionResetQuality(List<string> _)
     {
         GodEvolutionUnlimitedRefresh = false;
@@ -1566,7 +1622,6 @@ public class DataProcessor : MonoBehaviour
 
     public static void SpawnPetGargantuar(List<string> _)
     {
-
         if (Mouse.Instance != null)
         {
             var mousePos = Mouse.Instance.transform.position;
@@ -1576,7 +1631,6 @@ public class DataProcessor : MonoBehaviour
 
     public static void SpawnPetFootball(List<string> _)
     {
-        
         if (Mouse.Instance != null)
         {
             var mousePos = Mouse.Instance.transform.position;
@@ -1600,7 +1654,6 @@ public class DataProcessor : MonoBehaviour
             var mousePos = Mouse.Instance.transform.position;
             MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetJackbox);
         }
-        
     }
 
     public static void SpawnPetDrown(List<string> _)
@@ -1609,6 +1662,33 @@ public class DataProcessor : MonoBehaviour
         {
             var mousePos = Mouse.Instance.transform.position;
             MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetDrown);
+        }
+    }
+
+    public static void SpawnPetHorse(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetHorse);
+        }
+    }
+
+    public static void SpawnPetImp(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetImp);
+        }
+    }
+
+    public static void SpawnPetKirov(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetKirov);
         }
     }
 }

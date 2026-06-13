@@ -78,14 +78,14 @@
                                   VerticalAlignment="Center"
                                   IsChecked="{Binding WheelFullCDEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                         <u:NumericDoubleUpDown MinWidth="100"
-                                            Minimum="0"
-                                            Maximum="300"
-                                            Step="0.5"
-                                            EmptyInputValue="30"
-                                            FormatString="F1"
-                                            InnerRightContent="秒"
-                                            IsEnabled="{Binding WheelFullCDEnabled}"
-                                            Value="{Binding WheelFullCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                               Minimum="0"
+                                               Maximum="300"
+                                               Step="0.5"
+                                               EmptyInputValue="30"
+                                               FormatString="F1"
+                                               InnerRightContent="秒"
+                                               IsEnabled="{Binding WheelFullCDEnabled}"
+                                               Value="{Binding WheelFullCD,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <CheckBox Content="自由种植"
@@ -319,16 +319,23 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="召唤迷你黑曜石巨人"
-                                Command="{Binding SpawnPetGargantuarCommand}"/>
-                        <Button Content="召唤迷你黑橄榄将军" Command="{Binding SpawnPetFootballCommand}"/>
+                                Command="{Binding SpawnPetGargantuarCommand}" />
+                        <Button Content="召唤迷你黑橄榄将军" Command="{Binding SpawnPetFootballCommand}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="召唤迷你雪皇"
-                                Command="{Binding SpawnPetSnowBossCommand}"/>
-                        <Button Content="召唤迷你玩偶匣皇后" Command="{Binding SpawnPetJackboxCommand}"/>
+                                Command="{Binding SpawnPetSnowBossCommand}" />
+                        <Button Content="召唤迷你玩偶匣皇后" Command="{Binding SpawnPetJackboxCommand}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="召唤迷你渊海三叉戟" Command="{Binding SpawnPetDrownCommand}"/>
+                        <Button Content="召唤迷你渊海三叉戟" Command="{Binding SpawnPetDrownCommand}" />
+                        <Button Content="召唤迷你黑橄榄骑士" Command="{Binding SpawnPetHorseCommand}" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="召唤迷你小鬼国王" Command="{Binding SpawnPetImpCommand}" />
+                        <Button Content="召唤迷你裂空机甲" Command="{Binding SpawnPetKirovCommand}" />
+
                     </StackPanel>
                 </StackPanel>
             </Border>

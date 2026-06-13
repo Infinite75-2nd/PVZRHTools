@@ -53,22 +53,22 @@ public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
 
     #region 斗蛐蛐布阵 - 植物礼盒
 
-    [Reactive] public partial int GiftBox1PlantIndex { get; set; }
-    [Reactive] public partial int GiftBox2PlantIndex { get; set; }
-    [Reactive] public partial int GiftBox3PlantIndex { get; set; }
-    [Reactive] public partial int GiftBox4PlantIndex { get; set; }
-    [Reactive] public partial int GiftBox5PlantIndex { get; set; }
+    [Reactive] public partial int GiftBox1PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox2PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox3PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox4PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox5PlantIndex { get; set; } = -1;
 
     #endregion
 
     #region 斗蛐蛐布阵 - 僵尸槽位
 
-    [Reactive] public partial int ZombieSlot1Index { get; set; }
-    [Reactive] public partial int ZombieSlot2Index { get; set; }
-    [Reactive] public partial int ZombieSlot3Index { get; set; }
-    [Reactive] public partial int ZombieSlot4Index { get; set; }
-    [Reactive] public partial int ZombieSlot5Index { get; set; }
-    [Reactive] public partial int ZombieSlot6Index { get; set; }
+    [Reactive] public partial int ZombieSlot1Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot2Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot3Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot4Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot5Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot6Index { get; set; } = -1;
 
     #endregion
 

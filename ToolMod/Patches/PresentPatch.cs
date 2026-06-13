@@ -57,8 +57,9 @@ public static class PresentPatch
                 _ => PlantType.Nothing
             };
 
-            if (lockPlantType >= 0)
+            if (lockPlantType >= 0 && PVEPresentFlag[__instance.thePlantColumn - 1])
             {
+                PVEPresentFlag[__instance.thePlantColumn - 1] = false;
                 var col = __instance.thePlantColumn;
                 var row = __instance.thePlantRow;
                 var pos = __instance.transform.position;

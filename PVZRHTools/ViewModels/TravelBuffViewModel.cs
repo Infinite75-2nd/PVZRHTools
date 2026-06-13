@@ -104,6 +104,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             advBuff.Level = 1;
         }
+
         IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -122,12 +123,13 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     public void AdvBuffDeselectAll()
     {
-        DataSyncService.Lock(true); 
+        DataSyncService.Lock(true);
         IsChangingAll = true;
         foreach (var advBuff in AdvBuffs)
         {
             advBuff.Level = 0;
         }
+
         IsChangingAll = false;
 
         DataSyncService.Lock(false);
@@ -180,6 +182,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             advBuff.Level = 1;
         }
+
         IsChangingAll = false;
 
         DataSyncService.Lock(false);
@@ -205,6 +208,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             advBuff.Level = 0;
         }
+
         IsChangingAll = false;
 
         DataSyncService.Lock(false);
@@ -256,8 +260,9 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         foreach (var ultiBuff in UltiBuffs)
         {
             ultiBuff.Level = 1;
-        IsChangingAll = false;
+            IsChangingAll = false;
         }
+
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -278,9 +283,10 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         IsChangingAll = true;
         DataSyncService.Lock(true);
         foreach (var ultiBuff in UltiBuffs)
-        { 
+        {
             ultiBuff.Level = 0;
         }
+
         IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -326,12 +332,13 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     public void InGameUltiBuffChooseAll()
     {
-        DataSyncService.Lock(true); 
+        DataSyncService.Lock(true);
         IsChangingAll = true;
         foreach (var ultiBuff in InGameUltiBuffs)
         {
             ultiBuff.Level = 1;
         }
+
         IsChangingAll = false;
 
         DataSyncService.Lock(false);
@@ -357,6 +364,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             ultiBuff.Level = 0;
         }
+
         IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -394,7 +402,8 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             debuff.Enabled = true;
         }
-    IsChangingAll = false;
+
+        IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
         {
@@ -418,6 +427,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             debuff.Enabled = false;
         }
+
         IsChangingAll = false;
 
         DataSyncService.Lock(false);
@@ -456,6 +466,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             debuff.Enabled = true;
         }
+
         IsChangingAll = false;
 
         DataSyncService.Lock(false);
@@ -481,6 +492,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             debuff.Enabled = false;
         }
+
         IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -541,6 +553,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             invest.Enabled = false;
         }
+
         IsChangingAll = false;
 
         DataSyncService.Lock(false);
@@ -579,6 +592,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             invest.Enabled = true;
         }
+
         IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -603,6 +617,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             invest.Enabled = false;
         }
+
         IsChangingAll = false;
         DataSyncService.Lock(false);
         DataSyncService.SendCommand(new SyncData()
@@ -618,7 +633,8 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         });
     }
 
-    internal bool IsChangingAll=false;
+    internal bool IsChangingAll = false;
+
     public override void SaveSettings(SettingsData settings)
     {
         settings.TravelAdvBuffs = AdvBuffs.ToDictionary(x => x.ID, x => x.Level);

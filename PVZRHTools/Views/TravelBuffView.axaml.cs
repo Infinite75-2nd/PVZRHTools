@@ -14,8 +14,10 @@ public partial class TravelBuffView : UserControl
     public TravelBuffView()
     {
         InitializeComponent();
-        AddHandler(ToggleButton.IsCheckedChangedEvent, OnCheckBoxChanged, RoutingStrategies.Bubble, handledEventsToo: true);
-        AddHandler(NumericIntUpDown.ValueChangedEvent, OnNumericValueChanged, RoutingStrategies.Bubble, handledEventsToo: true);
+        AddHandler(ToggleButton.IsCheckedChangedEvent, OnCheckBoxChanged, RoutingStrategies.Bubble,
+            handledEventsToo: true);
+        AddHandler(NumericIntUpDown.ValueChangedEvent, OnNumericValueChanged, RoutingStrategies.Bubble,
+            handledEventsToo: true);
     }
 
     private TravelBuffViewModel? VM => DataContext as TravelBuffViewModel;
@@ -36,7 +38,8 @@ public partial class TravelBuffView : UserControl
 
     private void OnNumericValueChanged(object? sender, ValueChangedEventArgs<int> e)
     {
-        if (e.Source is not Control control || control.DataContext is not TravelBuffInfo info || VM is not { } vm) return;
+        if (e.Source is not Control control || control.DataContext is not TravelBuffInfo info ||
+            VM is not { } vm) return;
 
         if (vm.UltiBuffs.Contains(info))
             vm.UltiBuffLevelChanged(e);
