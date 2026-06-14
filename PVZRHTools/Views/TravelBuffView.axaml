@@ -34,6 +34,7 @@
                             <Button Content="全选"
                                     Command="{Binding AdvBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding AdvBuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnAdvBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding AdvBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -41,6 +42,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
@@ -76,6 +78,7 @@
                             <Button Content="全选"
                                     Command="{Binding InGameAdvBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding InGameAdvBuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameAdvBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameAdvBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -83,6 +86,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
@@ -123,6 +127,7 @@
                             <Button Content="全选"
                                     Command="{Binding UltiBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding UltiBuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnUltiBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding UltiBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -130,6 +135,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
@@ -159,6 +165,7 @@
                             <Button Content="全选"
                                     Command="{Binding InGameUltiBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding InGameUltiBuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameUltiBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameUltiBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -166,6 +173,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
@@ -201,6 +209,7 @@
                                     Command="{Binding DebuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding DebuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnDebuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding Debuffs}">
                             <ItemsControl.ItemTemplate>
@@ -208,6 +217,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"
@@ -226,6 +236,7 @@
                                     Command="{Binding InGameDebuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InGameDebuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameDebuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameDebuffs}">
                             <ItemsControl.ItemTemplate>
@@ -233,6 +244,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"
@@ -256,6 +268,7 @@
                                     Command="{Binding InGameInvestBuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InGameInvestBuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameInvestBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameInvestBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -263,6 +276,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"
@@ -281,6 +295,7 @@
                                     Command="{Binding InGameInvestBuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InGameInvestBuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInvestBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InvestBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -288,6 +303,7 @@
                                     <CheckBox
                                         IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <TextBlock Text="{Binding Name}"
                                                    TextAlignment="Left"

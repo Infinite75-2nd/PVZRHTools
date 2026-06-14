@@ -92,7 +92,7 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
             //new(_navigationService) { MenuHeader = "全局按键绑定", PageType = typeof(CommonSettingsViewModel) },
             new(_navigationService) { MenuHeader = "检索分区", PageType = typeof(SearchListViewModel) },
             new(_navigationService) { MenuHeader = "局内存档/回溯", PageType = typeof(SnapshotViewModel) },
-            new(_navigationService) { MenuHeader = "诸神进化", PageType = typeof(GodEvolutionViewModel) },
+            //new(_navigationService) { MenuHeader = "诸神进化", PageType = typeof(GodEvolutionViewModel) },
             new(_navigationService) { MenuHeader = "其他设置", PageType = typeof(MiscsViewModel) },
         };
 

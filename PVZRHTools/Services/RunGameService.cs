@@ -14,7 +14,11 @@ public class RunGameService(IModifierInfoService modifierInfoService) : IRunGame
     public void RunGame(GameInstanceInfo info)
     {
         modifierInfoService.WriteBootConfig(info);
-        Process.Start(Path.Combine(info.GameRootPath, Paths.GameName));
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = Path.Combine(info.GameRootPath, Paths.GameName),
+            WorkingDirectory = info.GameRootPath
+        });
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.TryShutdown();
     }

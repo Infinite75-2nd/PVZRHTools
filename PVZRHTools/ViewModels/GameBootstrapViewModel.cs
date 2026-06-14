@@ -40,8 +40,8 @@ public partial class GameBootstrapViewModel : ViewModelBase
         MenuItems = new()
         {
             new(_navigationService) { MenuHeader = "游戏管理", PageType = typeof(GameInstancesViewModel) },
-            new(_navigationService) { MenuHeader = "链接跳转", PageType = typeof(LinksViewModel) },
-            new(_navigationService) { MenuHeader = "关于修改器", PageType = typeof(AboutViewModel) }
+            //new(_navigationService) { MenuHeader = "链接跳转", PageType = typeof(LinksViewModel) },
+            //new(_navigationService) { MenuHeader = "关于修改器", PageType = typeof(AboutViewModel) }
         };
         navigationService.NavigateTo<GameInstancesViewModel>();
 
