@@ -9,8 +9,6 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(Hammer))]
 public static class HammerPatch
 {
-    public static float OriginalFullCD { get; set; }
-
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Hammer.OnUpdate))]
     public static void PostUpdate(Hammer __instance)
@@ -19,10 +17,7 @@ public static class HammerPatch
         {
             if (__instance == null) return;
             __instance.gameObject.transform.GetChild(0).GetChild(0).gameObject.SetActive(!HammerNoCD);
-            if (HammerFullCD > 0)
-                __instance.fullCD = HammerFullCD;
-            else
-                __instance.fullCD = OriginalFullCD;
+            __instance.fullCD = HammerFullCD > 0 ? HammerFullCD : OriginalHammerFullCD;
             if (HammerNoCD) __instance.CD = __instance.fullCD;
             var cdChild = __instance.transform.FindChild("ModifierHammerCD");
             if (cdChild == null) return;
@@ -46,7 +41,7 @@ public static class HammerPatch
     [HarmonyPatch(nameof(Hammer.Start))]
     public static void PostStart(Hammer __instance)
     {
-        OriginalFullCD = __instance.fullCD;
+        OriginalHammerFullCD = __instance.fullCD;
         GameObject obj = new("ModifierHammerCD");
         var text = obj.AddComponent<TextMeshProUGUI>();
         text.font = Resources.Load<TMP_FontAsset>("Fonts/ContinuumBold SDF");

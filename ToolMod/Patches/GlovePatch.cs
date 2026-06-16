@@ -9,8 +9,6 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(Glove))]
 public static class GlovePatch
 {
-    public static float OriginalFullCD { get; set; }
-
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Glove.OnUpdate))]
     public static void PostOnUpdate(Glove __instance)
@@ -19,7 +17,8 @@ public static class GlovePatch
         {
             if (__instance == null || Board.Instance.boardTag.isShooting) return;
             __instance.gameObject.transform.GetChild(0).gameObject.SetActive(!GloveNoCD);
-            __instance.fullCD = GloveFullCD >= 0 ? GloveFullCD : OriginalFullCD;
+            
+            __instance.fullCD = GloveFullCD >= 0 ? GloveFullCD : Lawnf.GetGloveCD();
             if (GloveNoCD) __instance.CD = __instance.fullCD;
             var cdChild = __instance.transform.FindChild("ModifierGloveCD");
             if (cdChild == null) return;
@@ -43,7 +42,6 @@ public static class GlovePatch
     [HarmonyPatch(nameof(Glove.Start))]
     public static void PostStart(Glove __instance)
     {
-        OriginalFullCD = __instance.fullCD;
         GameObject obj = new("ModifierGloveCD");
         var text = obj.AddComponent<TextMeshProUGUI>();
         text.font = Resources.Load<TMP_FontAsset>("Fonts/ContinuumBold SDF");

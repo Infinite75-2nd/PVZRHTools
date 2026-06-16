@@ -31,6 +31,7 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
     [Reactive] public partial double GodEvolutionQualityDiamond { get; set; } = 1.0;
     [Reactive] public partial bool GodEvolutionDamageMultiplierEnabled { get; set; }
     [Reactive] public partial double GodEvolutionDamageMultiplier { get; set; } = 1.0;
+    [Reactive] public partial bool GodEvolutionMultiSelectBuff { get; set; }
 
     [ReactiveCommand]
     public void GodEvolutionApplyQuality()
@@ -48,6 +49,16 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         DataSyncService.SendCommand(new SyncData()
         {
             Command = Strings.GodEvolutionResetQuality,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void GodEvolutionUnlockAll()
+    {
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.GodEvolutionUnlockAll,
             Parameters = []
         });
     }
@@ -77,6 +88,7 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.GodEvolutionUncrashable, Strings.GodEvolutionUncrashable);
         this.SimpleSyncFlaggedDouble(x => x.GodEvolutionDamageMultiplier, x => x.GodEvolutionDamageMultiplierEnabled,
             Strings.GodEvolutionDamageMultiplier);
+        this.SimpleOneWaySync(x => x.GodEvolutionMultiSelectBuff, Strings.GodEvolutionMultiSelectBuff);
 
         // 词条品质权重
         this.SimpleOneWaySync(x => x.GodEvolutionQualityWeightEnabled, Strings.GodEvolutionQualityWeightEnabled);
@@ -112,6 +124,7 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         settings.GodEvolutionQualityDiamond = GodEvolutionQualityDiamond;
         settings.GodEvolutionDamageMultiplierEnabled = GodEvolutionDamageMultiplierEnabled;
         settings.GodEvolutionDamageMultiplier = GodEvolutionDamageMultiplier;
+        settings.GodEvolutionMultiSelectBuff = GodEvolutionMultiSelectBuff;
     }
 
     public override void LoadSettings(SettingsData settings)
@@ -140,5 +153,6 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         GodEvolutionQualityDiamond = settings.GodEvolutionQualityDiamond;
         GodEvolutionDamageMultiplierEnabled = settings.GodEvolutionDamageMultiplierEnabled;
         GodEvolutionDamageMultiplier = settings.GodEvolutionDamageMultiplier;
+        GodEvolutionMultiSelectBuff = settings.GodEvolutionMultiSelectBuff;
     }
 }

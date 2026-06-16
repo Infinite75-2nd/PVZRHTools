@@ -1633,11 +1633,14 @@ public static class Utils
             if (GodEvolutionSuperUpgrade)
                 mgr.superUpgrade = true;
             if (GodEvolutionForceSuperQuality)
+                //mgr.appearSuperQualitative = GodEvolutionForceSuperQuality;
                 (_appearSuperQualitativeField ??= typeof(ShootingManager).GetField("appearSuperQualitative",
                     BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(mgr, true);
+                //mgr.uncrashable = GodEvolutionUncrashable;
             if (GodEvolutionUncrashable)
                 (_uncrashableField ??= typeof(ShootingManager).GetField("uncrashable",
                     BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(mgr, true);
+            
         }
         catch
         {

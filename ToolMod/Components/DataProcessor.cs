@@ -277,7 +277,8 @@ public class DataProcessor : MonoBehaviour
             Strings.GodEvolutionDamageMultiplier,
             SimpleSyncFloat(() => GodEvolutionDamageMultiplier, () => GodEvolutionApplyQuality([]))
         },
-
+        { Strings.GodEvolutionUnlockAll, GodEvolutionUnlockAll },
+        { Strings.GodEvolutionMultiSelectBuff, SimpleSyncBool(() => GodEvolutionMultiSelectBuff) },
         #endregion
 
         #region 游戏内按键绑定
@@ -343,7 +344,8 @@ public class DataProcessor : MonoBehaviour
         { Strings.SpawnPetDrown, SpawnPetDrown },
         { Strings.SpawnPetHorse, SpawnPetHorse },
         { Strings.SpawnPetImp, SpawnPetImp },
-        { Strings.SpawnPetKirov, SpawnPetKirov }
+        { Strings.SpawnPetKirov, SpawnPetKirov },
+        { Strings.ApplyAllPlantSkins, ApplyAllPlantSkins }
     };
 
     #region OverallCommands
@@ -1620,6 +1622,56 @@ public class DataProcessor : MonoBehaviour
         GodEvolutionApplyQuality(_);
     }
 
+    /// <summary>
+    /// 手动实现 RogueShootingData.Record 逻辑（Il2CppInterop 未暴露该泛型方法）
+    /// 在列表中查找匹配 element 的记录并 count+1，找不到则新建记录(count=1)并添加
+    /// DataRecord 字段偏移: element=0x10, count=0x14
+    /// </summary>
+    private static unsafe void RecordData(Il2CppSystem.Collections.Generic.List<DataRecord<int>> list, int element)
+    {
+        if (list == null) return;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var record = list[i];
+            if (record == null) continue;
+            int* ptr = (int*)record.Pointer;
+            if (ptr[4] == element) // offset 0x10 = 4 ints
+            {
+                ptr[5]++; // offset 0x14 = 5 ints
+                return;
+            }
+        }
+        var newRecord = new DataRecord<int>();
+        int* newPtr = (int*)newRecord.Pointer;
+        newPtr[4] = element;
+        newPtr[5] = 1;
+        list.Add(newRecord);
+    }
+
+    public static void GodEvolutionUnlockAll(List<string> _)
+    {
+        var data = ShootingManager.Data;
+        if (data == null) return;
+
+        // 设置总胜利次数≥20，解锁canTab和屋顶模式
+        data.victoryTimes = 20;
+
+        // 解锁全部难度（难度2/3/4各需前一级难度至少1次胜利）
+        RecordData(data.difficultyWin, 1);
+        RecordData(data.difficultyWin, 2);
+        RecordData(data.difficultyWin, 3);
+
+        // 解锁全部模式（模式1/2/3各需前一级至少1次胜利，模式4需模式3至少10次胜利）
+        RecordData(data.stageWins, 0);
+        RecordData(data.stageWins, 1);
+        RecordData(data.stageWins, 2);
+        // 模式4需要 stageWins[3] ≥ 10
+        for (var i = 0; i < 10; i++)
+            RecordData(data.stageWins, 3);
+
+        InGameText.Instance?.ShowText("已解锁全部难度与模式", 5);
+    }
+
     public static void SpawnPetGargantuar(List<string> _)
     {
         if (Mouse.Instance != null)
@@ -1689,6 +1741,58 @@ public class DataProcessor : MonoBehaviour
         {
             var mousePos = Mouse.Instance.transform.position;
             MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetKirov);
+        }
+    }
+
+    /// <summary>
+    /// 一键应用全部植物皮肤：遍历所有植物类型，将每种植物设置为最后一个可用皮肤（最高阶皮肤）
+    /// 使用游戏原生 SetSkin 方法避免直接操作 Il2Cpp 字典导致的运行时类型转换失败
+    /// </summary>
+    public static void ApplyAllPlantSkins(List<string> _)
+    {
+        if (!InGame) return;
+        try
+        {
+            var rm = GameAPP.resourcesManager;
+            if (rm?.allPlants == null) return;
+
+            var appliedCount = 0;
+            foreach (var plantType in rm.allPlants)
+            {
+                try
+                {
+                    // 检查该植物是否有多个皮肤（_plantPrefabs 中对应的 List 长度 > 1）
+                    Il2CppSystem.Collections.Generic.List<UnityEngine.GameObject> skinList = null;
+                    if (rm._plantPrefabs.TryGetValue(plantType, out skinList) && skinList != null)
+                    {
+                        var count = skinList.Count;
+                        if (count > 1)
+                        {
+                            var lastSkinIndex = count - 1;
+                            // 使用游戏原生 SetSkin 方法，避免直接操作 Il2Cpp 词典的索引器
+                            rm.SetSkin(plantType, lastSkinIndex);
+                            appliedCount++;
+                        }
+                    }
+                }
+                catch
+                {
+                    // 跳过没有皮肤的植物类型
+                }
+            }
+
+            if (appliedCount > 0)
+            {
+                InGameText.Instance?.ShowText("已应用全部植物皮肤", 2);
+            }
+            else
+            {
+                InGameText.Instance?.ShowText("没有找到可应用的植物皮肤", 2);
+            }
+        }
+        catch (Exception ex)
+        {
+            ModCore.Instance.Log.LogError($"ApplyAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
         }
     }
 }

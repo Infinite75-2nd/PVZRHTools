@@ -214,6 +214,7 @@ public class SettingsData
     public double GodEvolutionQualityDiamond { get; set; } = 1.0;
     public bool GodEvolutionDamageMultiplierEnabled { get; set; }
     public double GodEvolutionDamageMultiplier { get; set; } = 1.0;
+    public bool GodEvolutionMultiSelectBuff { get; set; }
 }
 
 /// <summary>

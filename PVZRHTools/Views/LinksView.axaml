@@ -2,12 +2,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             x:CompileBindings="True"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PVZRHTools.Views.LinksView">
-    <Panel VerticalAlignment="Top">
-        <StackPanel Orientation="Vertical">
-
-        </StackPanel>
-    </Panel>
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="950"
+             x:Class="PVZRHTools.Views.LinksView"
+             x:DataType="vm:LinksViewModel">
+    <WrapPanel Orientation="Horizontal">
+        <Border>
+            <StackPanel>
+                <u:Divider Content="游戏制作组"/>
+                
+            </StackPanel>
+        </Border>
+    </WrapPanel>
 </UserControl>

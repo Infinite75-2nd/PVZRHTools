@@ -185,6 +185,7 @@ public class PatchDataCache
     public static float GodEvolutionQualityGold { get; set; } = 1.0f;
     public static float GodEvolutionQualityDiamond { get; set; } = 1.0f;
     public static float GodEvolutionDamageMultiplier { get; set; } = 1.0f;
+    public static bool GodEvolutionMultiSelectBuff { get; set; }
 
     public static bool IsRefreshUnlimited =>
         UnlimitedRefresh || GodEvolutionUnlimitedRefresh;
@@ -222,10 +223,10 @@ public class PatchDataCache
 
     public static int SeaTime;
     public static int GarlicDayTime;
-    public static Dictionary<int, int> PlantHealthCache { get; set; } = [];
+    public static Dictionary<int, int> PlantHealthCache = [];
     public static readonly Dictionary<int, float> ZombieOriginalSpeeds = [];
     public static readonly Dictionary<int, int> ZombieOriginalAttackDamages = [];
-    public static Dictionary<int, PlantType> ZombieLastDamageSource { get; set; } = [];
+    public static Dictionary<int, PlantType> ZombieLastDamageSource = [];
     public static float TrampleImmunityTimer = 0f;
     public const float TrampleImmunityInterval = 0.1f;
     public static float CurseClearTimer = 0f;
@@ -240,13 +241,7 @@ public class PatchDataCache
     public static int LastUnlockWave = -1;
     public static int CurrentFlagWaveIndex = 0;
     public static bool NewBoard = false;
-    public static int _snapshotIntervalSeconds = 5;
-    public static int _snapshotDurationSeconds = 60;
-    public static DateTime _lastSnapshotTime = DateTime.MinValue;
-    public static bool _rewindOnFailEnabled = false;
-    public static int _restoreSecondsBeforeFail = 8;
     public static int PendingManualSnapshotFrames = 0;
-    public static bool CheckedAutoRestore = false;
     public static readonly List<Snapshot> Snapshots = [];
     public static PlantType AlmanacSeedType = PlantType.Nothing;
     public static bool AlmanacZombieMindCtrl = false;
@@ -254,6 +249,9 @@ public class PatchDataCache
     public static FieldInfo? _appearSuperQualitativeField;
     public static FieldInfo? _uncrashableField;
     public static bool[] PVEPresentFlag = new bool[5];
+    public static float OriginalHammerFullCD;
 
     #endregion
+
+
 }

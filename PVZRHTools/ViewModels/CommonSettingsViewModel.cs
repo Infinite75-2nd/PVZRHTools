@@ -372,6 +372,14 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         });
 
     [ReactiveCommand]
+    public void ApplyAllPlantSkins() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ApplyAllPlantSkins,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
     public void SpawnPetKirov() =>
         DataSyncService.SendCommand(new SyncData()
         {

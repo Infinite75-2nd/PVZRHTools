@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.7";
-        public const string ModifierVersion = "5.0.7";
+        public const string ModifierVersion = "5.0.8";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -75,6 +75,7 @@ namespace ToolData
         public const string SpawnPetHorse = "SpawnPetHorse";
         public const string SpawnPetImp = "SpawnPetImp";
         public const string SpawnPetKirov = "SpawnPetKirov";
+        public const string ApplyAllPlantSkins = "ApplyAllPlantSkins";
         public const string ZombieSea = "ZombieSea";
 
         #endregion
@@ -170,6 +171,8 @@ namespace ToolData
         public const string GodEvolutionDamageMultiplier = "GodEvolutionDamageMultiplier";
         public const string GodEvolutionApplyQuality = "GodEvolutionApplyQuality";
         public const string GodEvolutionResetQuality = "GodEvolutionResetQuality";
+        public const string GodEvolutionUnlockAll = "GodEvolutionUnlockAll";
+        public const string GodEvolutionMultiSelectBuff = "GodEvolutionMultiSelectBuff";
 
         #endregion
 

@@ -40,6 +40,7 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     public void Exit()
     {
+        SaveSettings();
         DataSyncService.SendCommand(new()
         {
             Command = Strings.Exit,
@@ -62,8 +63,21 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
     [ReactiveCommand]
     public void Closing()
     {
+        // 先保存设置，再处理浮窗关闭，避免 HideFloatingWindowInternal 抛出异常导致保存中断
+        SaveSettings();
         HideFloatingWindowInternal();
-        Locator.Current.GetService<ISettingsService>()?.SaveAllViewModelSettings();
+    }
+
+    private void SaveSettings()
+    {
+        try
+        {
+            Locator.Current.GetService<ISettingsService>()?.SaveAllViewModelSettings();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"保存设置时发生异常: {ex}");
+        }
     }
 
 
@@ -79,7 +93,11 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
 
         this.WhenAnyValue(x => x._navigationService.CurrentViewModel)
             .ToProperty(this, nameof(CurrentPage), out _currentPage);
-        AppDomain.CurrentDomain.ProcessExit += (sender, e) => Exit();
+        AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
+        {
+            SaveSettings();
+            Exit();
+        };
         MenuItems = new()
         {
             new(_navigationService) { MenuHeader = "通用修改", PageType = typeof(CommonSettingsViewModel) },
@@ -92,7 +110,7 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
             //new(_navigationService) { MenuHeader = "全局按键绑定", PageType = typeof(CommonSettingsViewModel) },
             new(_navigationService) { MenuHeader = "检索分区", PageType = typeof(SearchListViewModel) },
             new(_navigationService) { MenuHeader = "局内存档/回溯", PageType = typeof(SnapshotViewModel) },
-            //new(_navigationService) { MenuHeader = "诸神进化", PageType = typeof(GodEvolutionViewModel) },
+            new(_navigationService) { MenuHeader = "诸神进化", PageType = typeof(GodEvolutionViewModel) },
             new(_navigationService) { MenuHeader = "其他设置", PageType = typeof(MiscsViewModel) },
         };
 

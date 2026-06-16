@@ -27,15 +27,10 @@ public class SettingsService : ISettingsService
 
     public void SaveSettings(SettingsData settings)
     {
-        try
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath)!);
-            File.WriteAllText(_settingsPath, JsonSerializer.Serialize(settings, JsonSGC.Default.SettingsData));
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"保存设置失败: {ex.Message}");
-        }
+        Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath)!);
+        var json = JsonSerializer.Serialize(settings, JsonSGC.Default.SettingsData);
+        File.WriteAllText(_settingsPath, json);
+        System.Diagnostics.Debug.WriteLine($"设置已保存到: {_settingsPath}");
     }
 
     public SettingsData? LoadSettings()
