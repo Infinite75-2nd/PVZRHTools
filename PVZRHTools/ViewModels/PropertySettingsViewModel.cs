@@ -149,6 +149,22 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
             Parameters = [LockBulletType.ToString()]
         });
 
+    [ReactiveCommand]
+    public void ApplyAllPlantSkins() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ApplyAllPlantSkins,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void ObtainAllPlantSkins() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ObtainAllPlantSkins,
+            Parameters = []
+        });
+
     #endregion
 
 

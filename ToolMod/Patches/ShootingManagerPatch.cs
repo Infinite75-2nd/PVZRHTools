@@ -1,7 +1,9 @@
-﻿using GameLevel.RogueShooting;
+﻿using System.Reflection;
+using GameLevel.RogueShooting;
 using HarmonyLib;
 using UI;
 using UnityEngine;
+using UnityEngine.Events;
 using static ToolMod.Utils;
 using static ToolMod.Components.PatchDataCache;
 
@@ -14,18 +16,100 @@ public class ShootingManagerPatch
     [HarmonyPostfix]
     public static void PostUpdate(ShootingManager __instance)
     {
-        ApplySettings(__instance);
+        if (__instance == null) return;
+        try
+        {
+            if (GodEvolutionLucky >= 0)
+                __instance.Lucky = (int)GodEvolutionLucky;
+            if (GodEvolutionDifficulty >= 0)
+                __instance.difficulty = GodEvolutionDifficulty;
+            if (ShouldFixGodEvolutionRefreshButton)
+                __instance.refreshCount = GetGodEvolutionMenuRefreshCount();
+            if (GodEvolutionMaxPlantCount >= 0)
+                __instance.maxPlantCount = GodEvolutionMaxPlantCount;
+            if (GodEvolutionOptionCount >= 0)
+                __instance.optionCount = GodEvolutionOptionCount;
+            if (GodEvolutionUpgradeBuffChance >= 0 || GodEvolutionFreeUpgradeQuality)
+                __instance.upgradeBuffChance = GodEvolutionFreeUpgradeQuality ? 999999 : GodEvolutionUpgradeBuffChance;
+            if (GodEvolutionSuperUpgrade)
+                __instance.superUpgrade = GodEvolutionSuperUpgrade;
+            if (GodEvolutionUncrashable)
+                (_uncrashableField ??= typeof(ShootingManager).GetField("uncrashable",
+                    BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(__instance, true);
+            if (GodEvolutionQualityWeightEnabled)
+            {
+                __instance.qualityWeights[Quality.Default] = GodEvolutionQualityDefault;
+                __instance.qualityWeights[Quality.silver] = GodEvolutionQualitySilver;
+                __instance.qualityWeights[Quality.gold] = GodEvolutionQualityGold;
+                __instance.qualityWeights[Quality.diamond] = GodEvolutionQualityDiamond;
+            }
+            else if(__instance.qualityWeights.Equals(OriginalQualityWeights))
+            {
+                __instance.qualityWeights[Quality.Default] = OriginalQualityWeights[Quality.Default];
+                __instance.qualityWeights[Quality.silver] = OriginalQualityWeights[Quality.silver];
+                __instance.qualityWeights[Quality.gold] = OriginalQualityWeights[Quality.gold];
+                __instance.qualityWeights[Quality.diamond] = OriginalQualityWeights[Quality.diamond];
+            }
+        }
+        catch
+        {
+        }
     }
 
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(ShootingManager.GetRandomQuality))]
-    public static bool PreGetRandomQuality(ref Quality __result)
+    [HarmonyPatch(nameof(ShootingManager.RegisterOtherBuff))]
+    public static void PreRegisterOtherBuff(ShootingManager __instance,ref bool __state)
     {
-        if (!GodEvolutionQualityWeightEnabled) return true;
-        __result = RollQuality();
-        return false;
+        __state = __instance.appearSuperQualitative;
+        
     }
-
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(ShootingManager.RegisterOtherBuff))]
+    public static void PostRegisterOtherBuff(ShootingManager __instance,MultipleChoiceMenu menu,ref bool __state)
+    {
+        if (__state == __instance.appearSuperQualitative && GodEvolutionForceSuperQuality)
+        {
+            switch (Random.Range(0, 3))
+            {
+                case 0:
+                    if (Lawnf.TravelAdvanced((AdvBuff)2007)) break;
+                    menu.RegisterOption(
+                        "超质变：腐化",
+                        "获得词条：腐化",
+                        (UnityAction)(() => ShootingManager.__c.__9._RegisterOtherBuff_b__55_13()),
+                        (PlantType)254, (ZombieType)(-1), Quality.diamond);
+                    break;
+                case 1:
+                    if(__instance.superUpgrade)
+                        break;
+                    menu.RegisterOption(
+                        "超质变：步步高升",
+                        "所有词条一定是最高品质，且钻石词条的加成x5\n注意：部分植物攻速过快时会丢失动画导致无法攻击或攻速降低",
+                        (UnityAction)(() => __instance._RegisterOtherBuff_b__55_14()),
+                        (PlantType)254, (ZombieType)(-1), Quality.diamond);
+                    break;
+                case 2:
+                    if (Lawnf.TravelAdvanced((AdvBuff)3005)) break;
+                    string names = string.Concat(
+                        "获得词条：",
+                        Lawnf.GetName((PlantType)969),
+                        "\n获得植物：",
+                        Lawnf.GetName((PlantType)953),
+                        "\n获得植物：",
+                        Lawnf.GetName((PlantType)953),
+                        "\n"
+                    );
+                    menu.RegisterOption(
+                        "超质变：力量会给予希望",
+                        names,
+                        (UnityAction)(() => ShootingManager.__c.__9._RegisterOtherBuff_b__55_15()),
+                        (PlantType)969, (ZombieType)(-1), Quality.diamond);
+                    break;
+            }
+        }
+    }
+    
+    
     [HarmonyPostfix]
     [HarmonyPatch(nameof(ShootingManager.GetQualityValue), typeof(float), typeof(Quality))]
     public static void PostGetQualityValueF(ref float __result)
@@ -44,9 +128,19 @@ public class ShootingManagerPatch
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(ShootingManager.ShowBuff))]
-    public static void Prefix(ShootingManager __instance)
+    public static void PreShowBuff(ShootingManager __instance)
     {
         if (!ShouldFixGodEvolutionRefreshButton || __instance == null) return;
         __instance.refreshCount = GetGodEvolutionMenuRefreshCount();
+    }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(ShootingManager.Start))]
+    public static void PostStart(ShootingManager __instance)
+    {
+        OriginalQualityWeights[Quality.Default] = __instance.qualityWeights[Quality.Default];
+        OriginalQualityWeights[Quality.silver] = __instance.qualityWeights[Quality.silver];
+        OriginalQualityWeights[Quality.gold] = __instance.qualityWeights[Quality.gold];
+        OriginalQualityWeights[Quality.diamond] = __instance.qualityWeights[Quality.diamond];
     }
 }

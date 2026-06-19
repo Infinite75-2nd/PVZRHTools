@@ -1613,60 +1613,13 @@ public static class Utils
         }
     }
 
-    public static void ApplySettings(ShootingManager mgr)
-    {
-        if (mgr == null) return;
-        try
-        {
-            if (GodEvolutionLucky >= 0)
-                mgr.Lucky = (int)GodEvolutionLucky;
-            if (GodEvolutionDifficulty >= 0)
-                mgr.difficulty = GodEvolutionDifficulty;
-            if (ShouldFixGodEvolutionRefreshButton)
-                mgr.refreshCount = GetGodEvolutionMenuRefreshCount();
-            if (GodEvolutionMaxPlantCount >= 0)
-                mgr.maxPlantCount = GodEvolutionMaxPlantCount;
-            if (GodEvolutionOptionCount >= 0)
-                mgr.optionCount = GodEvolutionOptionCount;
-            if (GodEvolutionUpgradeBuffChance >= 0 || GodEvolutionFreeUpgradeQuality)
-                mgr.upgradeBuffChance = GodEvolutionFreeUpgradeQuality ? 999999 : GodEvolutionUpgradeBuffChance;
-            if (GodEvolutionSuperUpgrade)
-                mgr.superUpgrade = true;
-            if (GodEvolutionForceSuperQuality)
-                //mgr.appearSuperQualitative = GodEvolutionForceSuperQuality;
-                (_appearSuperQualitativeField ??= typeof(ShootingManager).GetField("appearSuperQualitative",
-                    BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(mgr, true);
-                //mgr.uncrashable = GodEvolutionUncrashable;
-            if (GodEvolutionUncrashable)
-                (_uncrashableField ??= typeof(ShootingManager).GetField("uncrashable",
-                    BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(mgr, true);
-            
-        }
-        catch
-        {
-        }
-    }
-
     public static int GetGodEvolutionMenuRefreshCount()
     {
         if (IsRefreshUnlimited) return 9999999;
         if (GodEvolutionRefreshOverrideActive) return GodEvolutionRefreshCount;
         return 0;
     }
-
-    public static Quality RollQuality()
-    {
-        float total = GodEvolutionQualityDefault + GodEvolutionQualitySilver + GodEvolutionQualityGold +
-                      GodEvolutionQualityDiamond;
-        if (total <= 0f) return Quality.Default;
-        var r = Random.Range(0f, total);
-        if (r < GodEvolutionQualityDefault) return Quality.Default;
-        r -= GodEvolutionQualityDefault;
-        if (r < GodEvolutionQualitySilver) return Quality.silver;
-        r -= GodEvolutionQualitySilver;
-        if (r < GodEvolutionQualityGold) return Quality.gold;
-        return Quality.diamond;
-    }
+    
 
     public static string GetInvestBuffChineseName(int id)
     {

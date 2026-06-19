@@ -160,6 +160,14 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         });
 
     [ReactiveCommand]
+    public void ApplyAllPlantSkins() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ApplyAllPlantSkins,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
     public void CreatePlant() =>
         DataSyncService.SendCommand(new SyncData()
         {
@@ -368,14 +376,6 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         DataSyncService.SendCommand(new SyncData()
         {
             Command = Strings.SpawnPetImp,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void ApplyAllPlantSkins() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.ApplyAllPlantSkins,
             Parameters = []
         });
 

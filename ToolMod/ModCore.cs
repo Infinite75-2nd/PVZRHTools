@@ -76,7 +76,12 @@ namespace ToolMod
             var startInfo = new ProcessStartInfo()
             {
                 FileName = ModifierPath,
-                ArgumentList = { Strings.RunModifierArgument, BepInEx.Paths.GameRootPath },
+                ArgumentList =
+                {
+                    Strings.RunModifierArgument,
+                    BepInEx.Paths.GameRootPath,
+                    Environment.ProcessId.ToString()
+                },
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,

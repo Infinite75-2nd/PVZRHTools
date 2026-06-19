@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
@@ -31,10 +31,12 @@ public static class Program
         using var mutex = new Mutex(true, Mutex, out bool createdNew);
         if (createdNew)
         {
-            App.Bootstrap = !(args.Length is 2 && args[0] is Strings.RunModifierArgument);
+            App.Bootstrap = !(args.Length >= 2 && args[0] is Strings.RunModifierArgument);
             if (!App.Bootstrap)
             {
                 App.GamePath = args[1];
+                if (args.Length >= 3 && int.TryParse(args[2], out var pid))
+                    App.GamePid = pid;
             }
 
             BuildAvaloniaApp()

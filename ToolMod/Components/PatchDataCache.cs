@@ -4,6 +4,7 @@ using System.Reflection;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
 using ToolData;
+using UI;
 using UnityEngine;
 
 namespace ToolMod.Components;
@@ -170,7 +171,7 @@ public class PatchDataCache
 
     public static bool GodEvolutionUnlimitedRefresh { get; set; }
     public static bool GodEvolutionFreeUpgradeQuality { get; set; }
-    public static float GodEvolutionLucky { get; set; } = 1.0f;
+    public static float GodEvolutionLucky { get; set; } = -1.0f;
     public static int GodEvolutionDifficulty { get; set; } = -1;
     public static int GodEvolutionRefreshCount { get; set; } = -1;
     public static int GodEvolutionMaxPlantCount { get; set; } = -1;
@@ -180,11 +181,11 @@ public class PatchDataCache
     public static bool GodEvolutionForceSuperQuality { get; set; }
     public static bool GodEvolutionUncrashable { get; set; }
     public static bool GodEvolutionQualityWeightEnabled { get; set; }
-    public static float GodEvolutionQualityDefault { get; set; } = 1.0f;
-    public static float GodEvolutionQualitySilver { get; set; } = 1.0f;
-    public static float GodEvolutionQualityGold { get; set; } = 1.0f;
-    public static float GodEvolutionQualityDiamond { get; set; } = 1.0f;
-    public static float GodEvolutionDamageMultiplier { get; set; } = 1.0f;
+    public static float GodEvolutionQualityDefault { get; set; } = 55;
+    public static float GodEvolutionQualitySilver { get; set; } =25;
+    public static float GodEvolutionQualityGold { get; set; } = 12;
+    public static float GodEvolutionQualityDiamond { get; set; } = 3;
+    public static float GodEvolutionDamageMultiplier { get; set; } = -1.0f;
     public static bool GodEvolutionMultiSelectBuff { get; set; }
 
     public static bool IsRefreshUnlimited =>
@@ -250,6 +251,8 @@ public class PatchDataCache
     public static FieldInfo? _uncrashableField;
     public static bool[] PVEPresentFlag = new bool[5];
     public static float OriginalHammerFullCD;
+    public static float OriginalGloveFullCD;
+    public static Il2CppSystem.Collections.Generic.Dictionary<Quality, float> OriginalQualityWeights = new();
 
     #endregion
 

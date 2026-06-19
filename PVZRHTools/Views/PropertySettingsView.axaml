@@ -190,6 +190,10 @@
                               DisplayMemberBinding="{Binding Value}"
                               SelectedValueBinding="{Binding Key}"
                               SelectedValue="{Binding LockWheat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="一键获得所有植物皮肤"
+                            Command="{Binding ObtainAllPlantSkinsCommand}" />
+                    <Button Content="一键应用全部植物皮肤"
+                            Command="{Binding ApplyAllPlantSkinsCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>

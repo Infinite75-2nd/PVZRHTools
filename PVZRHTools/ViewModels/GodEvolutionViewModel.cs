@@ -10,13 +10,13 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool GodEvolutionUnlimitedRefresh { get; set; }
     [Reactive] public partial bool GodEvolutionFreeUpgradeQuality { get; set; }
     [Reactive] public partial bool GodEvolutionLuckyEnabled { get; set; }
-    [Reactive] public partial double GodEvolutionLucky { get; set; } = 1.0;
+    [Reactive] public partial double GodEvolutionLucky { get; set; } = 0;
     [Reactive] public partial bool GodEvolutionDifficultyEnabled { get; set; }
     [Reactive] public partial int GodEvolutionDifficulty { get; set; }
     [Reactive] public partial bool GodEvolutionRefreshCountEnabled { get; set; }
     [Reactive] public partial int GodEvolutionRefreshCount { get; set; } = 99999999;
     [Reactive] public partial bool GodEvolutionMaxPlantCountEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionMaxPlantCount { get; set; } = 99;
+    [Reactive] public partial int GodEvolutionMaxPlantCount { get; set; } = 5;
     [Reactive] public partial bool GodEvolutionOptionCountEnabled { get; set; }
     [Reactive] public partial int GodEvolutionOptionCount { get; set; } = 3;
     [Reactive] public partial bool GodEvolutionUpgradeBuffChanceEnabled { get; set; }
@@ -25,23 +25,13 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool GodEvolutionForceSuperQuality { get; set; }
     [Reactive] public partial bool GodEvolutionUncrashable { get; set; }
     [Reactive] public partial bool GodEvolutionQualityWeightEnabled { get; set; }
-    [Reactive] public partial double GodEvolutionQualityDefault { get; set; } = 1.0;
-    [Reactive] public partial double GodEvolutionQualitySilver { get; set; } = 1.0;
-    [Reactive] public partial double GodEvolutionQualityGold { get; set; } = 1.0;
-    [Reactive] public partial double GodEvolutionQualityDiamond { get; set; } = 1.0;
+    [Reactive] public partial double GodEvolutionQualityDefault { get; set; } = 55;
+    [Reactive] public partial double GodEvolutionQualitySilver { get; set; } = 25;
+    [Reactive] public partial double GodEvolutionQualityGold { get; set; } = 12;
+    [Reactive] public partial double GodEvolutionQualityDiamond { get; set; } = 3;
     [Reactive] public partial bool GodEvolutionDamageMultiplierEnabled { get; set; }
     [Reactive] public partial double GodEvolutionDamageMultiplier { get; set; } = 1.0;
     [Reactive] public partial bool GodEvolutionMultiSelectBuff { get; set; }
-
-    [ReactiveCommand]
-    public void GodEvolutionApplyQuality()
-    {
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.GodEvolutionApplyQuality,
-            Parameters = []
-        });
-    }
 
     [ReactiveCommand]
     public void GodEvolutionResetQuality()

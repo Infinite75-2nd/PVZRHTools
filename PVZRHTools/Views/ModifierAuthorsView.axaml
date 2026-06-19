@@ -9,9 +9,7 @@
              x:DataType="vm:ModifierAuthorsViewModel"
              x:Class="PVZRHTools.Views.ModifierAuthorsView">
     <StackPanel Orientation="Vertical" Spacing="10">
-        <TextBlock Text="修改器作者"
-                   Classes="H5"
-                   Theme="{StaticResource TitleTextBlock}" />
+        <u:Divider Content="修改器作者"/>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Infinite75"
                        VerticalAlignment="Center"

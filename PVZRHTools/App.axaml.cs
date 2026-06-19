@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
@@ -48,6 +49,11 @@ public partial class App : Application
 
                 // 加载保存的设置
                 Locator.Current.GetService<ISettingsService>()?.LoadAllViewModelSettings();
+
+                // 监控游戏进程，游戏退出时自动关闭修改器
+                if (GamePid > 0)
+                    _ = MonitorGameProcessAsync();
+
             }
 
             Locator.Current.GetService<INotificationService>()?.NotificationManager = new(desktop.MainWindow)
@@ -65,4 +71,18 @@ public partial class App : Application
 
     public static bool Bootstrap { get; set; }
     public static string GamePath { get; set; } = "";
+    public static int GamePid { get; set; }
+
+    private static async Task MonitorGameProcessAsync()
+    {
+        try
+        {
+            using var process = Process.GetProcessById(GamePid);
+            await process.WaitForExitAsync();
+            Dispatcher.UIThread.InvokeShutdown();
+        }
+        catch
+        {
+        }
+    }
 }

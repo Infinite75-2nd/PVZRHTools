@@ -114,10 +114,6 @@
                         <CheckBox Content="词条无限刷新"
                                   IsChecked="{Binding UnlimitedRefresh,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
-                    <StackPanel IsVisible="False" Orientation="Horizontal">
-                        <Button Content="一键应用全部植物皮肤"
-                                Command="{Binding ApplyAllPlantSkinsCommand}"/>
-                    </StackPanel>
                 </StackPanel>
             </Border>
             <Border>

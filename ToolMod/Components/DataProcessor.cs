@@ -132,6 +132,8 @@ public class DataProcessor : MonoBehaviour
         { Strings.PlantUpgrade, SimpleSyncBool(() => PlantUpgrade) },
         { Strings.SuperStarNoCD, SimpleSyncBool(() => SuperStarNoCD) },
         { Strings.LockWheat, SimpleSyncInt(() => LockWheat) },
+        { Strings.ApplyAllPlantSkins, ApplyAllPlantSkins },
+        { Strings.ObtainAllPlantSkins, ObtainAllPlantSkins },
 
         // 僵尸特性
         { Strings.ZombieDamageLimit, SimpleSyncInt(() => ZombieDamageLimit) },
@@ -158,6 +160,8 @@ public class DataProcessor : MonoBehaviour
         { Strings.RandomBullet, SimpleSyncBool(() => RandomBullet) },
         { Strings.AutoRhythmGame, SimpleSyncBool(() => AutoRhythmGame) },
         { Strings.StarUpBuff, SimpleSyncBool(() => StarUpBuff) },
+
+
 
         #endregion
 
@@ -214,68 +218,68 @@ public class DataProcessor : MonoBehaviour
 
         {
             Strings.GodEvolutionUnlimitedRefresh,
-            SimpleSyncBool(() => GodEvolutionUnlimitedRefresh, () => GodEvolutionApplyQuality([]))
+            SimpleSyncBool(() => GodEvolutionUnlimitedRefresh)
         },
         {
             Strings.GodEvolutionFreeUpgradeQuality,
-            SimpleSyncBool(() => GodEvolutionFreeUpgradeQuality, () => GodEvolutionApplyQuality([]))
+            SimpleSyncBool(() => GodEvolutionFreeUpgradeQuality)
         },
-        { Strings.GodEvolutionLucky, SimpleSyncFloat(() => GodEvolutionLucky, () => GodEvolutionApplyQuality([])) },
+        { Strings.GodEvolutionLucky, SimpleSyncFloat(() => GodEvolutionLucky) },
         {
             Strings.GodEvolutionDifficulty,
-            SimpleSyncInt(() => GodEvolutionDifficulty, () => GodEvolutionApplyQuality([]))
+            SimpleSyncInt(() => GodEvolutionDifficulty)
         },
         {
             Strings.GodEvolutionRefreshCount,
-            SimpleSyncInt(() => GodEvolutionRefreshCount, () => GodEvolutionApplyQuality([]))
+            SimpleSyncInt(() => GodEvolutionRefreshCount)
         },
         {
             Strings.GodEvolutionMaxPlantCount,
-            SimpleSyncInt(() => GodEvolutionMaxPlantCount, () => GodEvolutionApplyQuality([]))
+            SimpleSyncInt(() => GodEvolutionMaxPlantCount)
         },
         {
             Strings.GodEvolutionOptionCount,
-            SimpleSyncInt(() => GodEvolutionOptionCount, () => GodEvolutionApplyQuality([]))
+            SimpleSyncInt(() => GodEvolutionOptionCount)
         },
         {
             Strings.GodEvolutionUpgradeBuffChance,
-            SimpleSyncInt(() => GodEvolutionUpgradeBuffChance, () => GodEvolutionApplyQuality([]))
+            SimpleSyncInt(() => GodEvolutionUpgradeBuffChance)
         },
         {
             Strings.GodEvolutionSuperUpgrade,
-            SimpleSyncBool(() => GodEvolutionSuperUpgrade, () => GodEvolutionApplyQuality([]))
+            SimpleSyncBool(() => GodEvolutionSuperUpgrade)
         },
         {
             Strings.GodEvolutionForceSuperQuality,
-            SimpleSyncBool(() => GodEvolutionForceSuperQuality, () => GodEvolutionApplyQuality([]))
+            SimpleSyncBool(() => GodEvolutionForceSuperQuality)
         },
         {
             Strings.GodEvolutionUncrashable,
-            SimpleSyncBool(() => GodEvolutionUncrashable, () => GodEvolutionApplyQuality([]))
+            SimpleSyncBool(() => GodEvolutionUncrashable)
         },
         {
             Strings.GodEvolutionQualityWeightEnabled,
-            SimpleSyncBool(() => GodEvolutionQualityWeightEnabled, () => GodEvolutionApplyQuality([]))
+            SimpleSyncBool(() => GodEvolutionQualityWeightEnabled)
         },
         {
             Strings.GodEvolutionQualityDefault,
-            SimpleSyncFloat(() => GodEvolutionQualityDefault, () => GodEvolutionApplyQuality([]))
+            SimpleSyncFloat(() => GodEvolutionQualityDefault)
         },
         {
             Strings.GodEvolutionQualitySilver,
-            SimpleSyncFloat(() => GodEvolutionQualitySilver, () => GodEvolutionApplyQuality([]))
+            SimpleSyncFloat(() => GodEvolutionQualitySilver)
         },
         {
             Strings.GodEvolutionQualityGold,
-            SimpleSyncFloat(() => GodEvolutionQualityGold, () => GodEvolutionApplyQuality([]))
+            SimpleSyncFloat(() => GodEvolutionQualityGold)
         },
         {
             Strings.GodEvolutionQualityDiamond,
-            SimpleSyncFloat(() => GodEvolutionQualityDiamond, () => GodEvolutionApplyQuality([]))
+            SimpleSyncFloat(() => GodEvolutionQualityDiamond)
         },
         {
             Strings.GodEvolutionDamageMultiplier,
-            SimpleSyncFloat(() => GodEvolutionDamageMultiplier, () => GodEvolutionApplyQuality([]))
+            SimpleSyncFloat(() => GodEvolutionDamageMultiplier)
         },
         { Strings.GodEvolutionUnlockAll, GodEvolutionUnlockAll },
         { Strings.GodEvolutionMultiSelectBuff, SimpleSyncBool(() => GodEvolutionMultiSelectBuff) },
@@ -335,7 +339,6 @@ public class DataProcessor : MonoBehaviour
         { Strings.PlayParticle, PlayParticle },
         { Strings.GetSnapshot, GetSnapshot },
         { Strings.RestoreSnapshot, RestoreSnapshot },
-        { Strings.GodEvolutionApplyQuality, GodEvolutionApplyQuality },
         { Strings.GodEvolutionResetQuality, GodEvolutionResetQuality },
         { Strings.SpawnPetGargantuar, SpawnPetGargantuar },
         { Strings.SpawnPetFootball, SpawnPetFootball },
@@ -345,7 +348,6 @@ public class DataProcessor : MonoBehaviour
         { Strings.SpawnPetHorse, SpawnPetHorse },
         { Strings.SpawnPetImp, SpawnPetImp },
         { Strings.SpawnPetKirov, SpawnPetKirov },
-        { Strings.ApplyAllPlantSkins, ApplyAllPlantSkins }
     };
 
     #region OverallCommands
@@ -765,7 +767,15 @@ public class DataProcessor : MonoBehaviour
 
     private static void CreateUltimateMeteorite(List<string> _) => Board.Instance.CreateUltimateMateorite();
 
-    private static void CreateSolarMeteorite(List<string> _) => Board.Instance.CreateUltimateMateorite2();
+    private static void CreateSolarMeteorite(List<string> _) {
+        GameObject? original = GameAPP.itemPrefab[47];
+        if(original == null||GameAPP.board == null)return;
+        GameObject? obj = Instantiate(original);
+        if(obj == null)return;
+        Transform transform = obj.transform;
+        Transform boardTransform = GameAPP.board.transform;
+        transform.SetParent(boardTransform);
+    }
 
     private static void NextWave(List<string> _)
     {
@@ -1565,7 +1575,7 @@ public class DataProcessor : MonoBehaviour
 
     public static void RestoreSnapshot(List<string> args)
     {
-        Snapshot target = null;
+        Snapshot target = new();
         if (Snapshots.Count > 0)
         {
             target = Snapshots[^1];
@@ -1594,12 +1604,6 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void GodEvolutionApplyQuality(List<string> _)
-    {
-        if (ShootingManager.Instance != null)
-            ApplySettings(ShootingManager.Instance);
-    }
-
     public static void GodEvolutionResetQuality(List<string> _)
     {
         GodEvolutionUnlimitedRefresh = false;
@@ -1614,12 +1618,11 @@ public class DataProcessor : MonoBehaviour
         GodEvolutionForceSuperQuality = false;
         GodEvolutionUncrashable = false;
         GodEvolutionQualityWeightEnabled = false;
-        GodEvolutionQualityDefault = 1f;
-        GodEvolutionQualitySilver = 1f;
-        GodEvolutionQualityGold = 1f;
-        GodEvolutionQualityDiamond = 1f;
+        GodEvolutionQualityDefault = 55f;
+        GodEvolutionQualitySilver = 25f;
+        GodEvolutionQualityGold = 12f;
+        GodEvolutionQualityDiamond = 3f;
         GodEvolutionDamageMultiplier = -1f;
-        GodEvolutionApplyQuality(_);
     }
 
     /// <summary>
@@ -1648,7 +1651,7 @@ public class DataProcessor : MonoBehaviour
         list.Add(newRecord);
     }
 
-    public static void GodEvolutionUnlockAll(List<string> _)
+    private static void GodEvolutionUnlockAll(List<string> _)
     {
         var data = ShootingManager.Data;
         if (data == null) return;
@@ -1672,7 +1675,7 @@ public class DataProcessor : MonoBehaviour
         InGameText.Instance?.ShowText("已解锁全部难度与模式", 5);
     }
 
-    public static void SpawnPetGargantuar(List<string> _)
+    private static void SpawnPetGargantuar(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1681,7 +1684,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void SpawnPetFootball(List<string> _)
+    private static void SpawnPetFootball(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1690,7 +1693,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void SpawnPetSnowBoss(List<string> _)
+    private static void SpawnPetSnowBoss(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1699,7 +1702,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void SpawnPetJackbox(List<string> _)
+    private static void SpawnPetJackbox(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1708,7 +1711,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void SpawnPetDrown(List<string> _)
+    private static void SpawnPetDrown(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1717,7 +1720,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void SpawnPetHorse(List<string> _)
+    private static void SpawnPetHorse(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1726,7 +1729,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void SpawnPetImp(List<string> _)
+    private static void SpawnPetImp(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1735,7 +1738,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void SpawnPetKirov(List<string> _)
+    private static void SpawnPetKirov(List<string> _)
     {
         if (Mouse.Instance != null)
         {
@@ -1748,9 +1751,9 @@ public class DataProcessor : MonoBehaviour
     /// 一键应用全部植物皮肤：遍历所有植物类型，将每种植物设置为最后一个可用皮肤（最高阶皮肤）
     /// 使用游戏原生 SetSkin 方法避免直接操作 Il2Cpp 字典导致的运行时类型转换失败
     /// </summary>
-    public static void ApplyAllPlantSkins(List<string> _)
+    private static void ApplyAllPlantSkins(List<string> _)
     {
-        if (!InGame) return;
+        //if (!InGame) return;
         try
         {
             var rm = GameAPP.resourcesManager;
@@ -1793,6 +1796,23 @@ public class DataProcessor : MonoBehaviour
         catch (Exception ex)
         {
             ModCore.Instance.Log.LogError($"ApplyAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
+    
+    private static void ObtainAllPlantSkins(List<string> _)
+    {
+        try
+        {
+            GameAPP.skinLevelCompleted.Clear();
+            for (var i = 1; i <= 10; i++)
+            {
+                GameAPP.skinLevelCompleted.Add(i);
+            }
+            InGameText.Instance?.ShowText("已获得所有植物皮肤", 2);
+        }
+        catch (Exception ex)
+        {
+            ModCore.Instance.Log.LogError($"ObtainAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
         }
     }
 }

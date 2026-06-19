@@ -133,7 +133,7 @@
                         <TextBlock Text="{Binding }"
                                    Classes="H6"
                                    Theme="{DynamicResource TitleTextBlock}"
-                                   Foreground="{DynamicResource SemiViolet6}" />
+                                   Foreground="{DynamicResource SemiViolet5}" />
                     </DataTemplate>
                 </Setter.Value>
             </Setter>

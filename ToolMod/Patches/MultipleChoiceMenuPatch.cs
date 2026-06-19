@@ -4,7 +4,6 @@ using System.Reflection;
 using GameLevel.RogueShooting;
 using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UI;
 using static ToolMod.Components.PatchDataCache;
 using static ToolMod.Utils;
 
@@ -13,10 +12,10 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(MultipleChoiceMenu))]
 public static class MultipleChoiceMenuRefreshPatch
 {
-    private static System.Reflection.FieldInfo? _refreshCountField;
+    private static FieldInfo? _refreshCountField;
 
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(MultipleChoiceMenu.SetRefreshable), typeof(bool), typeof(int), typeof(bool), typeof(bool))]
+    [HarmonyPatch(nameof(MultipleChoiceMenu.SetRefreshable))]
     public static void PrefixSetRefreshable(ref int refreshCount, ref bool interactable)
     {
         if (!ShouldFixGodEvolutionRefreshButton) return;
@@ -25,7 +24,7 @@ public static class MultipleChoiceMenuRefreshPatch
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(MultipleChoiceMenu.SetRefreshable), typeof(bool), typeof(int), typeof(bool), typeof(bool))]
+    [HarmonyPatch(nameof(MultipleChoiceMenu.SetRefreshable))]
     public static void PostfixSetRefreshable(MultipleChoiceMenu __instance)
     {
         if (!ShouldFixGodEvolutionRefreshButton) return;
@@ -47,7 +46,7 @@ public static class MultipleChoiceMenuRefreshPatch
         try
         {
             _refreshCountField ??= typeof(MultipleChoiceMenu).GetField("refreshCount",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                BindingFlags.Instance | BindingFlags.NonPublic);
             _refreshCountField?.SetValue(__instance, GetGodEvolutionMenuRefreshCount());
         }
         catch
@@ -63,7 +62,7 @@ public static class MultipleChoiceMenuRefreshPatch
         try
         {
             _refreshCountField ??= typeof(MultipleChoiceMenu).GetField("refreshCount",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                BindingFlags.Instance | BindingFlags.NonPublic);
             var count = GetGodEvolutionMenuRefreshCount();
             _refreshCountField?.SetValue(__instance, count);
             if (__instance?.refreshButton != null)
@@ -88,7 +87,7 @@ public static class MultipleChoiceMenuRefreshPatch
     /// <summary>判断当前是否在游戏内 Buff 选择环境（而非难度选择）</summary>
     private static bool IsInGameBuffContext()
     {
-        try { return GodEvolutionMultiSelectBuff && ShootingManager.Instance != null; }
+        try { return GodEvolutionMultiSelectBuff&&Board.Instance!=null&&Board.Instance.boardTag.rogueShooting && ShootingManager.Instance != null; }
         catch { return false; }
     }
 

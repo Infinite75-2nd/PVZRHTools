@@ -74,5 +74,14 @@ public static class MousePatch
                 CreatePlant.Instance.SetPlant(aa.thePlantColumn, aa.thePlantRow, aa.thePlantType);
             }
         }
+
+        OriginalGloveFullCD = Glove.Instance.fullCD;
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(Mouse.TryToSetZombieByCard))]
+    public static void PostTryToSetZombieByCard(Mouse __instance)
+    {
+        OriginalGloveFullCD = Glove.Instance.fullCD;
     }
 }
