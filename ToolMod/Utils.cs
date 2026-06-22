@@ -215,7 +215,7 @@ public static class Utils
         {
             try
             {
-                InGameUltiBuffs[ulti] = Lawnf.TravelUltimate(ulti) ? 1 : 0;
+                InGameUltiBuffs[ulti] = Lawnf.TravelUltimateLevel(ulti);
             }
             catch
             {
@@ -341,6 +341,7 @@ public static class Utils
     {
         try
         {
+            OperatingBuff = true;
             var travelMgr = ResolveTravelMgr(autoCreate: true);
             if (travelMgr == null)
             {
@@ -400,8 +401,9 @@ public static class Utils
                 }
             }
 
-            // 究极词条：以游戏为主，但对“手动取消勾选”的该词条执行一次关闭
+            // 究极词条：以游戏为主，但对"手动取消勾选"的该词条执行一次关闭
             // - 勾选 true 且未解锁 -> 解锁
+            // - 已解锁但修改等级（实时修改） -> 仅调整列表元素
             // - 从 true 取消勾选 -> 只对这一条从当前局移除，其它究极词条不受影响。
             if (TravelDictionary.ultimateBuffsText != null)
             {
@@ -411,26 +413,61 @@ public static class Utils
                     bool unlocked =
                         (data.ultiBuffs != null && data.ultiBuffs.Contains(kvp.Key)) ||
                         (data.ultiBuffs_lv2 != null && data.ultiBuffs_lv2.Contains(kvp.Key));
-
+            
+                    // 新增词条：未解锁且 level > 0，调用 GetUltiBuff 触发游戏内部逻辑
                     if (!unlocked && InGameUltiBuffs[kvp.Key] > 0)
                     {
                         if (!InGame)
                         {
                             continue;
                         }
-
+            
                         try
                         {
-                            travelMgr.GetUltiBuff(kvp.Key, InGameUltiBuffs[kvp.Key] is 2);
-                            if (InGameUltiBuffs[kvp.Key] is not 2)
+                            travelMgr.GetUltiBuff(kvp.Key, InGameUltiBuffs[kvp.Key] == 2);
+                        }
+                        catch (System.Exception ex)
+                        {
+                            ModCore.Instance.Log?.LogWarning(
+                                $"UpdateInGameBuffs: GetUltiBuff({kvp.Key}) 异常: {ex.Message}");
+                        }
+                    }
+            
+                    // 只要 level > 0，就确保列表状态与当前等级一致
+                    // 这同时覆盖了两种情况：
+                    // - 新解锁的词条（上面刚调用了 GetUltiBuff）
+                    // - 已解锁的词条（实时修改等级，如 Lv1 -> Lv2 或 Lv2 -> Lv1）
+                    if (InGameUltiBuffs[kvp.Key] > 0)
+                    {
+                        try
+                        {
+                            if (InGameUltiBuffs[kvp.Key] == 1)
                             {
+                                if (data.ultiBuffs != null)
+                                {
+                                    data.ultiBuffs.Remove(kvp.Key);
+                                    data.ultiBuffs.Add(kvp.Key);
+                                }
                                 data.ultiBuffs_lv2?.Remove(kvp.Key);
+                            }
+                            else if (InGameUltiBuffs[kvp.Key] == 2)
+                            {
+                                if (data.ultiBuffs != null)
+                                {
+                                    data.ultiBuffs.Remove(kvp.Key);
+                                    data.ultiBuffs.Add(kvp.Key);
+                                }
+                                if (data.ultiBuffs_lv2 != null)
+                                {
+                                    data.ultiBuffs_lv2.Remove(kvp.Key);
+                                    data.ultiBuffs_lv2.Add(kvp.Key);
+                                }
                             }
                         }
                         catch (System.Exception ex)
                         {
                             ModCore.Instance.Log?.LogWarning(
-                                $"UpdateInGameBuffs: 解锁强究词条 {kvp.Key} (id={kvp.Key}) 失败: {ex.Message}");
+                                $"UpdateInGameBuffs: 手动更新词条列表 {kvp.Key} 失败: {ex.Message}");
                         }
                     }
                     else if (InGameUltiBuffs[kvp.Key] is 0 && AllowBuffRemoval && unlocked)
@@ -554,6 +591,10 @@ public static class Utils
         catch (Exception ex)
         {
             ModCore.Instance.Log?.LogError($"UpdateInGameBuffs: 异常: {ex.Message}\n{ex.StackTrace}");
+        }
+        finally
+        {
+            OperatingBuff = false;
         }
     }
 
@@ -873,7 +914,7 @@ public static class Utils
             foreach (var t in zombiesNow)
             {
                 var zombie = t?.Cast<Zombie>();
-                if (zombie is not null && zombie.gameObject is not null && zombie.gameObject.activeInHierarchy)
+                if (zombie != null && zombie.gameObject != null &&zombie is { Alive: true, gameObject.activeInHierarchy: true })
                 {
                     int isMindControlled = zombie.isMindControlled ? 1 : 0;
                     var zombieData =

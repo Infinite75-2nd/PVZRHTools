@@ -180,6 +180,7 @@ namespace ToolMod
                             var id = (int)advBuffKey.Key;
                             advBuffs.Add(id, $"#{id} {advBuffKey.value}");
                             AdvBuffs.Add((AdvBuff)id, 0);
+                            InGameAdvBuffs.Add((AdvBuff)id, 0);
                         }
                     }
 
@@ -192,6 +193,7 @@ namespace ToolMod
                             var id = (int)ultiBuffKey.Key;
                             ultiBuffs.Add(id, $"#{id} {ultiBuffKey.value}");
                             UltiBuffs.Add((UltiBuff)id, 0);
+                            InGameUltiBuffs.Add((UltiBuff)id, 0);
                         }
                     }
 
@@ -224,6 +226,7 @@ namespace ToolMod
                             debuffs.Add(id,
                                 $"#{id} {(string.IsNullOrEmpty(text) ? ((TravelDebuff)id).ToString() : text)}");
                             Debuffs.Add((TravelDebuff)id, false);
+                            InGameDebuffs.Add((TravelDebuff)id, false);
                         }
                     }
                 }
@@ -251,6 +254,7 @@ namespace ToolMod
                             text = ((InvestBuff)id).ToString();
                         investBuffs.Add(id, $"#{id} {text}");
                         InvestBuffs.Add((InvestBuff)id, false);
+                        InGameInvestBuffs.Add((InvestBuff)id, false);
                     }
                 }
                 catch (Exception ex)

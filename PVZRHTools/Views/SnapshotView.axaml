@@ -1,27 +1,135 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PVZRHTools.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
-             x:CompileBindings="True"
              x:Class="PVZRHTools.Views.SnapshotView"
              x:DataType="vm:SnapshotViewModel">
+    
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+            <Setter Property="MinWidth" Value="66" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="MinWidth" Value="50" />
+        </Style>
+    </UserControl.Styles>
 
     <WrapPanel Orientation="Vertical">
         <Border>
             <StackPanel Orientation="Vertical">
                 <u:Divider Content="局内存档/回溯" />
-                <u:ButtonGroup>
+                <StackPanel Orientation="Horizontal">
                     <Button Content="立即保存快照"
                             Command="{Binding GetSnapshotCommand}" />
                     <Button Content="恢复最近快照"
                             Command="{Binding RestoreSnapshotCommand}" />
                     <Button Content="刷新快照信息"
                             Command="{Binding RefreshSnapshotInfoCommand}" />
-                </u:ButtonGroup>
-                <TextBlock Text="{Binding SnapshotString}" />
+                </StackPanel>
+
+                <TextBlock Text="{Binding StatusText}"
+                           Margin="10" />
+
+                <StackPanel Orientation="Vertical"
+                            Spacing="4"
+                            Margin="5">
+                    <!-- 基本信息 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="捕获时间" />
+                        <TextBlock Text="{Binding CapturedAtText}" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="关卡类型" />
+                        <TextBlock Text="{Binding BoardTypeText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="关卡编号" />
+                        <TextBlock Text="{Binding LevelNumberText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="生存轮次" />
+                        <TextBlock Text="{Binding SurvivalRoundText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- 波次信息 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="波次" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <TextBlock Text="{Binding WaveDisplayText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="旗帜波" />
+                        <TextBlock Text="{Binding IsHugeWaveText}" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="下波时间" />
+                        <TextBlock Text="{Binding TimeUntilNextWaveText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="波间隔" />
+                        <TextBlock Text="{Binding WaveIntervalText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- 资源 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="阳光" />
+                        <TextBlock Text="{Binding SunText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="金币" />
+                        <TextBlock Text="{Binding MoneyText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- BoardTag -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="种子雨" />
+                        <TextBlock Text="{Binding IsSeedRainText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="列种" />
+                        <TextBlock Text="{Binding IsColumnText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="胆小菇梦境" />
+                        <TextBlock Text="{Binding IsScaredyDreamText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- 词条计数 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="高级词条" />
+                        <TextBlock Text="{Binding AdvOnCountText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="究极词条" />
+                        <TextBlock Text="{Binding UltiOnCountText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="负面词条" />
+                        <TextBlock Text="{Binding DebuffOnCountText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="投资词条" />
+                        <TextBlock Text="{Binding InvestOnCountText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- 物品 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="格子物品" />
+                        <TextBlock Text="{Binding GridItemsCountText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="罐子" />
+                        <TextBlock Text="{Binding VasesCountText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- 卡槽/冷却 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="卡槽" />
+                        <TextBlock Text="{Binding CardBankCountText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="卡片冷却" />
+                        <TextBlock Text="{Binding CardCDsCountText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="掉落物冷却" />
+                        <TextBlock Text="{Binding DroppedCDsCountText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- 血量 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="植物血量" />
+                        <TextBlock Text="{Binding PlantHealthsCountText}" VerticalAlignment="Center" />
+                        <Label Classes="Ghost LightBlue" Content="僵尸血量" />
+                        <TextBlock Text="{Binding ZombieHealthsCountText}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- 其他 -->
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Label Classes="Ghost LightBlue" Content="随机种子" />
+                        <TextBlock Text="{Binding RandomSeedText}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
         </Border>
     </WrapPanel>

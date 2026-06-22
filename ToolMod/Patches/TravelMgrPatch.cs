@@ -4,6 +4,7 @@ using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using UnityEngine;
 using static ToolMod.Utils;
+using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Patches;
 
@@ -11,7 +12,7 @@ namespace ToolMod.Patches;
 /// 监听游戏词条状态变化，实时同步到修改器
 /// </summary>
 [HarmonyPatch(typeof(TravelMgr))]
-public static class TravelPatch
+public static class TravelMgrPatch
 {
     /// <summary>
     /// GetNormalBuff 后置补丁：解锁高级词条后实时同步到修改器
@@ -20,6 +21,7 @@ public static class TravelPatch
     [HarmonyPatch(nameof(TravelMgr.GetNormalBuff))]
     public static void PostGetNormalBuff(TravelMgr __instance, AdvBuff __0)
     {
+        if (OperatingBuff) return;
         try
         {
             // 延迟一小段时间后同步，确保游戏状态已更新
@@ -38,6 +40,7 @@ public static class TravelPatch
     [HarmonyPatch(nameof(TravelMgr.GetUltiBuff))]
     public static void PostGetUltiBuff(TravelMgr __instance, UltiBuff __0, bool __1)
     {
+        if (OperatingBuff) return;
         try
         {
             // 延迟一小段时间后同步，确保游戏状态已更新
@@ -56,6 +59,7 @@ public static class TravelPatch
     [HarmonyPatch(nameof(TravelMgr.GetDebuff))]
     public static void PostGetDebuff(TravelMgr __instance, TravelDebuff __0)
     {
+        if (OperatingBuff) return;
         try
         {
             // 延迟一小段时间后同步，确保游戏状态已更新
@@ -74,6 +78,7 @@ public static class TravelPatch
     [HarmonyPatch(nameof(TravelMgr.GetInvestBuff))]
     public static void PostGetInvestBuff(TravelMgr __instance, InvestBuff __0)
     {
+        if (OperatingBuff) return;
         try
         {
             // 延迟一小段时间后同步，确保游戏状态已更新

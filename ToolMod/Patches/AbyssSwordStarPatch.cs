@@ -31,7 +31,7 @@ public static class AbyssSwordStarPatch
         __state = GameAPP.theBoardType;
         if (UnlockRedCardPlants)
         {
-            GameAPP.theBoardType = (LevelType)7; // 神秘模式
+            GameAPP.theBoardType = LevelType.AbyssLevel;
         }
     }
 

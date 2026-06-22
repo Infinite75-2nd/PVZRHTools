@@ -109,20 +109,10 @@ public static class InitBoardPatch
             ModCore.Instance.Log?.LogWarning("[PVZRHTools] PostInitBoard: 无法找到 TravelMgr 组件");
             yield break;
         }
-        // 已移除：不再在游戏开局自动生成小推车
         yield return null;
         if (!(GameAPP.theBoardType == (LevelType)3 && Board.Instance.theCurrentSurvivalRound != 1))
         {
             yield return null;
-
-            // 3.4.1：不再直接操作 TravelMgr.advancedUpgrades，改为在需要时通过 GetNormalBuff 应用
-
-            // 3.4.1：不再直接操作 TravelMgr 内部的 ultimateUpgrades/debuff 数组，
-            // 需要时通过 GetUltiBuff / GetDebuff 接口来应用词条。
-
-            // 设置 BoardTag 标志，使游戏识别并应用词条效果
-            // 注意：这里只在关卡本身就是旅行关（isTravel 为 true）时，才开启 enableTravelBuff，
-            // 避免把所有普通关卡都强行当成旅行关，从而影响小推车等原版关卡行为
             try
             {
                 if (Board.Instance != null && GameAPP.board != null)

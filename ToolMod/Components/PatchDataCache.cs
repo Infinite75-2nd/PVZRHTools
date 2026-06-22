@@ -253,6 +253,7 @@ public class PatchDataCache
     public static float OriginalHammerFullCD;
     public static float OriginalGloveFullCD;
     public static Il2CppSystem.Collections.Generic.Dictionary<Quality, float> OriginalQualityWeights = new();
+    public static bool OperatingBuff;
 
     #endregion
 

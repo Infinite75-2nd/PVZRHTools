@@ -543,7 +543,7 @@ public class DataProcessor : MonoBehaviour
                 {
                     for (var i = 0; i < Board.Instance!.rowNum; i++)
                     for (var j = 0; j < Board.Instance.columnNum; j++)
-                        global::CreatePlant.Instance.SetPlant(j, i, (PlantType)id);
+                        global::CreatePlant.Instance.SetPlant(j, i, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
 
                     continue;
                 }
@@ -551,7 +551,7 @@ public class DataProcessor : MonoBehaviour
                 if (r == 0 && c != 0)
                 {
                     for (var j = 0; j < Board.Instance!.columnNum; j++)
-                        global::CreatePlant.Instance.SetPlant(c - 1, j, (PlantType)id);
+                        global::CreatePlant.Instance.SetPlant(c - 1, j, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
 
                     continue;
                 }
@@ -559,13 +559,13 @@ public class DataProcessor : MonoBehaviour
                 if (c == 0 && r != 0)
                 {
                     for (var j = 0; j < Board.Instance!.columnNum; j++)
-                        global::CreatePlant.Instance.SetPlant(j, r - 1, (PlantType)id);
+                        global::CreatePlant.Instance.SetPlant(j, r - 1, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
 
                     continue;
                 }
 
                 if (c > 0 && r > 0 && c <= Board.Instance!.columnNum && r <= Board.Instance.rowNum)
-                    global::CreatePlant.Instance.SetPlant(c - 1, r - 1, (PlantType)id);
+                    global::CreatePlant.Instance.SetPlant(c - 1, r - 1, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
             }
         }
         catch
@@ -581,12 +581,11 @@ public class DataProcessor : MonoBehaviour
     {
         var plantType = (PlantType)int.Parse(args[0]);
         var repeatTimes = int.Parse(args[1]);
-        if ((int)plantType is -1) plantType = GameAPP.resourcesManager.allPlants.GetRandom();
 
         if (InGameUI.Instance == null) return;
         for (int i = 0; i < repeatTimes; i++)
         {
-            var droppedCard = Lawnf.SetDroppedCard(new Vector2(0f, 0f), plantType);
+            var droppedCard = Lawnf.SetDroppedCard(new Vector2(0f, 0f), plantType is PlantType.Nothing ? GameAPP.resourcesManager.allPlants.GetRandom():plantType);
             if (droppedCard != null)
                 droppedCard.GameObject().transform.SetParent(InGameUI.Instance.transform);
         }
@@ -598,13 +597,12 @@ public class DataProcessor : MonoBehaviour
         var r = int.Parse(args[1]);
         var c = int.Parse(args[2]);
         var PvPPotRange = bool.Parse(args[3]);
-        if (id is -1) id = (int)GameAPP.resourcesManager.allPlants.GetRandom();
         if (PvPPotRange)
         {
             for (var i = 0; i < Board.Instance!.rowNum; i++)
             for (var j = 3; j < Board.Instance.columnNum; j++)
                 GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                    (PlantType)id;
+                    id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
         }
         else
         {
@@ -612,21 +610,21 @@ public class DataProcessor : MonoBehaviour
                 for (var i = 0; i < Board.Instance!.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
                     GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                        (PlantType)id;
+                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
 
             if (r == 0 && c != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(c - 1, j, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                        (PlantType)id;
+                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
 
             if (c == 0 && r != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(j, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                        (PlantType)id;
+                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
 
             if (c > 0 && r > 0 && c <= Board.Instance!.columnNum && r <= Board.Instance.rowNum)
                 GridItem.SetGridItem(c - 1, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                    (PlantType)id;
+                    id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
         }
     }
 
@@ -644,27 +642,27 @@ public class DataProcessor : MonoBehaviour
             {
                 for (var i = 0; i < Board.Instance.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombie(i, (ZombieType)id, -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombie(i, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id , -5f + j * 1.37f);
                 continue;
             }
 
             if (r == 0 && c != 0)
             {
                 for (var j = 0; j < Board.Instance.rowNum; j++)
-                    global::CreateZombie.Instance.SetZombie(j, (ZombieType)id, -5f + (c - 1) * 1.37f);
+                    global::CreateZombie.Instance.SetZombie(j, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
                 continue;
             }
 
             if (c == 0 && r != 0)
             {
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombie(r - 1, (ZombieType)id, -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombie(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + j * 1.37f);
                 continue;
             }
 
             if (c > 0 && r > 0 && c <= Board.Instance.columnNum + 1 && r <= Board.Instance.rowNum)
             {
-                global::CreateZombie.Instance.SetZombie(r - 1, (ZombieType)id, -5f + (c - 1) * 1.37f);
+                global::CreateZombie.Instance.SetZombie(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
             }
         }
     }
@@ -675,7 +673,6 @@ public class DataProcessor : MonoBehaviour
         var r = int.Parse(args[1]);
         var c = int.Parse(args[2]);
         var repeatTimes = int.Parse(args[3]);
-        if (id is -1) id = (int)GameAPP.resourcesManager.allZombieTypes.GetRandom();
         if (repeatTimes > 50) repeatTimes = 50;
         for (var n = 0; n < repeatTimes; n++)
         {
@@ -683,27 +680,27 @@ public class DataProcessor : MonoBehaviour
             {
                 for (var i = 0; i < Board.Instance.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombieWithMindControl(i, (ZombieType)id, -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombieWithMindControl(i, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + j * 1.37f);
                 continue;
             }
 
             if (r == 0 && c != 0)
             {
                 for (var j = 0; j < Board.Instance.rowNum; j++)
-                    global::CreateZombie.Instance.SetZombieWithMindControl(j, (ZombieType)id, -5f + (c - 1) * 1.37f);
+                    global::CreateZombie.Instance.SetZombieWithMindControl(j, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
                 continue;
             }
 
             if (c == 0 && r != 0)
             {
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombieWithMindControl(r - 1, (ZombieType)id, -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombieWithMindControl(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + j * 1.37f);
                 continue;
             }
 
             if (c > 0 && r > 0 && c <= Board.Instance.columnNum + 1 && r <= Board.Instance.rowNum)
             {
-                global::CreateZombie.Instance.SetZombieWithMindControl(r - 1, (ZombieType)id, -5f + (c - 1) * 1.37f);
+                global::CreateZombie.Instance.SetZombieWithMindControl(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
             }
         }
     }
@@ -720,7 +717,7 @@ public class DataProcessor : MonoBehaviour
             for (var i = 0; i < Board.Instance!.rowNum; i++)
             for (var j = 3; j < Board.Instance.columnNum; j++)
                 GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                    (ZombieType)id;
+                    id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
         }
         else
         {
@@ -728,21 +725,21 @@ public class DataProcessor : MonoBehaviour
                 for (var i = 0; i < Board.Instance!.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
                     GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                        (ZombieType)id;
+                        id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
 
             if (r == 0 && c != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(c - 1, j, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                        (ZombieType)id;
+                        id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
 
             if (c == 0 && r != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(j, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                        (ZombieType)id;
+                        id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
 
             if (c > 0 && r > 0 && c <= Board.Instance!.columnNum && r <= Board.Instance.rowNum)
                 GridItem.SetGridItem(c - 1, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                    (ZombieType)id;
+                    id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
         }
     }
 

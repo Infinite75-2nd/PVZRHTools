@@ -40,27 +40,13 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
-                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        IsChecked="{Binding Level, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <!--<u:NumericIntUpDown
-                                                Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
-                                                Minimum="0"
-                                                Maximum="2"
-                                                InnerLeftContent="等级"
-                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
-                                                <Interaction.Behaviors>
-                                                    <EventTrigger EventName="ValueChanged">
-                                                        <InvokeCommandAction
-                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).AdvBuffLevelChangedCommand}"
-                                                            PassEventArgsToCommand="True" />
-                                                    </EventTrigger>
-                                                </Interaction.Behaviors>
-                                            </u:NumericIntUpDown>-->
                                             <TextBlock Text="{Binding Name}"
                                                        TextAlignment="Left"
                                                        HorizontalAlignment="Left"
@@ -84,27 +70,13 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
-                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        IsChecked="{Binding Level, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <!--<u:NumericIntUpDown
-                                                Value="{Binding Level, Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
-                                                Minimum="0"
-                                                Maximum="2"
-                                                InnerLeftContent="等级"
-                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
-                                                <Interaction.Behaviors>
-                                                    <EventTrigger EventName="ValueChanged">
-                                                        <InvokeCommandAction
-                                                            Command="{Binding $parent[UserControl].((vm:TravelBuffViewModel)DataContext).InGameAdvBuffLevelChangedCommand}"
-                                                            PassEventArgsToCommand="True" />
-                                                    </EventTrigger>
-                                                </Interaction.Behaviors>
-                                            </u:NumericIntUpDown>-->
                                             <TextBlock Text="{Binding Name}"
                                                        TextAlignment="Left"
                                                        HorizontalAlignment="Left"
@@ -133,7 +105,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
-                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        IsChecked="{Binding Level, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
@@ -171,7 +143,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
-                                        IsChecked="{Binding Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource IntToBoolConverter}}"
+                                        IsChecked="{Binding Level, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}"
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         Tag="{Binding ID}"
@@ -265,12 +237,12 @@
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
                             <Button Content="全选"
-                                    Command="{Binding InGameInvestBuffChooseAllCommand}" />
+                                    Command="{Binding InvestBuffChooseAllCommand}" />
                             <Button Content="全不选"
-                                    Command="{Binding InGameInvestBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameInvestBuffSearchChanged" />
+                                    Command="{Binding InvestBuffDeselectAllCommand}" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInvestBuffSearchChanged" />
                         </StackPanel>
-                        <ItemsControl ItemsSource="{Binding InGameInvestBuffs}">
+                        <ItemsControl ItemsSource="{Binding InvestBuffs}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
@@ -295,9 +267,9 @@
                                     Command="{Binding InGameInvestBuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InGameInvestBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInvestBuffSearchChanged" />
+                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameInvestBuffSearchChanged" />
                         </StackPanel>
-                        <ItemsControl ItemsSource="{Binding InvestBuffs}">
+                        <ItemsControl ItemsSource="{Binding InGameInvestBuffs}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox

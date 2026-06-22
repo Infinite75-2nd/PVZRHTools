@@ -11,7 +11,51 @@ namespace PVZRHTools.ViewModels;
 
 public partial class SnapshotViewModel(IDataSyncService dataSyncService) : ModifierPageViewModelBase(dataSyncService)
 {
-    [Reactive] public partial string SnapshotString { get; set; } = "";
+    [Reactive] public partial bool HasSnapshotData { get; set; }
+    [Reactive] public partial string StatusText { get; set; } = "";
+
+    // 基本信息
+    [Reactive] public partial string CapturedAtText { get; set; } = "";
+    [Reactive] public partial string BoardTypeText { get; set; } = "";
+    [Reactive] public partial string LevelNumberText { get; set; } = "";
+    [Reactive] public partial string SurvivalRoundText { get; set; } = "";
+
+    // 波次信息
+    [Reactive] public partial string WaveDisplayText { get; set; } = "";
+    [Reactive] public partial string IsHugeWaveText { get; set; } = "";
+    [Reactive] public partial string TimeUntilNextWaveText { get; set; } = "";
+    [Reactive] public partial string WaveIntervalText { get; set; } = "";
+
+    // 资源
+    [Reactive] public partial string SunText { get; set; } = "";
+    [Reactive] public partial string MoneyText { get; set; } = "";
+
+    // BoardTag
+    [Reactive] public partial string IsSeedRainText { get; set; } = "";
+    [Reactive] public partial string IsColumnText { get; set; } = "";
+    [Reactive] public partial string IsScaredyDreamText { get; set; } = "";
+
+    // 词条计数
+    [Reactive] public partial string AdvOnCountText { get; set; } = "";
+    [Reactive] public partial string UltiOnCountText { get; set; } = "";
+    [Reactive] public partial string DebuffOnCountText { get; set; } = "";
+    [Reactive] public partial string InvestOnCountText { get; set; } = "";
+
+    // 物品
+    [Reactive] public partial string GridItemsCountText { get; set; } = "";
+    [Reactive] public partial string VasesCountText { get; set; } = "";
+
+    // 卡槽/冷却
+    [Reactive] public partial string CardBankCountText { get; set; } = "";
+    [Reactive] public partial string CardCDsCountText { get; set; } = "";
+    [Reactive] public partial string DroppedCDsCountText { get; set; } = "";
+
+    // 血量
+    [Reactive] public partial string PlantHealthsCountText { get; set; } = "";
+    [Reactive] public partial string ZombieHealthsCountText { get; set; } = "";
+
+    // 其他
+    [Reactive] public partial string RandomSeedText { get; set; } = "";
 
     [ReactiveCommand]
     public async Task GetSnapshot()
@@ -39,39 +83,53 @@ public partial class SnapshotViewModel(IDataSyncService dataSyncService) : Modif
     [ReactiveCommand]
     public void RefreshSnapshotInfo()
     {
+        HasSnapshotData = false;
         try
         {
             var path = Path.Combine(App.GamePath, Paths.LatestSnapshotPath);
             if (!File.Exists(path))
             {
-                SnapshotString = "暂无快照文件";
+                StatusText = "暂无快照文件";
                 return;
             }
 
             var json = File.ReadAllText(path);
             var snapshot = JsonSerializer.Deserialize(json, JsonSGC.Default.Snapshot);
             if (snapshot is null) return;
-            var sb = new System.Text.StringBuilder();
+
             var captured = snapshot.CapturedAt;
-            if (captured != DateTime.MinValue) sb.AppendLine($"捕获时间：{captured.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
-            sb.AppendLine($"关卡类型：{snapshot.BoardType}    关卡编号：{snapshot.LevelNumber}    生存轮次：{snapshot.SurvivalRound}");
-            sb.AppendLine($"波次：{snapshot.Wave}/{snapshot.MaxWave}    旗帜波：{(snapshot.IsHugeWave ? "是" : "否")}");
-            sb.AppendLine($"距下波时间：{snapshot.TimeUntilNextWave:F2}    波间隔：{snapshot.WaveInterval:F2}");
-            sb.AppendLine($"阳光：{snapshot.Sun}    金币：{snapshot.Money}");
-            sb.AppendLine(
-                $"BoardTag：种子雨={snapshot.BoardTag.IsSeedRain}  列种={snapshot.BoardTag.IsColumn}  胆小菇梦境={snapshot.BoardTag.IsScaredyDream}");
-            sb.AppendLine(
-                $"高级词条：{snapshot.AdvOn.Count}    究极词条：{snapshot.UltiOn.Count}    负面词条：{snapshot.DebuffOn.Count}    投资词条：{snapshot.InvestOn.Count}");
-            sb.AppendLine($"格子物品：{snapshot.GridItems.Count}    罐子：{snapshot.Vases.Count}");
-            sb.AppendLine(
-                $"卡槽：{snapshot.CardBank.Count}    卡片冷却：{snapshot.CardCDs.Count}    掉落物冷却：{snapshot.DroppedCDs.Count}");
-            sb.AppendLine($"植物血量：{snapshot.PlantHealths.Count}    僵尸血量：{snapshot.ZombieHealths.Count}");
-            sb.AppendLine($"随机种子：{snapshot.RandomSeed}");
-            SnapshotString = sb.ToString();
+            CapturedAtText = captured != DateTime.MinValue
+                ? captured.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")
+                : "";
+            BoardTypeText = snapshot.BoardType.ToString();
+            LevelNumberText = snapshot.LevelNumber.ToString();
+            SurvivalRoundText = snapshot.SurvivalRound.ToString();
+            WaveDisplayText = $"{snapshot.Wave} / {snapshot.MaxWave}";
+            IsHugeWaveText = snapshot.IsHugeWave ? "是" : "否";
+            TimeUntilNextWaveText = snapshot.TimeUntilNextWave.ToString("F2");
+            WaveIntervalText = snapshot.WaveInterval.ToString("F2");
+            SunText = snapshot.Sun.ToString();
+            MoneyText = snapshot.Money.ToString();
+            IsSeedRainText = snapshot.BoardTag.IsSeedRain ? "是" : "否";
+            IsColumnText = snapshot.BoardTag.IsColumn ? "是" : "否";
+            IsScaredyDreamText = snapshot.BoardTag.IsScaredyDream ? "是" : "否";
+            AdvOnCountText = snapshot.AdvOn.Count.ToString();
+            UltiOnCountText = snapshot.UltiOn.Count.ToString();
+            DebuffOnCountText = snapshot.DebuffOn.Count.ToString();
+            InvestOnCountText = snapshot.InvestOn.Count.ToString();
+            GridItemsCountText = snapshot.GridItems.Count.ToString();
+            VasesCountText = snapshot.Vases.Count.ToString();
+            CardBankCountText = snapshot.CardBank.Count.ToString();
+            CardCDsCountText = snapshot.CardCDs.Count.ToString();
+            DroppedCDsCountText = snapshot.DroppedCDs.Count.ToString();
+            PlantHealthsCountText = snapshot.PlantHealths.Count.ToString();
+            ZombieHealthsCountText = snapshot.ZombieHealths.Count.ToString();
+            RandomSeedText = snapshot.RandomSeed.ToString();
+            HasSnapshotData = true;
         }
         catch (Exception ex)
         {
-            SnapshotString = $"读取失败: {ex.Message}";
+            StatusText = $"读取失败: {ex.Message}";
         }
     }
 }

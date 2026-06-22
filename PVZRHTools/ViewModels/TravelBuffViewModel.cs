@@ -87,7 +87,9 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     {
         DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
-        info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
+        var isChecked = ((CheckBox)e.Source).IsChecked ?? false;
+        if (isChecked && info.Level > 0) return;
+        info.Level = isChecked ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
         {
             Command = Strings.UpdateAdvBuff,
@@ -165,7 +167,9 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     {
         DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
-        info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
+        var isChecked = ((CheckBox)e.Source).IsChecked ?? false;
+        if (isChecked && info.Level > 0) return;
+        info.Level = isChecked ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
         {
             Command = Strings.UpdateInGameAdvBuff,
@@ -244,7 +248,9 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     {
         DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
-        info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
+        var isChecked = ((CheckBox)e.Source).IsChecked ?? false;
+        if (isChecked && info.Level > 0) return;
+        info.Level = isChecked ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
         {
             Command = Strings.UpdateUltiBuff,
@@ -321,7 +327,9 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     {
         DataSyncService.Lock(IsChangingAll);
         var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
-        info.Level = ((CheckBox)e.Source).IsChecked ?? false ? 1 : 0;
+        var isChecked = ((CheckBox)e.Source).IsChecked ?? false;
+        if (isChecked && info.Level > 0) return;
+        info.Level = isChecked ? 1 : 0;
         DataSyncService.SendCommand(new SyncData()
         {
             Command = Strings.UpdateInGameUltiBuff,

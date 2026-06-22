@@ -87,7 +87,7 @@ public class DataSync : IDisposable
         if (string.IsNullOrEmpty(message))
             throw new ArgumentNullException(nameof(message));
 #if DEBUG
-        ModCore.Instance.Log.LogMessage($"Received Command from Modifier UI: \n{message}");
+        ModCore.Instance.Log.LogMessage($"Send Message to Modifier UI: \n{message}");
 #endif
         StreamWriter writer;
         lock (_lock)

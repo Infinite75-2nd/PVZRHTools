@@ -107,9 +107,9 @@ public static class BoardPatch
         try
         {
             // 处理无限积分（使用新的独立开关或旧的兼容开关）
-            if ((UnlimitedScore || UnlimitedRefresh) && __instance != null)
+            if (UnlimitedScore && __instance != null)
             {
-                __instance.thePoints = 999999f;
+                __instance.thePoints = int.MaxValue;
             }
 
             // 处理诅咒免疫
