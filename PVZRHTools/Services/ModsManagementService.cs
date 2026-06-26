@@ -23,46 +23,67 @@ public class ModsManagementService : IModsManagementService
         var pluginsFolder = Path.Combine(info.GameRootPath, Paths.PluginsPath);
         var hengMingModsFolder = Path.Combine(pluginsFolder, "Mods - HengMing");
         if (filePaths.Count is 0) return;
+
         try
         {
             Directory.CreateDirectory(pluginsFolder);
             Directory.CreateDirectory(hengMingModsFolder);
-
-            foreach (var filePath in filePaths)
-            {
-                if (!File.Exists(filePath)) continue;
-
-                var extension = Path.GetExtension(filePath).ToLowerInvariant();
-
-                switch (extension)
-                {
-                    case ".dll":
-                        ProcessDllFile(filePath, pluginsFolder, hengMingModsFolder);
-                        break;
-                    case ".zip":
-                        ProcessZipFile(filePath, pluginsFolder, hengMingModsFolder);
-                        break;
-                }
-            }
         }
         catch (UnauthorizedAccessException)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
                 Locator.Current.GetService<INotificationService>()?.NotificationManager
                     ?.Show("权限不足无法操作，请尝试以管理员身份启动", NotificationType.Error));
+            return;
+        }
+
+        foreach (var filePath in filePaths)
+        {
+            if (!File.Exists(filePath)) continue;
+
+            var extension = Path.GetExtension(filePath).ToLowerInvariant();
+
+            try
+            {
+                switch (extension)
+                {
+                    case ".dll":
+                        ProcessDllFile(filePath, Path.GetFileName(filePath), pluginsFolder, hengMingModsFolder);
+                        break;
+                    case ".zip":
+                        ProcessZipFile(filePath, pluginsFolder, hengMingModsFolder);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                    Locator.Current.GetService<INotificationService>()?.NotificationManager
+                        ?.Show($"处理文件失败: {Path.GetFileName(filePath)}\n{ex.Message}",
+                            NotificationType.Error));
+            }
         }
     }
 
-    private void ProcessDllFile(string dllPath, string pluginsFolder, string hengMingModsFolder)
+    private void ProcessDllFile(string dllPath, string targetFileName, string pluginsFolder, string hengMingModsFolder)
     {
+        AssemblyDefinition assembly;
         try
         {
-            using var assembly = AssemblyDefinition.ReadAssembly(dllPath);
+            assembly = AssemblyDefinition.ReadAssembly(dllPath);
+        }
+        catch
+        {
+            // 不是有效的 .NET 程序集，跳过
+            return;
+        }
 
+        using (assembly)
+        {
             var hasBasePlugin = CheckTypeInheritance(assembly, BasePluginTypeName);
             var hasLoadBase = CheckTypeInheritance(assembly, LoadBaseTypeName);
 
-            var fileName = Path.GetFileName(dllPath);
+            var fileName = targetFileName;
 
             if (hasBasePlugin)
             {
@@ -75,39 +96,27 @@ public class ModsManagementService : IModsManagementService
                 File.Copy(dllPath, destPath, overwrite: true);
             }
         }
-        catch
-        {
-            // 忽略无法读取的DLL文件
-        }
     }
 
     private void ProcessZipFile(string zipPath, string pluginsFolder, string hengMingModsFolder)
     {
-        try
+        using var archive = ZipFile.OpenRead(zipPath);
+        foreach (var entry in archive.Entries)
         {
-            using var archive = ZipFile.OpenRead(zipPath);
+            if (!entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                continue;
 
-            foreach (var entry in archive.Entries)
+            var tempPath = Path.GetTempFileName() + ".dll";
+            try
             {
-                if (!entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                var tempPath = Path.GetTempFileName() + ".dll";
-                try
-                {
-                    entry.ExtractToFile(tempPath, overwrite: true);
-                    ProcessDllFile(tempPath, pluginsFolder, hengMingModsFolder);
-                }
-                finally
-                {
-                    if (File.Exists(tempPath))
-                        File.Delete(tempPath);
-                }
+                entry.ExtractToFile(tempPath, overwrite: true);
+                ProcessDllFile(tempPath, Path.GetFileName(entry.FullName), pluginsFolder, hengMingModsFolder);
             }
-        }
-        catch
-        {
-            // 忽略无法读取的ZIP文件
+            finally
+            {
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
+            }
         }
     }
 

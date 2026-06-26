@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
@@ -87,6 +87,25 @@ public static class TravelMgrPatch
         catch (System.Exception ex)
         {
             ModCore.Instance.Log?.LogWarning($"[PVZRHTools] PostGetInvestBuff 异常: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// UnlockPlant 后置补丁：解锁植物后实时同步到修改器
+    /// </summary>
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(TravelMgr.UnlockPlant))]
+    public static void PostUnlockPlant(TravelMgr __instance, TravelUnlocks __0)
+    {
+        if (OperatingBuff) return;
+        try
+        {
+            // 延迟一小段时间后同步，确保游戏状态已更新
+            __instance.StartCoroutine(SyncBuffsDelayed());
+        }
+        catch (System.Exception ex)
+        {
+            ModCore.Instance.Log?.LogWarning($"[PVZRHTools] PostUnlockPlant 异常: {ex.Message}");
         }
     }
 

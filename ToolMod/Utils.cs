@@ -187,7 +187,8 @@ public static class Utils
                     InGameAdvBuffs = InGameAdvBuffs.ToDictionary(x => (int)x.Key, x => x.Value),
                     InGameUltiBuffs = InGameUltiBuffs.ToDictionary(x => (int)x.Key, x => x.Value),
                     InGameDebuffs = InGameDebuffs.ToDictionary(x => (int)x.Key, x => x.Value),
-                    InGameInvestBuffs = InGameInvestBuffs.ToDictionary(x => (int)x.Key, x => x.Value)
+                    InGameInvestBuffs = InGameInvestBuffs.ToDictionary(x => (int)x.Key, x => x.Value),
+                    InGameUnlockedPlants = InGameUnlockedPlants.ToDictionary(x => (int)x.Key, x => x.Value)
                 })
             ]
         });
@@ -227,6 +228,22 @@ public static class Utils
             try
             {
                 InGameDebuffs[debuff] = Lawnf.TravelDebuff(debuff);
+            }
+            catch
+            {
+            }
+        }
+
+        // 同步解锁植物的状态：从 TravelMgr.data.unlockedPlants 中读取
+        foreach (var plant in InGameUnlockedPlants.Keys.ToList())
+        {
+            try
+            {
+                var travelMgr = ResolveTravelMgr();
+                if (travelMgr?.data?.unlockedPlants != null)
+                {
+                    InGameUnlockedPlants[plant] = travelMgr.data.unlockedPlants.Contains(plant);
+                }
             }
             catch
             {
@@ -536,6 +553,7 @@ public static class Utils
             // 投资词条（Invest）：以游戏为主，但对“手动取消勾选”的该词条执行一次关闭
             // - 勾选 true 且未解锁 -> 解锁
             // - 从 true 取消勾选 -> 只对这一条从当前局移除，其它投资词条不受影响。
+            
             foreach (var invest in InGameInvestBuffs.Keys)
             {
                 bool unlocked = data.investmentBuffs != null && data.investmentBuffs.Contains(invest);
@@ -568,6 +586,41 @@ public static class Utils
                 }
             }
 
+            // 解锁植物（Unlock）：以游戏为主，但对"手动取消勾选"的该条目执行一次关闭
+            // - 勾选 true 且未解锁 -> 调用 TravelMgr.UnlockPlant 解锁
+            // - 从 true 取消勾选 -> 只从 data.unlockedPlants 列表中移除该条目
+            foreach (var unlock in InGameUnlockedPlants.Keys)
+            {
+                bool unlocked = data.unlockedPlants != null &&
+                    data.unlockedPlants.Contains(unlock);
+
+                if (InGameUnlockedPlants[unlock] && !unlocked)
+                {
+                    if (!InGame) continue;
+
+                    try
+                    {
+                        travelMgr.UnlockPlant(unlock);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        ModCore.Instance.Log?.LogWarning($"UpdateInGameBuffs: 解锁植物条目 {unlock} (id={unlock}) 失败: {ex.Message}");
+                    }
+                }
+                else if (!InGameUnlockedPlants[unlock] && AllowBuffRemoval && unlocked)
+                {
+                    try
+                    {
+                        data.unlockedPlants?.Remove(unlock);
+                        ModCore.Instance.Log?.LogInfo($"UpdateInGameBuffs: 关闭植物条目 {unlock} (id={unlock})，已从当前局移除");
+                    }
+                    catch (System.Exception ex)
+                    {
+                        ModCore.Instance.Log?.LogWarning($"UpdateInGameBuffs: 移除植物条目 {unlock} (id={unlock}) 失败: {ex.Message}");
+                    }
+                }
+            }
+
             // 关键：设置 BoardTag 标志，使游戏识别并应用词条系统
             try
             {
@@ -578,6 +631,7 @@ public static class Utils
                     {
                         var boardTag = board.boardTag;
                         boardTag.isTravel = true;
+                        boardTag.enableTravelPlant = true;
                         boardTag.enableTravelBuff = true;
                         Board.Instance.boardTag = boardTag;
                     }

@@ -260,7 +260,7 @@ public class ToolsUpdater : MonoBehaviour
         if (LockSun >= 0) Board.Instance.theSun = LockSun;
         if (LockMoney >= 0) Board.Instance.theMoney = LockMoney;
         if (PauseSpawn) Board.Instance!.iceDoomFreezeTime = 1;
-        if (CheckLose != null) CheckLose.canTriggerLose = !NoFail;
+        if (CheckLose != null) CheckLose.enabled = !NoFail;
     }
 
     public void ProcessZombieSea()

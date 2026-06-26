@@ -34,6 +34,12 @@ public partial class ModListViewModel(
     }
 
     [ReactiveCommand]
+    private void RefreshModList()
+    {
+        _modsManagementService.SyncModsInfo(Info);
+    }
+
+    [ReactiveCommand]
     private async void OpenFileDialog(Control source)
     {
         var filePickerOptions = new FilePickerOpenOptions()
@@ -41,12 +47,14 @@ public partial class ModListViewModel(
             AllowMultiple = true,
             FileTypeFilter = [new FilePickerFileType("Mod文件") { Patterns = ["*.zip", "*.dll"] }]
         };
-        var paths = (await source.FindAncestorOfType<CustomDialogWindow>()!
-                .StorageProvider
-                .OpenFilePickerAsync(filePickerOptions))
-            .Select(p => p.Path.AbsolutePath).ToList();
-        if (paths.Count is 0) return;
-        await Task.Run(() => ProcessDroppedFilesAsync(paths));
+        var dialogWindow = source.FindAncestorOfType<CustomDialogWindow>();
+        if (dialogWindow == null) return;
+        var files = await dialogWindow.StorageProvider.OpenFilePickerAsync(filePickerOptions);
+        if (files.Count is 0) return;
+        var paths = files
+            .Select(p => p.TryGetLocalPath() ?? p.Path.AbsolutePath)
+            .ToList();
+        await ProcessDroppedFilesAsync(paths);
     }
 
     [ReactiveCommand]
@@ -66,9 +74,9 @@ public partial class ModListViewModel(
         {
             var files = e.DataTransfer.Items;
 
-            var filePaths =
-                files.Select(file => file.TryGetFile()?.Path.AbsolutePath ?? string.Empty)
-                    .ToList();
+            var filePaths = files
+                .Select(file => file.TryGetFile()?.TryGetLocalPath() ?? string.Empty)
+                .ToList();
 
             // 处理拖放的文件
             await ProcessDroppedFilesAsync(filePaths);
@@ -84,18 +92,21 @@ public partial class ModListViewModel(
                 where !string.IsNullOrEmpty(path)
                 where path.EndsWith(".zip", System.StringComparison.OrdinalIgnoreCase) ||
                       path.EndsWith(".dll", System.StringComparison.OrdinalIgnoreCase)
-                select path.Replace("%20", " "))
+                select path)
             .ToList();
 
-        await Task.Run(() =>
+        if (validPaths.Count is 0) return;
+
+        // 文件操作（复制 DLL 到游戏目录）在后台线程执行
+        await Task.Run(() => _modsManagementService.AddMods(Info, validPaths));
+
+        // UI 更新必须在 UI 线程执行，避免 ObservableCollection 跨线程操作导致列表显示异常
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _modsManagementService.AddMods(Info, validPaths);
             _modsManagementService.SyncModsInfo(Info);
-            if (validPaths.Count > 0)
-                Dispatcher.UIThread.InvokeAsync(() =>
-                    _notificationService.NotificationManager?.Show(
-                        new Notification($"已添加{validPaths.Count}个模组", null, NotificationType.Success),
-                        NotificationType.Success));
+            _notificationService.NotificationManager?.Show(
+                new Notification($"已添加{validPaths.Count}个模组", null, NotificationType.Success),
+                NotificationType.Success);
         });
     }
 }

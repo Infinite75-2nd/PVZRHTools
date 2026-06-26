@@ -173,6 +173,7 @@ public class SettingsData
     public Dictionary<int, int> TravelUltiBuffs { get; set; } = [];
     public Dictionary<int, bool> TravelDebuffs { get; set; } = [];
     public Dictionary<int, bool> TravelInvestBuffs { get; set; } = [];
+    public Dictionary<int, bool> TravelUnlockedPlants { get; set; } = [];
 
     // FlagWaveBuffsViewModel
     public bool FlagWaveBuffsEnabled { get; set; }

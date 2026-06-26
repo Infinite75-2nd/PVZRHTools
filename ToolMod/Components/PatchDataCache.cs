@@ -157,11 +157,13 @@ public class PatchDataCache
     public static Dictionary<AdvBuff, int> AdvBuffs { get; set; } = [];
     public static Dictionary<UltiBuff, int> UltiBuffs { get; set; } = [];
     public static Dictionary<TravelDebuff, bool> Debuffs { get; set; } = [];
-    public static Dictionary<InvestBuff, bool> InvestBuffs { get; set; } = [];
+    public static Dictionary<InvestBuff, bool> InvestBuffs { get; set; } = []; 
+    public static Dictionary<TravelUnlocks, bool> UnlockedPlants { get; set; } = [];
     public static Dictionary<AdvBuff, int> InGameAdvBuffs { get; set; } = [];
     public static Dictionary<UltiBuff, int> InGameUltiBuffs { get; set; } = [];
     public static Dictionary<InvestBuff, bool> InGameInvestBuffs { get; set; } = [];
     public static Dictionary<TravelDebuff, bool> InGameDebuffs { get; set; } = [];
+    public static Dictionary<TravelUnlocks, bool> InGameUnlockedPlants { get; set; } = [];
     public static FlagWaveBuff[] FlagWaveBuffs { get; set; } = new FlagWaveBuff[10];
     public static bool FlagWaveBuffsEnabled { get; set; }
 
@@ -206,7 +208,7 @@ public class PatchDataCache
     public static GameObject? SeedGroup =>
         Utils.InGame && InGameUI.Instance != null ? InGameUI.Instance.SeedBank : null;
 
-    public static GameLose? CheckLose { get; set; }
+    public static BoxCollider2D? CheckLose { get; set; }
 
     public static Board.BoardTag? OriginalBoardTag { get; set; }
 

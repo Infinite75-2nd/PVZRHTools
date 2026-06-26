@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -62,6 +62,11 @@ public class InitDataService(string gamePath) : IInitDataService
             foreach (var investBuff in newInitData.InvestBuffs)
             {
                 InitData.InvestBuffs.TryAdd(investBuff.Key, investBuff.Value);
+            }
+
+            foreach (var plant in newInitData.UnlockablePlants)
+            {
+                InitData.UnlockablePlants.TryAdd(plant.Key, plant.Value);
             }
         }
         catch

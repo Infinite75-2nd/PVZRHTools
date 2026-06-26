@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace ToolData;
 
@@ -13,4 +13,5 @@ public class InitData
     public Dictionary<int, string> UltiBuffs { get; set; } = [];
     public Dictionary<int, string> Debuffs { get; set; } = [];
     public Dictionary<int, string> InvestBuffs { get; set; } = [];
+    public Dictionary<int, string> UnlockablePlants { get; set; } = [];
 }

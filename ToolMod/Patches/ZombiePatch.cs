@@ -102,7 +102,7 @@ public static class ZombiePatch
     public static bool PreBodyTakeDamage(Zombie __instance, ref int theDamage)
     {
         // 僵尸限伤功能 - 限制每次伤害最多为设定值
-        if (ZombieDamageLimit > 0 && theDamage > ZombieDamageLimit)
+        if (__instance!=null&&ZombieDamageLimit > 0 && theDamage > ZombieDamageLimit)
         {
             theDamage = ZombieDamageLimit;
         }

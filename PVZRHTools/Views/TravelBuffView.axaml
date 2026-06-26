@@ -34,7 +34,7 @@
                             <Button Content="全选"
                                     Command="{Binding AdvBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding AdvBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnAdvBuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnAdvBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding AdvBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -64,7 +64,7 @@
                             <Button Content="全选"
                                     Command="{Binding InGameAdvBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding InGameAdvBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameAdvBuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnInGameAdvBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameAdvBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -99,7 +99,7 @@
                             <Button Content="全选"
                                     Command="{Binding UltiBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding UltiBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnUltiBuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnUltiBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding UltiBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -137,7 +137,7 @@
                             <Button Content="全选"
                                     Command="{Binding InGameUltiBuffChooseAllCommand}" />
                             <Button Content="全不选" Command="{Binding InGameUltiBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameUltiBuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnInGameUltiBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameUltiBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -173,6 +173,65 @@
         </Border>
         <Border>
             <StackPanel Orientation="Vertical">
+                <u:Divider Content="强究解锁(Unlocked Plants)" />
+                <Expander Header="初始词条设置">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding UnlockedPlantChooseAllCommand}" />
+                            <Button Content="全不选"
+                                    Command="{Binding UnlockedPlantDeselectAllCommand}" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnUnlockedPlantSearchChanged" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding UnlockedPlants}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
+                                        IsCheckedChanged="OnCheckBoxChanged">
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextAlignment="Left"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="实时词条修改">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="全选"
+                                    Command="{Binding InGameUnlockedPlantChooseAllCommand}" />
+                            <Button Content="全不选"
+                                    Command="{Binding InGameUnlockedPlantDeselectAllCommand}" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnInGameUnlockedPlantSearchChanged" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding InGameUnlockedPlants}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsVisible}"
+                                        IsCheckedChanged="OnCheckBoxChanged">
+                                        <TextBlock Text="{Binding Name}"
+                                                   TextAlignment="Left"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" />
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
                 <u:Divider Content="僵尸词条(Debuffs)" />
                 <Expander Header="初始词条设置">
                     <StackPanel Orientation="Vertical">
@@ -181,7 +240,7 @@
                                     Command="{Binding DebuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding DebuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnDebuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnDebuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding Debuffs}">
                             <ItemsControl.ItemTemplate>
@@ -208,7 +267,7 @@
                                     Command="{Binding InGameDebuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InGameDebuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameDebuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnInGameDebuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameDebuffs}">
                             <ItemsControl.ItemTemplate>
@@ -240,7 +299,7 @@
                                     Command="{Binding InvestBuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InvestBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInvestBuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnInvestBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InvestBuffs}">
                             <ItemsControl.ItemTemplate>
@@ -267,7 +326,7 @@
                                     Command="{Binding InGameInvestBuffChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InGameInvestBuffDeselectAllCommand}" />
-                            <TextBox Watermark="搜索..." Width="200" TextChanged="OnInGameInvestBuffSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnInGameInvestBuffSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameInvestBuffs}">
                             <ItemsControl.ItemTemplate>

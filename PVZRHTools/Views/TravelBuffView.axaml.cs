@@ -35,6 +35,8 @@ public partial class TravelBuffView : UserControl
         else if (vm.InGameDebuffs.Contains(info)) vm.InGameDebuffEnabledChanged(e);
         else if (vm.InGameInvestBuffs.Contains(info)) vm.InGameInvestBuffEnabledChanged(e);
         else if (vm.InvestBuffs.Contains(info)) vm.InvestBuffEnabledChanged(e);
+        else if (vm.UnlockedPlants.Contains(info)) vm.UnlockedPlantEnabledChanged(e);
+        else if (vm.InGameUnlockedPlants.Contains(info)) vm.InGameUnlockedPlantEnabledChanged(e);
     }
 
     private void OnNumericValueChanged(object? sender, ValueChangedEventArgs<int> e)
@@ -80,4 +82,10 @@ public partial class TravelBuffView : UserControl
 
     private void OnInvestBuffSearchChanged(object? sender, TextChangedEventArgs e) =>
         ApplySearchFilter((sender as TextBox)?.Text, VM?.InvestBuffs!);
+
+    private void OnUnlockedPlantSearchChanged(object? sender, TextChangedEventArgs e) =>
+        ApplySearchFilter((sender as TextBox)?.Text, VM?.UnlockedPlants!);
+
+    private void OnInGameUnlockedPlantSearchChanged(object? sender, TextChangedEventArgs e) =>
+        ApplySearchFilter((sender as TextBox)?.Text, VM?.InGameUnlockedPlants!);
 }

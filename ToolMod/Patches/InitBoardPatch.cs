@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -212,9 +212,27 @@ public static class InitBoardPatch
                 }
             }
 
-            // 避免调用 Lawnf.TravelInvest 触发 InvestBuff 泛型约束异常
             foreach (var invest in InGameInvestBuffs.Keys)
-                InGameInvestBuffs[invest] = false;
+                try
+                {
+                    InGameInvestBuffs[invest] = Lawnf.TravelInvest(invest);
+                    
+                }
+                catch
+                {
+                    InGameInvestBuffs[invest] = false;                
+                }
+
+            // 解锁植物：默认全部未解锁
+            foreach (var plant in InGameUnlockedPlants.Keys)
+                try
+                {
+                    InGameUnlockedPlants[plant] = Lawnf.TravelUnlock(plant);
+                }
+                catch (Exception e)
+                {
+                    InGameUnlockedPlants[plant] = false;
+                }
         }
 
         yield return null;
@@ -242,5 +260,8 @@ public static class InitBoardPatch
                 ModCore.Instance.Log?.LogError($"ZombieSeaLow 异常: {ex.Message}\n{ex.StackTrace}");
             }
         }
+        yield return null;
+        CheckLose = GameObject.Find("checklose")?.GetComponent<BoxCollider2D>();
+
     }
 }

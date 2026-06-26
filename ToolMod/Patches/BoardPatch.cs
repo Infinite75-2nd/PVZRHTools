@@ -4,10 +4,12 @@ using System.Linq;
 using BepInEx;
 using Core;
 using HarmonyLib;
+using Il2CppInterop.Runtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using static ToolMod.Components.PatchDataCache;
 using static ToolMod.Utils;
+using Object = UnityEngine.Object;
 
 namespace ToolMod.Patches;
 
@@ -306,9 +308,10 @@ public static class BoardPatch
             bool hasAnyInitialUlti = UltiBuffs is { Count: > 0 } && UltiBuffs.Values.Any(v => v > 0);
             bool hasAnyInitialInvest = InvestBuffs is { Count: > 0 } && InvestBuffs.Values.Any(v => v);
             bool hasAnyInitialDebuff = Debuffs is { Count: > 0 } && Debuffs.Values.Any(v => v);
-
-            // 如果四类初始词条都“完全为空”，则认为玩家没有配置初始词条，什么都不做。
-            if (!hasAnyInitialAdv && !hasAnyInitialUlti && !hasAnyInitialInvest && !hasAnyInitialDebuff)
+            bool hasAnyInitialUnlockedPlant = UnlockedPlants is { Count: > 0 } && UnlockedPlants.Values.Any(v => v);
+            
+            // 如果所有初始词条都"完全为空"，则认为玩家没有配置初始词条，什么都不做。
+            if (!hasAnyInitialAdv && !hasAnyInitialUlti && !hasAnyInitialInvest && !hasAnyInitialDebuff && !hasAnyInitialUnlockedPlant)
             {
                 return;
             }
@@ -355,6 +358,16 @@ public static class BoardPatch
                 }
             }
 
+            // 应用初始解锁植物到游戏内状态
+            if (TravelDictionary.unlocksText != null)
+            {
+                foreach (var kvp in TravelDictionary.unlocksText)
+                {
+                    InGameUnlockedPlants.TryAdd(kvp.Key, false);
+                    UnlockedPlants.TryAdd(kvp.Key, false);
+                    InGameUnlockedPlants[kvp.Key] = InGameUnlockedPlants[kvp.Key] || UnlockedPlants[kvp.Key];
+                }
+            }
 
             // 应用词条到游戏（初始词条不允许移除已有词条）
             bool oldAllow = AllowBuffRemoval;
@@ -366,7 +379,8 @@ public static class BoardPatch
             finally
             {
                 AllowBuffRemoval = oldAllow;
-            }
+            } 
+
         }
         catch (Exception ex)
         {

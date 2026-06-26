@@ -71,6 +71,8 @@ public struct SyncTravelBuffs
     public Dictionary<int, int> InGameUltiBuffs { get; set; } = [];
     public Dictionary<int, bool> InGameDebuffs { get; set; } = [];
     public Dictionary<int, bool> InGameInvestBuffs { get; set; } = [];
+    public Dictionary<int, bool> UnlockedPlants { get; set; } = [];
+    public Dictionary<int, bool> InGameUnlockedPlants { get; set; } = [];
 }
 
 [Serializable]

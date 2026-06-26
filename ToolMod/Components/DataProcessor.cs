@@ -203,6 +203,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.UpdateUltiBuff, UpdateUltiBuff },
         { Strings.UpdateDebuff, UpdateDebuff },
         { Strings.UpdateInvestBuff, UpdateInvestBuff },
+        { Strings.UpdateUnlockedPlant, UpdateUnlockedPlant },
         { Strings.UpdateAllBuffs, UpdateAllBuffs },
 
         #endregion
@@ -336,6 +337,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.UpdateInGameUltiBuff, UpdateInGameUltiBuff },
         { Strings.UpdateInGameDebuff, UpdateInGameDebuff },
         { Strings.UpdateInGameInvestBuff, UpdateInGameInvestBuff },
+        { Strings.UpdateInGameUnlockedPlant, UpdateInGameUnlockedPlant },
         { Strings.PlayParticle, PlayParticle },
         { Strings.GetSnapshot, GetSnapshot },
         { Strings.RestoreSnapshot, RestoreSnapshot },
@@ -405,14 +407,31 @@ public class DataProcessor : MonoBehaviour
 
     private static void RemoveAllZombies(List<string> _)
     {
+        for (var j = Board.Instance.zombieArray.Count - 1; j >= 0; j--)
+            try
+            {
+                var zombie = Board.Instance.zombieArray[j];
+                if (zombie == null || !zombie||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled&&zombie.isIdle)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled&&zombie.isIdle))
+                    continue;
+                zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
+                zombie.BodyTakeDamage(2147483647);
+                zombie.Die();
+            }
+            catch
+            {
+            }
         Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
         for (var i = zombies.Count - 1; i >= 0; i--)
         {
             try
             {
                 var zombie = (Zombie)zombies[i];
-                if (zombie == null || !zombie) continue;
-
+                if (zombie == null || !zombie||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled&&zombie.isIdle)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled&&zombie.isIdle))
+                    continue;
                 zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
                 zombie.BodyTakeDamage(2147483647);
                 zombie.Die();
@@ -421,20 +440,6 @@ public class DataProcessor : MonoBehaviour
             {
             }
         }
-
-        for (var j = Board.Instance.zombieArray.Count - 1; j >= 0; j--)
-            try
-            {
-                var zombie = Board.Instance.zombieArray[j];
-                if (zombie == null || !zombie) continue;
-
-                zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
-                zombie.BodyTakeDamage(2147483647);
-                zombie.Die();
-            }
-            catch
-            {
-            }
     }
 
     private static void MindCtrlAllZombies(List<string> _)
@@ -534,7 +539,6 @@ public class DataProcessor : MonoBehaviour
         var r = int.Parse(args[1]);
         var c = int.Parse(args[2]);
         var repeatTimes = int.Parse(args[3]);
-        if (id is -1) id = (int)GameAPP.resourcesManager.allPlants.GetRandom();
         try
         {
             for (var n = 0; n < repeatTimes; n++)
@@ -581,7 +585,6 @@ public class DataProcessor : MonoBehaviour
     {
         var plantType = (PlantType)int.Parse(args[0]);
         var repeatTimes = int.Parse(args[1]);
-
         if (InGameUI.Instance == null) return;
         for (int i = 0; i < repeatTimes; i++)
         {
@@ -634,7 +637,6 @@ public class DataProcessor : MonoBehaviour
         var r = int.Parse(args[1]);
         var c = int.Parse(args[2]);
         var repeatTimes = int.Parse(args[3]);
-        if (id is -1) id = (int)GameAPP.resourcesManager.allZombieTypes.GetRandom();
         if (repeatTimes > 50) repeatTimes = 50;
         for (var n = 0; n < repeatTimes; n++)
         {
@@ -710,7 +712,6 @@ public class DataProcessor : MonoBehaviour
         var id = int.Parse(args[0]);
         var r = int.Parse(args[1]);
         var c = int.Parse(args[2]);
-        if (id is -1) id = (int)GameAPP.resourcesManager.allZombieTypes.GetRandom();
         var PvPPotRange = bool.Parse(args[3]);
         if (PvPPotRange)
         {
@@ -746,7 +747,7 @@ public class DataProcessor : MonoBehaviour
     private static void CreateItem(List<string> args)
     {
         var itemType = int.Parse(args[0]);
-        if (itemType <= 8 && itemType >= 0)
+        if (itemType is <= 8 and >= 0)
         {
             Instantiate(Items[itemType]).transform.SetParent(GameAPP.board.transform);
         }
@@ -1429,6 +1430,21 @@ public class DataProcessor : MonoBehaviour
         UpdateInGameBuffs();
     }
 
+    private static void UpdateUnlockedPlant(List<string> args)
+    {
+        var id = (TravelUnlocks)int.Parse(args[0]);
+        var isEnabled = bool.Parse(args[1]);
+        UnlockedPlants[id] = isEnabled;
+    }
+
+    private static void UpdateInGameUnlockedPlant(List<string> args)
+    {
+        var id = (TravelUnlocks)int.Parse(args[0]);
+        var isEnabled = bool.Parse(args[1]);
+        InGameUnlockedPlants[id] = isEnabled;
+        UpdateInGameBuffs();
+    }
+
     private static void UpdateAllBuffs(List<string> args)
     {
         var buffs = JsonSerializer.Deserialize<SyncTravelBuffs>(args[0]);
@@ -1463,7 +1479,13 @@ public class DataProcessor : MonoBehaviour
                 InvestBuffs[(InvestBuff)investBuff.Key] = investBuff.Value;
             }
         }
-
+        if (buffs.UnlockedPlants.Count > 0)
+        {
+            foreach (var unlock in buffs.UnlockedPlants)
+            {
+                UnlockedPlants[(TravelUnlocks)unlock.Key] = unlock.Value; 
+            }
+        }
         if (!InGame) return;
 
         var needRefresh = false;
@@ -1472,8 +1494,8 @@ public class DataProcessor : MonoBehaviour
             foreach (var advBuff in buffs.InGameAdvBuffs)
             {
                 InGameAdvBuffs[(AdvBuff)advBuff.Key] = advBuff.Value;
-                needRefresh = true;
             }
+            needRefresh = true;
         }
 
         if (buffs.InGameUltiBuffs.Count > 0)
@@ -1481,8 +1503,8 @@ public class DataProcessor : MonoBehaviour
             foreach (var ultiBuff in buffs.InGameUltiBuffs)
             {
                 InGameUltiBuffs[(UltiBuff)ultiBuff.Key] = ultiBuff.Value;
-                needRefresh = true;
             }
+            needRefresh = true;
         }
 
         if (buffs.InGameDebuffs.Count > 0)
@@ -1490,8 +1512,8 @@ public class DataProcessor : MonoBehaviour
             foreach (var debuff in buffs.InGameDebuffs)
             {
                 InGameDebuffs[(TravelDebuff)debuff.Key] = debuff.Value;
-                needRefresh = true;
             }
+            needRefresh = true;
         }
 
         if (buffs.InGameInvestBuffs.Count > 0)
@@ -1499,14 +1521,23 @@ public class DataProcessor : MonoBehaviour
             foreach (var investBuff in buffs.InGameInvestBuffs)
             {
                 InGameInvestBuffs[(InvestBuff)investBuff.Key] = investBuff.Value;
-                needRefresh = true;
             }
+            needRefresh = true;
+        }
+        
+        if (buffs.InGameUnlockedPlants.Count > 0)
+        {
+            foreach (var unlock in buffs.InGameUnlockedPlants)
+            {
+                InGameUnlockedPlants[(TravelUnlocks)unlock.Key] = unlock.Value;
+            }
+            needRefresh = true;
         }
 
         if (needRefresh) UpdateInGameBuffs();
     }
 
-    public static void FlagWaveBuff(List<string> args)
+    private static void FlagWaveBuff(List<string> args)
     {
         var buffs = JsonSerializer.Deserialize<FlagWaveBuff>(args[0]);
         FlagWaveBuffs[buffs.Wave - 1] = buffs;
@@ -1601,7 +1632,7 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    public static void GodEvolutionResetQuality(List<string> _)
+    private static void GodEvolutionResetQuality(List<string> _)
     {
         GodEvolutionUnlimitedRefresh = false;
         GodEvolutionFreeUpgradeQuality = false;
@@ -1630,11 +1661,10 @@ public class DataProcessor : MonoBehaviour
     private static unsafe void RecordData(Il2CppSystem.Collections.Generic.List<DataRecord<int>> list, int element)
     {
         if (list == null) return;
-        for (int i = 0; i < list.Count; i++)
+        foreach (var record in list)
         {
-            var record = list[i];
             if (record == null) continue;
-            int* ptr = (int*)record.Pointer;
+            var ptr = (int*)record.Pointer;
             if (ptr[4] == element) // offset 0x10 = 4 ints
             {
                 ptr[5]++; // offset 0x14 = 5 ints
@@ -1762,8 +1792,7 @@ public class DataProcessor : MonoBehaviour
                 try
                 {
                     // 检查该植物是否有多个皮肤（_plantPrefabs 中对应的 List 长度 > 1）
-                    Il2CppSystem.Collections.Generic.List<UnityEngine.GameObject> skinList = null;
-                    if (rm._plantPrefabs.TryGetValue(plantType, out skinList) && skinList != null)
+                    if (rm._plantPrefabs.TryGetValue(plantType, out Il2CppSystem.Collections.Generic.List<GameObject> skinList) && skinList != null)
                     {
                         var count = skinList.Count;
                         if (count > 1)
@@ -1781,14 +1810,7 @@ public class DataProcessor : MonoBehaviour
                 }
             }
 
-            if (appliedCount > 0)
-            {
-                InGameText.Instance?.ShowText("已应用全部植物皮肤", 2);
-            }
-            else
-            {
-                InGameText.Instance?.ShowText("没有找到可应用的植物皮肤", 2);
-            }
+            InGameText.Instance?.ShowText(appliedCount > 0 ? "已应用全部植物皮肤" : "没有找到可应用的植物皮肤", 2);
         }
         catch (Exception ex)
         {

@@ -127,6 +127,7 @@ namespace ToolMod
                 SortedDictionary<int, string> ultiBuffs = [];
                 SortedDictionary<int, string> debuffs = [];
                 SortedDictionary<int, string> investBuffs = [];
+                SortedDictionary<int, string> unlockablePlants = [];
                 SortedDictionary<int, string> bullets = [];
                 SortedDictionary<int, string> firsts = [];
                 SortedDictionary<int, string> seconds = [];
@@ -262,6 +263,19 @@ namespace ToolMod
                     Log.LogError(ex);
                 }
 
+                // Unlockable Plants (强究解锁)
+                if (TravelDictionary.unlocksText != null && TravelDictionary.unlocksText.Count > 0)
+                {
+                    foreach (var unlockEntry in TravelDictionary.unlocksText)
+                    {
+                        if (unlockEntry is null) continue;
+                        var id = (int)unlockEntry.Key;
+                        unlockablePlants.Add(id, $"#{id} {unlockEntry.value}");
+                        UnlockedPlants[(TravelUnlocks)id] = false;
+                        InGameUnlockedPlants[(TravelUnlocks)id] = false;
+                    }
+                }
+
                 foreach (var t in GameAPP.resourcesManager.allBullets)
                     if (GameAPP.resourcesManager.bulletPrefabs[t] is not null)
                     {
@@ -293,7 +307,8 @@ namespace ToolMod
                     FirstArmors = new(firsts),
                     SecondArmors = new(seconds),
                     Debuffs = new(debuffs),
-                    InvestBuffs = new(investBuffs)
+                    InvestBuffs = new(investBuffs),
+                    UnlockablePlants = new(unlockablePlants)
                 };
                 File.WriteAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath),
                     JsonSerializer.Serialize(InitData));

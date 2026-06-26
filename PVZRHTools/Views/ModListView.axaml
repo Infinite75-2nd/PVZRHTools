@@ -25,11 +25,16 @@
                   VerticalScrollBarVisibility="Auto"
                   u:ScrollTo.Direction="Top">
         <StackPanel Orientation="Vertical" Spacing="10" MinWidth="300">
-            <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Stretch">
                 <Label Content="{Binding Info.GameRootPath, Converter={StaticResource PathToFolderConverter}}"
                        Theme="{DynamicResource TagLabel}" />
                 <Label Content="{Binding Info.GameVersion}"
                        Theme="{DynamicResource TagLabel}" />
+                <u:IconButton Icon="{DynamicResource SemiIconRedoStroked}"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Right"
+                              Content="刷新模组列表"
+                              Command="{Binding RefreshModListCommand}" />
             </StackPanel>
             <u:IconButton Icon="{DynamicResource SemiIconPlusStroked}"
                           Classes="Success"

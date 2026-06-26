@@ -26,6 +26,9 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
     [Reactive] public partial ObservableCollection<TravelBuffInfo> InGameDebuffs { get; set; }
     [Reactive] public partial ObservableCollection<TravelBuffInfo> InGameInvestBuffs { get; set; }
 
+    [Reactive] public partial ObservableCollection<TravelBuffInfo> UnlockedPlants { get; set; }
+    [Reactive] public partial ObservableCollection<TravelBuffInfo> InGameUnlockedPlants { get; set; }
+
     public void MessageReceived(object? sender, SyncData message)
     {
         if (message.Command is Strings.UpdateAllBuffs)
@@ -61,6 +64,14 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
                 if (buffs.InGameInvestBuffs.TryGetValue(invest.ID, out var investEnabled))
                 {
                     invest.Enabled = investEnabled;
+                }
+            }
+
+            foreach (var plant in InGameUnlockedPlants)
+            {
+                if (buffs.InGameUnlockedPlants.TryGetValue(plant.ID, out var plantEnabled))
+                {
+                    plant.Enabled = plantEnabled;
                 }
             }
 
@@ -641,6 +652,136 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         });
     }
 
+    #region 强究解锁(Unlocked Plants)
+
+    [ReactiveCommand]
+    public void UnlockedPlantEnabledChanged(RoutedEventArgs e)
+    {
+        DataSyncService.Lock(IsChangingAll);
+        var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
+        info.Enabled = ((CheckBox)e.Source).IsChecked ?? false;
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.UpdateUnlockedPlant,
+            Parameters = [info.ID.ToString(), info.Enabled.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void UnlockedPlantChooseAll()
+    {
+        DataSyncService.Lock(true);
+        IsChangingAll = true;
+        foreach (var plant in UnlockedPlants)
+        {
+            plant.Enabled = true;
+        }
+
+        IsChangingAll = false;
+        DataSyncService.Lock(false);
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.UpdateAllBuffs,
+            Parameters =
+            [
+                JsonSerializer.Serialize(new SyncTravelBuffs()
+                {
+                    UnlockedPlants = UnlockedPlants.ToDictionary(x => x.ID, x => x.Enabled)
+                }, JsonSGC.Default.SyncTravelBuffs)
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void UnlockedPlantDeselectAll()
+    {
+        DataSyncService.Lock(true);
+        IsChangingAll = true;
+        foreach (var plant in UnlockedPlants)
+        {
+            plant.Enabled = false;
+        }
+
+        IsChangingAll = false;
+        DataSyncService.Lock(false);
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.UpdateAllBuffs,
+            Parameters =
+            [
+                JsonSerializer.Serialize(new SyncTravelBuffs()
+                {
+                    UnlockedPlants = UnlockedPlants.ToDictionary(x => x.ID, x => x.Enabled)
+                }, JsonSGC.Default.SyncTravelBuffs)
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void InGameUnlockedPlantEnabledChanged(RoutedEventArgs e)
+    {
+        DataSyncService.Lock(IsChangingAll);
+        var info = (TravelBuffInfo)((Control)e.Source!).DataContext!;
+        info.Enabled = ((CheckBox)e.Source).IsChecked ?? false;
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.UpdateInGameUnlockedPlant,
+            Parameters = [info.ID.ToString(), info.Enabled.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void InGameUnlockedPlantChooseAll()
+    {
+        DataSyncService.Lock(true);
+        IsChangingAll = true;
+        foreach (var plant in InGameUnlockedPlants)
+        {
+            plant.Enabled = true;
+        }
+
+        IsChangingAll = false;
+        DataSyncService.Lock(false);
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.UpdateAllBuffs,
+            Parameters =
+            [
+                JsonSerializer.Serialize(new SyncTravelBuffs()
+                {
+                    InGameUnlockedPlants = InGameUnlockedPlants.ToDictionary(x => x.ID, x => x.Enabled)
+                }, JsonSGC.Default.SyncTravelBuffs)
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void InGameUnlockedPlantDeselectAll()
+    {
+        DataSyncService.Lock(true);
+        IsChangingAll = true;
+        foreach (var plant in InGameUnlockedPlants)
+        {
+            plant.Enabled = false;
+        }
+
+        IsChangingAll = false;
+        DataSyncService.Lock(false);
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.UpdateAllBuffs,
+            Parameters =
+            [
+                JsonSerializer.Serialize(new SyncTravelBuffs()
+                {
+                    InGameUnlockedPlants = InGameUnlockedPlants.ToDictionary(x => x.ID, x => x.Enabled)
+                }, JsonSGC.Default.SyncTravelBuffs)
+            ]
+        });
+    }
+
+    #endregion
+
     internal bool IsChangingAll = false;
 
     public override void SaveSettings(SettingsData settings)
@@ -649,6 +790,7 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         settings.TravelUltiBuffs = UltiBuffs.ToDictionary(x => x.ID, x => x.Level);
         settings.TravelDebuffs = Debuffs.ToDictionary(x => x.ID, x => x.Enabled);
         settings.TravelInvestBuffs = InvestBuffs.ToDictionary(x => x.ID, x => x.Enabled);
+        settings.TravelUnlockedPlants = UnlockedPlants.ToDictionary(x => x.ID, x => x.Enabled);
     }
 
     public override void LoadSettings(SettingsData settings)
@@ -679,6 +821,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
             if (settings.TravelInvestBuffs.TryGetValue(invest.ID, out var enabled))
                 invest.Enabled = enabled;
         }
+
+        foreach (var plant in UnlockedPlants)
+        {
+            if (settings.TravelUnlockedPlants.TryGetValue(plant.ID, out var enabled))
+                plant.Enabled = enabled;
+        }
     }
 
     public TravelBuffViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
@@ -693,6 +841,8 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         InGameUltiBuffs = [];
         InGameDebuffs = [];
         InGameInvestBuffs = [];
+        UnlockedPlants = [];
+        InGameUnlockedPlants = [];
         DataSyncService.MessageReceived += MessageReceived;
 
         foreach (var adv in InitDataService.InitData.AdvBuffs)
@@ -717,6 +867,12 @@ public partial class TravelBuffViewModel : ModifierPageViewModelBase
         {
             InvestBuffs.Add(new TravelBuffInfo { ID = invest.Key, Name = invest.Value, Enabled = false });
             InGameInvestBuffs.Add(new TravelBuffInfo { ID = invest.Key, Name = invest.Value, Enabled = false });
+        }
+
+        foreach (var plant in InitDataService.InitData.UnlockablePlants)
+        {
+            UnlockedPlants.Add(new TravelBuffInfo { ID = plant.Key, Name = plant.Value, Enabled = false });
+            InGameUnlockedPlants.Add(new TravelBuffInfo { ID = plant.Key, Name = plant.Value, Enabled = false });
         }
     }
 }

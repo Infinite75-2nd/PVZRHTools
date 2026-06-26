@@ -237,6 +237,9 @@ public static class SettingsLoader
             foreach (var kvp in settings.TravelInvestBuffs)
                 PatchDataCache.InvestBuffs[(InvestBuff)kvp.Key] = kvp.Value;
 
+            foreach (var kvp in settings.TravelUnlockedPlants)
+                PatchDataCache.UnlockedPlants[(TravelUnlocks)kvp.Key] = kvp.Value;
+
             #endregion
         }
         catch (Exception ex)
