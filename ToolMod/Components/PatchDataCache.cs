@@ -177,8 +177,6 @@ public class PatchDataCache
     public static int GodEvolutionDifficulty { get; set; } = -1;
     public static int GodEvolutionRefreshCount { get; set; } = -1;
     public static int GodEvolutionMaxPlantCount { get; set; } = -1;
-    public static int GodEvolutionOptionCount { get; set; } = -1;
-    public static int GodEvolutionUpgradeBuffChance { get; set; } = -1;
     public static bool GodEvolutionSuperUpgrade { get; set; }
     public static bool GodEvolutionForceSuperQuality { get; set; }
     public static bool GodEvolutionUncrashable { get; set; }

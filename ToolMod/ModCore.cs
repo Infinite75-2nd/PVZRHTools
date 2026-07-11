@@ -55,6 +55,7 @@ namespace ToolMod
         public void LateInit()
         {
             if (Inited) return;
+            GameAPP.theGameStatus = GameStatus.OutGame;
             ModifierObject = new("PVZRHTools");
             ModifierObject.AddComponent<DataProcessor>();
             ModifierObject.AddComponent<ToolsUpdater>();

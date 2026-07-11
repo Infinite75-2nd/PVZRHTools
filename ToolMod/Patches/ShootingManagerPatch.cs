@@ -27,10 +27,6 @@ public class ShootingManagerPatch
                 __instance.refreshCount = GetGodEvolutionMenuRefreshCount();
             if (GodEvolutionMaxPlantCount >= 0)
                 __instance.maxPlantCount = GodEvolutionMaxPlantCount;
-            if (GodEvolutionOptionCount >= 0)
-                __instance.optionCount = GodEvolutionOptionCount;
-            //if (GodEvolutionUpgradeBuffChance >= 0 || GodEvolutionFreeUpgradeQuality)
-                //__instance. = GodEvolutionFreeUpgradeQuality ? 999999 : GodEvolutionUpgradeBuffChance;
             if (GodEvolutionSuperUpgrade)
                 __instance.superUpgrade = GodEvolutionSuperUpgrade;
             if (GodEvolutionUncrashable)

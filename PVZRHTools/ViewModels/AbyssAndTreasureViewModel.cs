@@ -54,8 +54,20 @@ public partial class AbyssAndTreasureViewModel:ModifierPageViewModelBase
             Parameters = [AbyssMoney.ToString()]
         });
 
+    [ReactiveCommand]
+    public void EnterWIPAbyss()
+    {
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.AbyssJumpLevel,
+            Parameters = []
+        });
+    }
+
     #region 深渊模式修改
 
+    
+    
     [Reactive] public partial int AbyssJumpLevel { get; set; }
     [Reactive] public partial int AbyssMoney { get; set; }
     [Reactive] public partial bool AbyssLimitlessRefresh { get; set; }

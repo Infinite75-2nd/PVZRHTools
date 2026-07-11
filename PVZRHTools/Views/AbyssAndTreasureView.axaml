@@ -23,10 +23,12 @@
     </UserControl.Styles>
     
     <WrapPanel Orientation="Vertical">
-        <Border IsEnabled="False">
+        <Border>
             <StackPanel Orientation="Vertical">
                 <u:Divider Content="深渊模式修改"/> 
-                <StackPanel Orientation="Horizontal">
+                <Button Content="进入未完成的冒险秘境模式（试验性功能）"
+                        Command="{Binding EnterWIPAbyssCommand}"/>
+                <StackPanel Orientation="Horizontal" IsEnabled="False">
                     <Button Content="跳关"
                             Command="{Binding AbyssSetJumpLevelCommand}"/>
                     <u:NumericIntUpDown
@@ -42,7 +44,7 @@
                     <CheckBox Content="取消帝果限制"
                               IsChecked="{Binding AbyssRemoveSuperSunNutLimit, Mode=TwoWay}"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" IsEnabled="False">
                     <CheckBox Content="修改植物上限"
                               IsChecked="{Binding AbyssMaxPlantCountEnabled, Mode=TwoWay}"/>
                     <u:NumericIntUpDown

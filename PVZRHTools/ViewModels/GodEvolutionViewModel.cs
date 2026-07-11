@@ -17,10 +17,6 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
     [Reactive] public partial int GodEvolutionRefreshCount { get; set; } = 99999999;
     [Reactive] public partial bool GodEvolutionMaxPlantCountEnabled { get; set; }
     [Reactive] public partial int GodEvolutionMaxPlantCount { get; set; } = 5;
-    [Reactive] public partial bool GodEvolutionOptionCountEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionOptionCount { get; set; } = 3;
-    [Reactive] public partial bool GodEvolutionUpgradeBuffChanceEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionUpgradeBuffChance { get; set; }
     [Reactive] public partial bool GodEvolutionSuperUpgrade { get; set; }
     [Reactive] public partial bool GodEvolutionForceSuperQuality { get; set; }
     [Reactive] public partial bool GodEvolutionUncrashable { get; set; }
@@ -69,10 +65,6 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
             Strings.GodEvolutionDifficulty);
         this.SimpleSyncFlaggedInt(x => x.GodEvolutionMaxPlantCount, x => x.GodEvolutionMaxPlantCountEnabled,
             Strings.GodEvolutionMaxPlantCount);
-        this.SimpleSyncFlaggedInt(x => x.GodEvolutionOptionCount, x => x.GodEvolutionOptionCountEnabled,
-            Strings.GodEvolutionOptionCount);
-        this.SimpleSyncFlaggedInt(x => x.GodEvolutionUpgradeBuffChance, x => x.GodEvolutionUpgradeBuffChanceEnabled,
-            Strings.GodEvolutionUpgradeBuffChance);
         this.SimpleOneWaySync(x => x.GodEvolutionSuperUpgrade, Strings.GodEvolutionSuperUpgrade);
         this.SimpleOneWaySync(x => x.GodEvolutionForceSuperQuality, Strings.GodEvolutionForceSuperQuality);
         this.SimpleOneWaySync(x => x.GodEvolutionUncrashable, Strings.GodEvolutionUncrashable);
@@ -100,10 +92,6 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         settings.GodEvolutionRefreshCount = GodEvolutionRefreshCount;
         settings.GodEvolutionMaxPlantCountEnabled = GodEvolutionMaxPlantCountEnabled;
         settings.GodEvolutionMaxPlantCount = GodEvolutionMaxPlantCount;
-        settings.GodEvolutionOptionCountEnabled = GodEvolutionOptionCountEnabled;
-        settings.GodEvolutionOptionCount = GodEvolutionOptionCount;
-        settings.GodEvolutionUpgradeBuffChanceEnabled = GodEvolutionUpgradeBuffChanceEnabled;
-        settings.GodEvolutionUpgradeBuffChance = GodEvolutionUpgradeBuffChance;
         settings.GodEvolutionSuperUpgrade = GodEvolutionSuperUpgrade;
         settings.GodEvolutionForceSuperQuality = GodEvolutionForceSuperQuality;
         settings.GodEvolutionUncrashable = GodEvolutionUncrashable;
@@ -129,10 +117,6 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         GodEvolutionRefreshCount = settings.GodEvolutionRefreshCount;
         GodEvolutionMaxPlantCountEnabled = settings.GodEvolutionMaxPlantCountEnabled;
         GodEvolutionMaxPlantCount = settings.GodEvolutionMaxPlantCount;
-        GodEvolutionOptionCountEnabled = settings.GodEvolutionOptionCountEnabled;
-        GodEvolutionOptionCount = settings.GodEvolutionOptionCount;
-        GodEvolutionUpgradeBuffChanceEnabled = settings.GodEvolutionUpgradeBuffChanceEnabled;
-        GodEvolutionUpgradeBuffChance = settings.GodEvolutionUpgradeBuffChance;
         GodEvolutionSuperUpgrade = settings.GodEvolutionSuperUpgrade;
         GodEvolutionForceSuperQuality = settings.GodEvolutionForceSuperQuality;
         GodEvolutionUncrashable = settings.GodEvolutionUncrashable;

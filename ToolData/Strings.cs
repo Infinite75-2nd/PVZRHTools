@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.8";
-        public const string ModifierVersion = "5.1.0";
+        public const string ModifierVersion = "5.1.1";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -160,8 +160,6 @@ namespace ToolData
         public const string GodEvolutionDifficulty = "GodEvolutionDifficulty";
         public const string GodEvolutionRefreshCount = "GodEvolutionRefreshCount";
         public const string GodEvolutionMaxPlantCount = "GodEvolutionMaxPlantCount";
-        public const string GodEvolutionOptionCount = "GodEvolutionOptionCount";
-        public const string GodEvolutionUpgradeBuffChance = "GodEvolutionUpgradeBuffChance";
         public const string GodEvolutionSuperUpgrade = "GodEvolutionSuperUpgrade";
         public const string GodEvolutionForceSuperQuality = "GodEvolutionForceSuperQuality";
         public const string GodEvolutionUncrashable = "GodEvolutionUncrashable";

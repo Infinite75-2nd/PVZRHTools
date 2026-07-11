@@ -273,14 +273,6 @@ public class DataProcessor : MonoBehaviour
             SimpleSyncInt(() => GodEvolutionMaxPlantCount)
         },
         {
-            Strings.GodEvolutionOptionCount,
-            SimpleSyncInt(() => GodEvolutionOptionCount)
-        },
-        {
-            Strings.GodEvolutionUpgradeBuffChance,
-            SimpleSyncInt(() => GodEvolutionUpgradeBuffChance)
-        },
-        {
             Strings.GodEvolutionSuperUpgrade,
             SimpleSyncBool(() => GodEvolutionSuperUpgrade)
         },
@@ -1674,8 +1666,6 @@ public class DataProcessor : MonoBehaviour
         GodEvolutionDifficulty = -1;
         GodEvolutionRefreshCount = -1;
         GodEvolutionMaxPlantCount = -1;
-        GodEvolutionOptionCount = -1;
-        GodEvolutionUpgradeBuffChance = -1;
         GodEvolutionSuperUpgrade = false;
         GodEvolutionForceSuperQuality = false;
         GodEvolutionUncrashable = false;
@@ -1879,12 +1869,21 @@ public class DataProcessor : MonoBehaviour
 
     private static void AbyssJumpLevel(List<string> args)
     {
+        /*
         var level=int.Parse(args[0]);
         if (AbyssManager.Instance != null)
         {
             //AbyssManager.Instance.abyssData.arrivedLevel=level;
             //AbyssManager.Instance.abyssData.maxArrivedLevel=level;
             //AbyssManager.Instance.abyssData.tempAbyssData.arrivedLevel=level;
+        }*/
+        if (GameAPP.theGameStatus is GameStatus.OutGame)
+        {
+            GameAPP.UIManager.Push(UIType.AbyssMenu, false);
+        }
+        else
+        {
+            Core.InGameText.Instance.ShowText("请在主菜单打开这个模式",5f);
         }
     }
 

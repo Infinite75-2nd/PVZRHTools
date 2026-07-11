@@ -24,7 +24,7 @@
             <StackPanel Orientation="Vertical">
                 <u:Divider Content="诸神进化" />
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox Content="词条多重选择（试验性功能）" IsChecked="{Binding GodEvolutionMultiSelectBuff, Mode=TwoWay}" />
+                    <CheckBox Content="词条多重选择" IsChecked="{Binding GodEvolutionMultiSelectBuff, Mode=TwoWay}" />
                     <CheckBox Content="词条无限刷新" IsChecked="{Binding GodEvolutionUnlimitedRefresh, Mode=TwoWay}" />
                     <CheckBox Content="超进化词条概率大幅提升" IsChecked="{Binding GodEvolutionForceSuperQuality, Mode=TwoWay}" />
                     <CheckBox Content="强制超级升级" IsChecked="{Binding GodEvolutionSuperUpgrade, Mode=TwoWay}" />
@@ -38,22 +38,12 @@
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionDifficulty, Mode=TwoWay}" /></Border>
                     <CheckBox Content="最大植物数" IsChecked="{Binding GodEvolutionMaxPlantCountEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionMaxPlantCount, Mode=TwoWay}" /></Border>
-                    <CheckBox Content="词条选项数" IsChecked="{Binding GodEvolutionOptionCountEnabled, Mode=TwoWay}" />
-                    <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionOptionCount, Mode=TwoWay}" 
-                                                            Minimum="2"
-                                                            Maximum="5"/></Border>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    
                     <CheckBox Content="锁定刷新次数" IsChecked="{Binding GodEvolutionRefreshCountEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionRefreshCount, Mode=TwoWay}" /></Border>
-
                     <CheckBox Content="伤害倍率" IsChecked="{Binding GodEvolutionDamageMultiplierEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericDoubleUpDown Value="{Binding GodEvolutionDamageMultiplier, Mode=TwoWay}" /></Border>
-                    <CheckBox Content="升级品质无消耗" IsChecked="{Binding GodEvolutionFreeUpgradeQuality, Mode=TwoWay}" />
-                    <CheckBox Content="升级品质次数" IsChecked="{Binding GodEvolutionUpgradeBuffChanceEnabled, Mode=TwoWay}" />
-                    <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionUpgradeBuffChance, Mode=TwoWay}" /></Border>
-
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
 

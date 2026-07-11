@@ -38,7 +38,7 @@ public static class TreasureManagerPatch
             var uiManager = GameAPP.UIManager;
             if (uiManager != null)
             {
-                var menu = GameAPP.UIManager.Push((UIType)58, GameAPP.canvasUp).Cast<TreasureEvacuateMenu>();
+                var menu = GameAPP.UIManager.Push((UIType)51, GameAPP.canvasUp).Cast<TreasureEvacuateMenu>();
                 if (menu != null)
                 {
                     ModCore.Instance.Log.LogWarning("PreEvacuate");
