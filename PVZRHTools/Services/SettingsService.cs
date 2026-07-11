@@ -65,6 +65,7 @@ public class SettingsService : ISettingsService
             var travelBuffVm = Locator.Current.GetService<TravelBuffViewModel>();
             var flagWaveBuffsVm = Locator.Current.GetService<FlagWaveBuffsViewModel>();
             var inGameHotkeysVm = Locator.Current.GetService<InGameHotkeysViewModel>();
+            var abyssAndTreasureVm = Locator.Current.GetService<AbyssAndTreasureViewModel>();
 
             commonSettingsVm?.SaveSettings(settings);
             propertySettingsVm?.SaveSettings(settings);
@@ -72,6 +73,7 @@ public class SettingsService : ISettingsService
             travelBuffVm?.SaveSettings(settings);
             flagWaveBuffsVm?.SaveSettings(settings);
             inGameHotkeysVm?.SaveSettings(settings);
+            abyssAndTreasureVm?.SaveSettings(settings);
             miscsVm.SaveSettings(settings);
 
             SaveSettings(settings);
@@ -101,6 +103,7 @@ public class SettingsService : ISettingsService
         var travelBuffVm = Locator.Current.GetService<TravelBuffViewModel>();
         var flagWaveBuffsVm = Locator.Current.GetService<FlagWaveBuffsViewModel>();
         var inGameHotkeysVm = Locator.Current.GetService<InGameHotkeysViewModel>();
+        var abyssAndTreasureVm = Locator.Current.GetService<AbyssAndTreasureViewModel>();
 
         commonSettingsVm?.LoadSettings(savedSettings);
         propertySettingsVm?.LoadSettings(savedSettings);
@@ -108,5 +111,6 @@ public class SettingsService : ISettingsService
         travelBuffVm?.LoadSettings(savedSettings);
         flagWaveBuffsVm?.LoadSettings(savedSettings);
         inGameHotkeysVm?.LoadSettings(savedSettings);
+        abyssAndTreasureVm?.LoadSettings(savedSettings);
     }
 }

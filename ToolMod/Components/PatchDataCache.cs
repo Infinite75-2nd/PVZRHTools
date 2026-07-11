@@ -203,14 +203,32 @@ public class PatchDataCache
 
     #endregion
 
+    #region 深渊/神秘
+
+    // 神秘模式
+    public static bool TreasureFreeUpgrade { get; set; }
+    public static bool TreasureFreeWithdraw { get; set; }
+    public static int TreasureMaxTime { get; set; } = -1;
+    public static bool TreasureAllRedCard { get; set; }
+
+    // 深渊模式
+    public static int AbyssJumpLevel { get; set; }
+    public static int AbyssMoney { get; set; }
+    public static bool AbyssLimitlessRefresh { get; set; }
+    public static bool AbyssRemoveSuperSunNutLimit { get; set; }
+    public static int AbyssMaxPlantCount { get; set; } = -1;
+    public static int AbyssMaxSuperCount { get; set; } = -1;
+    public static int AbyssMaxUltimateCount { get; set; } = -1;
+
+    #endregion
+
     #region 对象缓存
 
     public static GameObject? SeedGroup =>
         Utils.InGame && InGameUI.Instance != null ? InGameUI.Instance.SeedBank : null;
-
-    public static BoxCollider2D? CheckLose { get; set; }
-
+    
     public static Board.BoardTag? OriginalBoardTag { get; set; }
+
 
     #endregion
 
@@ -219,6 +237,10 @@ public class PatchDataCache
     [HideFromIl2Cpp]
     public static Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.List<ZombieSpawnData>>
         ZombieSpawnDataList => InitZombieList.zombieList;
+    [HideFromIl2Cpp]
+    public static Il2CppSystem.Collections.Generic.Dictionary<AdvBuff, string> AdvancedBuffsText=> TravelDictionary.advancedBuffsText;
+
+    [HideFromIl2Cpp] public static TreasureData TreasureData => new();
 
     #endregion
 
@@ -256,6 +278,11 @@ public class PatchDataCache
     public static float OriginalGloveFullCD;
     public static Il2CppSystem.Collections.Generic.Dictionary<Quality, float> OriginalQualityWeights = new();
     public static bool OperatingBuff;
+    public static float OriginalTreasureMaxTime;
+    public static bool LastNoFail;
+    public static int OriginalAbyssMaxPlantCount;
+    public static int OriginalAbyssMaxSuperCount;
+    public static int OriginalAbyssMaxUltimateCount;
 
     #endregion
 

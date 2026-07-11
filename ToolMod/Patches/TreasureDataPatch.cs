@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
+using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Linq;
 using ToolMod.Components;
+using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Patches;
 
@@ -18,9 +21,21 @@ public static class TreasureDataPatch
     public static void PostGetCardLevel(ref CardLevel __result)
     {
         // 当启用卡片无限制时，将所有卡片等级设为White（无限制）
-        if (PatchDataCache.UnlimitedCardSlots)
+        if (UnlimitedCardSlots)
         {
             __result = CardLevel.White;
         }
+    }
+    
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(TreasureData.GetLastPool))]
+    public static bool PreGetLastPool(ref List<PlantType> __result)
+    {
+        if (TreasureAllRedCard&&UnityEngine.Random.RandomRangeInt(0,2) is 0)//50%
+        {
+            __result = TypeMgr.RedPlant.Cast<IEnumerable<PlantType>>().ToList();
+            return false;
+        }
+        return true;
     }
 }

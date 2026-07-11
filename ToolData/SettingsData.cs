@@ -175,6 +175,26 @@ public class SettingsData
     public Dictionary<int, bool> TravelInvestBuffs { get; set; } = [];
     public Dictionary<int, bool> TravelUnlockedPlants { get; set; } = [];
 
+    // AbyssAndTreasureViewModel - 神秘模式
+    public int TreasureMoney { get; set; }
+    public bool TreasureFreeUpgrade { get; set; }
+    public bool TreasureFreeWithdraw { get; set; }
+    public bool TreasureMaxTimeEnabled { get; set; }
+    public int TreasureMaxTime { get; set; }
+    public bool TreasureAllRedCard { get; set; }
+
+    // AbyssAndTreasureViewModel - 深渊模式
+    public int AbyssJumpLevel { get; set; }
+    public int AbyssMoney { get; set; }
+    public bool AbyssLimitlessRefresh { get; set; }
+    public bool AbyssRemoveSuperSunNutLimit { get; set; }
+    public bool AbyssMaxPlantCountEnabled { get; set; }
+    public int AbyssMaxPlantCount { get; set; }
+    public bool AbyssMaxSuperCountEnabled { get; set; }
+    public int AbyssMaxSuperCount { get; set; }
+    public bool AbyssMaxUltimateCountEnabled { get; set; }
+    public int AbyssMaxUltimateCount { get; set; }
+
     // FlagWaveBuffsViewModel
     public bool FlagWaveBuffsEnabled { get; set; }
     public List<FlagWaveBuffSettings> FlagWaveBuffs { get; set; } = [];

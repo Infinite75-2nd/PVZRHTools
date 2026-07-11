@@ -29,8 +29,8 @@ public class ShootingManagerPatch
                 __instance.maxPlantCount = GodEvolutionMaxPlantCount;
             if (GodEvolutionOptionCount >= 0)
                 __instance.optionCount = GodEvolutionOptionCount;
-            if (GodEvolutionUpgradeBuffChance >= 0 || GodEvolutionFreeUpgradeQuality)
-                __instance.upgradeBuffChance = GodEvolutionFreeUpgradeQuality ? 999999 : GodEvolutionUpgradeBuffChance;
+            //if (GodEvolutionUpgradeBuffChance >= 0 || GodEvolutionFreeUpgradeQuality)
+                //__instance. = GodEvolutionFreeUpgradeQuality ? 999999 : GodEvolutionUpgradeBuffChance;
             if (GodEvolutionSuperUpgrade)
                 __instance.superUpgrade = GodEvolutionSuperUpgrade;
             if (GodEvolutionUncrashable)
@@ -60,50 +60,60 @@ public class ShootingManagerPatch
     [HarmonyPatch(nameof(ShootingManager.RegisterOtherBuff))]
     public static void PreRegisterOtherBuff(ShootingManager __instance,ref bool __state)
     {
-        __state = __instance.appearSuperQualitative;
+        __state = __instance.SuperQualitative;
         
     }
+    
     [HarmonyPostfix]
     [HarmonyPatch(nameof(ShootingManager.RegisterOtherBuff))]
     public static void PostRegisterOtherBuff(ShootingManager __instance,MultipleChoiceMenu menu,ref bool __state)
     {
-        if (__state == __instance.appearSuperQualitative && GodEvolutionForceSuperQuality)
+        if (__state == __instance.SuperQualitative && GodEvolutionForceSuperQuality)
         {
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    if (Lawnf.TravelAdvanced((AdvBuff)2007)) break;
+                    // 超质变：腐化
+                    // Note: The mod patch adds a TravelAdvanced(2007) guard here
                     menu.RegisterOption(
                         "超质变：腐化",
                         "获得词条：腐化",
-                        (UnityAction)(() => ShootingManager.__c.__9._RegisterOtherBuff_b__55_13()),
-                        (PlantType)254, (ZombieType)(-1), Quality.diamond);
+                        ShootingManager.__c.__9__60_13 ?? (ShootingManager.__c.__9__60_13 = (UnityAction)ShootingManager.__c.__9._RegisterOtherBuff_b__60_13),
+                        (PlantType)254,
+                        (ZombieType)(-1),
+                        Quality.diamond);
                     break;
+
                 case 1:
-                    if(__instance.superUpgrade)
-                        break;
+                    // 超质变：步步高升
+                    UnityAction action14 = (UnityAction)__instance._RegisterOtherBuff_b__60_14;
                     menu.RegisterOption(
                         "超质变：步步高升",
                         "所有词条一定是最高品质，且钻石词条的加成x5\n注意：部分植物攻速过快时会丢失动画导致无法攻击或攻速降低",
-                        (UnityAction)(() => __instance._RegisterOtherBuff_b__55_14()),
-                        (PlantType)254, (ZombieType)(-1), Quality.diamond);
+                        action14,
+                        (PlantType)254,
+                        (ZombieType)(-1),
+                        Quality.diamond);
                     break;
+
                 case 2:
-                    if (Lawnf.TravelAdvanced((AdvBuff)3005)) break;
+                    // 超质变：力量会给予希望
                     string names = string.Concat(
-                        "获得词条：",
+                        "获得词条：力量会给予希望\n获得植物：",
                         Lawnf.GetName((PlantType)969),
                         "\n获得植物：",
                         Lawnf.GetName((PlantType)953),
-                        "\n获得植物：",
+                        "\n",
                         Lawnf.GetName((PlantType)953),
-                        "\n"
-                    );
+                        "获得600%攻击力加成");
+
                     menu.RegisterOption(
                         "超质变：力量会给予希望",
                         names,
-                        (UnityAction)(() => ShootingManager.__c.__9._RegisterOtherBuff_b__55_15()),
-                        (PlantType)969, (ZombieType)(-1), Quality.diamond);
+                        (UnityAction)__instance._RegisterOtherBuff_b__60_15,
+                        (PlantType)969,
+                        (ZombieType)(-1),
+                        Quality.diamond);
                     break;
             }
         }

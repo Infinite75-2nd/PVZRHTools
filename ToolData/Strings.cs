@@ -2,8 +2,8 @@ namespace ToolData
 {
     public static class Strings
     {
-        public const string GameVersion = "3.7";
-        public const string ModifierVersion = "5.0.11";
+        public const string GameVersion = "3.8";
+        public const string ModifierVersion = "5.1.0";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -11,6 +11,7 @@ namespace ToolData
         {
             "a9d8b12bb519944f35aa83ba3f20ef24abc15e672071db605129e98a68759240" => "3.6.1",
             "a436fd03e084010b4d5c19896f12b10ebb1e44d3172534cda335f1c20b591281" => "3.7",
+            "8b3ded75fc67104efcf927cbfe6b9937d2b9f99b3d1ef1d4c29473405539653c"=>"3.8",
             _ => "<internal alpha>"
         };
 
@@ -176,6 +177,17 @@ namespace ToolData
 
         #endregion
 
+        #region 神秘模式
+
+        public const string TreasureSetMoney = "TreasureSetMoney";
+        public const string TreasureFreeUpgrade = "TreasureFreeUpgrade";
+        public const string TreasureFreeWithdraw = "TreasureFreeWithdraw";        
+        public const string TreasureMaxTime = "TreasureMaxTime";
+        public const string TreasureAllRedCard = "TreasureAllRedCard";
+        public const string TreasureFillCard = "TreasureFillCard";
+
+        #endregion
+
         #region 精细出怪修改
 
         public const string GetZombiesList = "GetZombiesList";
@@ -244,6 +256,18 @@ namespace ToolData
 
         public const string PlaySound = "PlaySound";
         public const string PlayParticle = "PlayParticle";
+
+        #endregion
+
+        #region 深渊模式修改
+
+        public const string AbyssJumpLevel = "AbyssJumpLevel";
+        public const string AbyssMoney = "AbyssMoney";
+        public const string AbyssLimitlessRefresh = "AbyssLimitlessRefresh";
+        public const string AbyssRemoveSuperSunNutLimit = "AbyssRemoveSuperSunNutLimit";
+        public const string AbyssMaxPlantCount = "AbyssMaxPlantCount";
+        public const string AbyssMaxSuperCount = "AbyssMaxSuperCount";
+        public const string AbyssMaxUltimateCount = "AbyssMaxUltimateCount";
 
         #endregion
 

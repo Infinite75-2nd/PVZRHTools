@@ -241,6 +241,23 @@ public static class SettingsLoader
                 PatchDataCache.UnlockedPlants[(TravelUnlocks)kvp.Key] = kvp.Value;
 
             #endregion
+
+            #region 深渊/神秘
+
+            // 神秘模式
+            PatchDataCache.TreasureFreeUpgrade = settings.TreasureFreeUpgrade;
+            PatchDataCache.TreasureFreeWithdraw = settings.TreasureFreeWithdraw;
+            PatchDataCache.TreasureMaxTime = settings.TreasureMaxTimeEnabled ? settings.TreasureMaxTime : -1;
+            PatchDataCache.TreasureAllRedCard = settings.TreasureAllRedCard;
+
+            // 深渊模式
+            PatchDataCache.AbyssLimitlessRefresh = settings.AbyssLimitlessRefresh;
+            PatchDataCache.AbyssRemoveSuperSunNutLimit = settings.AbyssRemoveSuperSunNutLimit;
+            PatchDataCache.AbyssMaxPlantCount = settings.AbyssMaxPlantCountEnabled ? settings.AbyssMaxPlantCount : -1;
+            PatchDataCache.AbyssMaxSuperCount = settings.AbyssMaxSuperCountEnabled ? settings.AbyssMaxSuperCount : -1;
+            PatchDataCache.AbyssMaxUltimateCount = settings.AbyssMaxUltimateCountEnabled ? settings.AbyssMaxUltimateCount : -1;
+
+            #endregion
         }
         catch (Exception ex)
         {

@@ -261,7 +261,5 @@ public static class InitBoardPatch
             }
         }
         yield return null;
-        CheckLose = GameObject.Find("checklose")?.GetComponent<BoxCollider2D>();
-
     }
 }

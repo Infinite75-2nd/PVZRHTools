@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PVZRHTools.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="950"
+             x:Class="PVZRHTools.Views.AbyssAndTreasureView"
+             x:CompileBindings="True"
+             x:DataType="vm:AbyssAndTreasureViewModel">
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Theme" Value="{DynamicResource TagLabel}" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinWidth" Value="160" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="u|NumericUpDown">
+            <Setter Property="MinWidth" Value="100" />
+        </Style>
+    </UserControl.Styles>
+    
+    <WrapPanel Orientation="Vertical">
+        <Border IsEnabled="False">
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="深渊模式修改"/> 
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="跳关"
+                            Command="{Binding AbyssSetJumpLevelCommand}"/>
+                    <u:NumericIntUpDown
+                        Minimum="0"
+                        Value="{Binding AbyssJumpLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Button Content="修改叶绿素"
+                            Command="{Binding AbyssSetMoneyCommand}"/>
+                    <u:NumericIntUpDown
+                        Minimum="0"
+                        Value="{Binding AbyssMoney, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Content="词条无限刷新"
+                              IsChecked="{Binding AbyssLimitlessRefresh, Mode=TwoWay}"/>
+                    <CheckBox Content="取消帝果限制"
+                              IsChecked="{Binding AbyssRemoveSuperSunNutLimit, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="修改植物上限"
+                              IsChecked="{Binding AbyssMaxPlantCountEnabled, Mode=TwoWay}"/>
+                    <u:NumericIntUpDown
+                        Minimum="0"
+                        Value="{Binding AbyssMaxPlantCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Content="修改超级植物上限"
+                              IsChecked="{Binding AbyssMaxSuperCountEnabled, Mode=TwoWay}"/>
+                    <u:NumericIntUpDown
+                        Minimum="0"
+                        Value="{Binding AbyssMaxSuperCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Content="修改究极植物上限"
+                              IsChecked="{Binding AbyssMaxUltimateCountEnabled, Mode=TwoWay}"/>
+                    <u:NumericIntUpDown
+                        Minimum="0"
+                        Value="{Binding AbyssMaxUltimateCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="神秘模式修改"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="修改资产数"
+                            Command="{Binding TreasureSetMoneyCommand}"/>
+                    <u:NumericIntUpDown
+                        Minimum="0"
+                        Step="100"
+                        Value="{Binding TreasureMoney, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Content="修改最大关卡时长" IsChecked="{Binding TreasureMaxTimeEnabled, Mode=TwoWay}"/>
+                    <u:NumericIntUpDown
+                        Value="{Binding TreasureMaxTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Minimum="1"
+                        Step="10"
+                        InnerRightContent="秒"/>
+                    <Button Content="现有卡片满库存"
+                            Command="{Binding TreasureFillCardCommand}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="大幅提高红卡概率"
+                              IsChecked="{Binding TreasureAllRedCard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Content="仓库免费升级" IsChecked="{Binding TreasureFreeUpgrade, Mode=TwoWay}"/>
+                    <CheckBox Content="取消撤离等待时间限制" IsChecked="{Binding TreasureFreeWithdraw, Mode=TwoWay}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </WrapPanel>
+</UserControl>

@@ -5,6 +5,8 @@
       <map>
         <entry key="PVZRHTools/App.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/AboutView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/AbyssAndTreasure.axaml" value="PVZRHTools/PVZRHTools.csproj" />
+        <entry key="PVZRHTools/Views/AbyssAndTreasureView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/AddGameInstance.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/AddGameInstanceView.axaml" value="PVZRHTools/PVZRHTools.csproj" />
         <entry key="PVZRHTools/Views/CommonSettings.axaml" value="PVZRHTools/PVZRHTools.csproj" />

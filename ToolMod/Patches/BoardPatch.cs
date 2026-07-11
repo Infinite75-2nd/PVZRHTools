@@ -380,7 +380,7 @@ public static class BoardPatch
             {
                 AllowBuffRemoval = oldAllow;
             } 
-
+            
         }
         catch (Exception ex)
         {

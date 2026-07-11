@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Core;
+using GameLevel.Abyss;
 using GameLevel.RogueShooting;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Attributes;
@@ -159,9 +160,42 @@ public class DataProcessor : MonoBehaviour
         { Strings.UnlimitedCardSlots, SimpleSyncBool(() => UnlimitedCardSlots) },
         { Strings.RandomBullet, SimpleSyncBool(() => RandomBullet) },
         { Strings.AutoRhythmGame, SimpleSyncBool(() => AutoRhythmGame) },
-        { Strings.StarUpBuff, SimpleSyncBool(() => StarUpBuff) },
+        { Strings.StarUpBuff, SimpleSyncBool(() =>PatchDataCache.StarUpBuff) },
 
+        // 神秘模式
+        { Strings.TreasureFreeUpgrade, SimpleSyncBool(() => TreasureFreeUpgrade) },
+        { Strings.TreasureFreeWithdraw, SimpleSyncBool(() => TreasureFreeWithdraw) },
+        { Strings.TreasureMaxTime, SimpleSyncInt(() => TreasureMaxTime) },
+        { Strings.TreasureAllRedCard, SimpleSyncBool(() => TreasureAllRedCard) },
+        { Strings.TreasureSetMoney, SimpleSyncInt(()=>TreasureData.treasureMoney) },
+        { Strings.TreasureFillCard, TreasureFillCard },
 
+        // 深渊模式
+        { Strings.AbyssJumpLevel, AbyssJumpLevel },
+        { Strings.AbyssMoney, AbyssMoney },
+        { Strings.AbyssLimitlessRefresh, SimpleSyncBool(() => AbyssLimitlessRefresh) },
+        { Strings.AbyssRemoveSuperSunNutLimit, SimpleSyncBool(() => AbyssRemoveSuperSunNutLimit) },
+        { Strings.AbyssMaxPlantCount, SimpleSyncInt(() => AbyssMaxPlantCount, () =>
+        {
+            if (AbyssManager.Instance!=null)
+            {
+                //AbyssManager.Instance.maxPlantCount = AbyssMaxPlantCount>=0?AbyssMaxPlantCount:OriginalAbyssMaxPlantCount;
+            }
+        }) },
+        { Strings.AbyssMaxSuperCount, SimpleSyncInt(() => AbyssMaxSuperCount, () =>
+        {
+            if (AbyssManager.Instance!=null)
+            {
+                //AbyssManager.Instance.superPlantCount = AbyssMaxSuperCount>=0?AbyssMaxSuperCount:OriginalAbyssMaxSuperCount;
+            }
+        })  },
+        { Strings.AbyssMaxUltimateCount, SimpleSyncInt(() => AbyssMaxUltimateCount, () =>
+        {
+            if (AbyssManager.Instance!=null)
+            {
+                //AbyssManager.Instance.ultiPlantCount = AbyssMaxUltimateCount>=0?AbyssMaxUltimateCount:OriginalAbyssMaxUltimateCount;
+            }
+        })  },
 
         #endregion
 
@@ -1545,7 +1579,7 @@ public class DataProcessor : MonoBehaviour
 
     #endregion
 
-    public static void PlaySound(List<string> args)
+    private static void PlaySound(List<string> args)
     {
         try
         {
@@ -1832,6 +1866,34 @@ public class DataProcessor : MonoBehaviour
         catch (Exception ex)
         {
             ModCore.Instance.Log.LogError($"ObtainAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
+    
+    private static void TreasureFillCard(List<string> _)
+    {
+        foreach (var card in TreasureData.treasureCards)
+        {
+            card.durability = 40;
+        }
+    }
+
+    private static void AbyssJumpLevel(List<string> args)
+    {
+        var level=int.Parse(args[0]);
+        if (AbyssManager.Instance != null)
+        {
+            //AbyssManager.Instance.abyssData.arrivedLevel=level;
+            //AbyssManager.Instance.abyssData.maxArrivedLevel=level;
+            //AbyssManager.Instance.abyssData.tempAbyssData.arrivedLevel=level;
+        }
+    }
+
+    private static void AbyssMoney(List<string> args)
+    {
+        var money=int.Parse(args[0]);
+        if (AbyssManager.Instance != null)
+        {
+            //AbyssManager.Instance.abyssData.money=money;
         }
     }
 }

@@ -50,5 +50,6 @@ public class ModifierServicesModule : IModule
             new MiscsViewModel());
         resolver.RegisterLazySingleton(() =>
             new GodEvolutionViewModel(Locator.Current.GetService<IDataSyncService>()!));
+        resolver.RegisterLazySingleton(()=>new AbyssAndTreasureViewModel(Locator.Current.GetService<IDataSyncService>()!));
     }
 }

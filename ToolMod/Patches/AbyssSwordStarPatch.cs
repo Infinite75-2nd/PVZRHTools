@@ -31,7 +31,7 @@ public static class AbyssSwordStarPatch
         __state = GameAPP.theBoardType;
         if (UnlockRedCardPlants)
         {
-            GameAPP.theBoardType = LevelType.AbyssLevel;
+            GameAPP.theBoardType = LevelType.AbyssRealm;
         }
     }
 

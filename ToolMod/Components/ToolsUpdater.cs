@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
 using TMPro;
@@ -260,7 +261,17 @@ public class ToolsUpdater : MonoBehaviour
         if (LockSun >= 0) Board.Instance.theSun = LockSun;
         if (LockMoney >= 0) Board.Instance.theMoney = LockMoney;
         if (PauseSpawn) Board.Instance!.iceDoomFreezeTime = 1;
-        if (CheckLose != null) CheckLose.enabled = !NoFail;
+        //if (CheckLose != null) CheckLose.enabled = !NoFail;
+        if(LastNoFail!=NoFail)
+            foreach (var gameLose in FindObjectsOfTypeAll(Il2CppType.Of<GameLose>()))
+            {
+                if (gameLose==null)
+                {
+                    continue;
+                }
+                gameLose.GetComponent<BoxCollider2D>().enabled = !NoFail;
+            }
+        LastNoFail=NoFail;
     }
 
     public void ProcessZombieSea()

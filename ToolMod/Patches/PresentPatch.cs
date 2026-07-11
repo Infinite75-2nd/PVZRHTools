@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Patches;
@@ -44,9 +44,11 @@ public static class PresentPatch
     [HarmonyPatch(nameof(Present.AnimEvent))]
     public static bool PreAnimEvent(Present __instance)
     {
-        // 检查是否是PvE布阵的礼盒（第3行，第1-5列）
-        if (__instance.thePlantRow is 2)
+        // 检查是否是PvE布阵的礼盒（第3行，第0-4列）
+        if (__instance.thePlantRow is 2 && __instance.thePlantColumn >= 0 && __instance.thePlantColumn < PVEPresentFlag.Length && PVEPresentFlag[__instance.thePlantColumn])
         {
+            PVEPresentFlag[__instance.thePlantColumn] = false;
+
             var lockPlantType = __instance.thePlantColumn switch
             {
                 0 => Present1PlantIndex,
@@ -57,9 +59,8 @@ public static class PresentPatch
                 _ => PlantType.Nothing
             };
 
-            if (lockPlantType >= 0 && PVEPresentFlag[__instance.thePlantColumn - 1])
+            if (lockPlantType >= 0)
             {
-                PVEPresentFlag[__instance.thePlantColumn - 1] = false;
                 var col = __instance.thePlantColumn;
                 var row = __instance.thePlantRow;
                 var pos = __instance.transform.position;
@@ -77,9 +78,9 @@ public static class PresentPatch
                     CreatePlant.Instance.SetPlant(col, row, lockPlantType);
                     CreatePlant.Instance.SetPlant(col, row, lockPlantType);
                 }
-
-                return false; // 阻止原始AnimEvent执行
             }
+
+            return false; // 阻止原始AnimEvent执行（防止LockPresent干扰）
         }
 
         return true; // 继续执行原始AnimEvent
