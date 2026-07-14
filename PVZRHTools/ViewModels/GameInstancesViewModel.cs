@@ -91,6 +91,26 @@ public partial class GameInstancesViewModel : ViewModelBase
     }
 
     [ReactiveCommand]
+    public async Task InstallModifier(GameInstanceInfo info)
+    {
+        try
+        {
+            _gameBootstrapService.InstallModifier(info.GameRootPath);
+            _notificationService.NotificationManager?.Show(
+                $"\"{new DirectoryInfo(info.GameRootPath).Name}\" 的修改器已安装完成", NotificationType.Success);
+            MenuItems = _modifierInfoService.InitGameInstanceInfos();
+        }
+        catch (Exception ex)
+        {
+            await OverlayMessageBox.ShowAsync(
+                $"安装修改器失败：{ex.Message}",
+                "安装失败",
+                icon: MessageBoxIcon.Error,
+                button: MessageBoxButton.OK);
+        }
+    }
+
+    [ReactiveCommand]
     public void OpenGameRootFolder(GameInstanceInfo info)
     {
         Process.Start("explorer.exe", info.GameRootPath);

@@ -269,7 +269,7 @@ public static class BoardPatch
                 (PlantType)LockWheat
             );
 
-            if (plantObject is not null)
+            if (plantObject != null)
             {
                 plantObject.wheatType = 1;
             }

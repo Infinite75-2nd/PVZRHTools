@@ -26,8 +26,8 @@
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Content="词条多重选择" IsChecked="{Binding GodEvolutionMultiSelectBuff, Mode=TwoWay}" />
                     <CheckBox Content="词条无限刷新" IsChecked="{Binding GodEvolutionUnlimitedRefresh, Mode=TwoWay}" />
-                    <CheckBox Content="超进化词条概率大幅提升" IsChecked="{Binding GodEvolutionForceSuperQuality, Mode=TwoWay}" />
-                    <CheckBox Content="强制超级升级" IsChecked="{Binding GodEvolutionSuperUpgrade, Mode=TwoWay}" />
+                    <CheckBox Content="开启隐藏难度(shoothard)" IsChecked="{Binding GodEvolutionCheatHard, Mode=TwoWay}" />
+                    <CheckBox Content="开启步步高升" IsChecked="{Binding GodEvolutionSuperUpgrade, Mode=TwoWay}" />
                     <CheckBox Content="植物坚不可摧" IsChecked="{Binding GodEvolutionUncrashable, Mode=TwoWay}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" >
@@ -38,12 +38,14 @@
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionDifficulty, Mode=TwoWay}" /></Border>
                     <CheckBox Content="最大植物数" IsChecked="{Binding GodEvolutionMaxPlantCountEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionMaxPlantCount, Mode=TwoWay}" /></Border>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
                     <CheckBox Content="锁定刷新次数" IsChecked="{Binding GodEvolutionRefreshCountEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionRefreshCount, Mode=TwoWay}" /></Border>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <CheckBox Content="伤害倍率" IsChecked="{Binding GodEvolutionDamageMultiplierEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericDoubleUpDown Value="{Binding GodEvolutionDamageMultiplier, Mode=TwoWay}" /></Border>
+                    <CheckBox Content="超进化词条概率大幅提升" IsChecked="{Binding GodEvolutionForceSuperQuality, Mode=TwoWay}" />
+                    <CheckBox Content="专家邀请词条概率大幅提升" IsChecked="{Binding GodEvolutionForceExpertBuff, Mode=TwoWay}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
 
@@ -79,6 +81,8 @@
                                     Command="{Binding GodEvolutionUnlockAllCommand}" />
                     <Button Content="恢复默认"
                             Command="{Binding GodEvolutionResetQualityCommand}" />
+                    <Button Content="立即选词条"
+                            Command="{Binding GodEvolutionChooseBuffCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>

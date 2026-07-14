@@ -5,7 +5,7 @@ using Avalonia.Threading;
 using ToolData;
 using PVZRHTools.Services;
 using PVZRHTools.Views;
-using ReactiveUI;
+using ReactiveUI; 
 using ReactiveUI.SourceGenerators;
 using Splat;
 
@@ -117,8 +117,7 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
         _navigationService.NavigateTo<CommonSettingsViewModel>();
 
         // 监听ShowFloatingWindow属性变化
-        this.WhenAnyValue(x => x.ShowFloatingWindow)
-            .Subscribe(show =>
+        this.WhenAnyValue(x => x.ShowFloatingWindow).Subscribe(show =>
             {
                 if (show)
                 {

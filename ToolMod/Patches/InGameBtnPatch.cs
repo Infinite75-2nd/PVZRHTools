@@ -19,6 +19,6 @@ public static class InGameBtnPatch
             TimeStop = false;
         }
 
-        if (__instance.buttonNumber == 13) BottomEnabled = GameObject.Find("Bottom") is not null;
+        if (__instance.buttonNumber == 13) BottomEnabled = GameObject.Find("Bottom") != null;
     }
 }

@@ -13,6 +13,7 @@ public partial class GameInstanceInfo : ReactiveObject
     [Reactive] public partial string GameVersion { get; set; } = "";
     [Reactive] public partial bool BepInExEnabled { get; set; }
     [Reactive] public partial bool ModifierEnabled { get; set; }
+    [Reactive] public partial bool NeedsModifierInstall { get; set; }
     [Reactive] public partial ObservableCollection<ModInfo> Mods { get; set; } = [];
 }
 

@@ -48,6 +48,10 @@ public class ModifierInfoService : IModifierInfoService
                                 Path.Combine(gamePath, Paths.GameAssemblyName))))));
             info.BepInExEnabled = ToolUtils.GetBepInExEnabled(gamePath);
             info.ModifierEnabled = GetModifierEnabled(gamePath);
+            info.NeedsModifierInstall =
+                !File.Exists(Path.Combine(gamePath, Paths.ModifierExeName)) ||
+                !File.Exists(Path.Combine(gamePath, Paths.PluginsPath, "ToolMod.dll")) ||
+                !File.Exists(Path.Combine(gamePath, Paths.PluginsPath, "ToolData.dll"));
             _modsManagementService.SyncModsInfo(info);
             infos.Add(info);
         }
@@ -139,15 +143,37 @@ public class ModifierInfoService : IModifierInfoService
             var gameVersion = Strings.GetGameVersion(hash);
             if (gameVersion != Strings.GameVersion) continue;
 
+            // 检测 PVZRHTools.exe 版本
             var modifierExePath = Path.Combine(gamePath, Paths.ModifierExeName);
-            if (!File.Exists(modifierExePath)) continue;
+            bool exeOutdated = false;
+            if (File.Exists(modifierExePath))
+            {
+                var exeVersion = FileVersionInfo.GetVersionInfo(modifierExePath).FileVersion;
+                if (exeVersion != null &&
+                    Version.TryParse(exeVersion, out var exeVer) &&
+                    Version.TryParse(currentVersion, out var curVer) &&
+                    exeVer < curVer)
+                {
+                    exeOutdated = true;
+                }
+            }
 
-            var fileVersion = FileVersionInfo.GetVersionInfo(modifierExePath).FileVersion;
-            if (fileVersion == null) continue;
+            // 检测 ToolMod.dll 版本
+            var toolModPath = Path.Combine(gamePath, Paths.PluginsPath, "ToolMod.dll");
+            bool dllOutdated = false;
+            if (File.Exists(toolModPath))
+            {
+                var dllVersion = FileVersionInfo.GetVersionInfo(toolModPath).FileVersion;
+                if (dllVersion != null &&
+                    Version.TryParse(dllVersion, out var dllVer) &&
+                    Version.TryParse(currentVersion, out var curVer2) &&
+                    dllVer < curVer2)
+                {
+                    dllOutdated = true;
+                }
+            }
 
-            if (Version.TryParse(fileVersion, out var fileVer) &&
-                Version.TryParse(currentVersion, out var curVer) &&
-                fileVer < curVer)
+            if (exeOutdated || dllOutdated)
             {
                 outdatedPaths.Add(gamePath);
             }

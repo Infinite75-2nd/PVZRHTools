@@ -310,6 +310,9 @@ public class DataProcessor : MonoBehaviour
         },
         { Strings.GodEvolutionUnlockAll, GodEvolutionUnlockAll },
         { Strings.GodEvolutionMultiSelectBuff, SimpleSyncBool(() => GodEvolutionMultiSelectBuff) },
+        { Strings.GodEvolutionChooseBuff, GodEvolutionChooseBuff },
+        { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard) },
+        { Strings.GodEvolutionForceExpertBuff, SimpleSyncBool(() => GodEvolutionForceExpertBuff) },
         #endregion
 
         #region 游戏内按键绑定
@@ -354,6 +357,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.CreateUltimateMeteorite, CreateUltimateMeteorite },
         { Strings.CreateSolarMeteorite, CreateSolarMeteorite },
         { Strings.NextWave, NextWave },
+        { Strings.SetJumpWave, SetJumpWave },
         { Strings.SetAward, SetAward },
         { Strings.DestroyAward, DestroyAward },
         { Strings.ShowText, ShowText },
@@ -792,12 +796,12 @@ public class DataProcessor : MonoBehaviour
     private static void CreateUltimateMeteorite(List<string> _) => Board.Instance.CreateUltimateMateorite();
 
     private static void CreateSolarMeteorite(List<string> _) {
-        GameObject? original = GameAPP.itemPrefab[47];
+        var original = GameAPP.itemPrefab[47];
         if(original == null||GameAPP.board == null)return;
-        GameObject? obj = Instantiate(original);
+        var obj = Instantiate(original);
         if(obj == null)return;
-        Transform transform = obj.transform;
-        Transform boardTransform = GameAPP.board.transform;
+        var transform = obj.transform;
+        var boardTransform = GameAPP.board.transform;
         transform.SetParent(boardTransform);
     }
 
@@ -807,11 +811,28 @@ public class DataProcessor : MonoBehaviour
         {
             // 第 0 波时保证进度条可见（与原版表现一致）
             if (Board.Instance.theWave == 0 && InGameUI.Instance != null && InGameUI.Instance.LevProgress != null)
+            {
+                InGameUI.Instance.LevelName2.gameObject.SetActive(false);
+                InGameUI.Instance.LevelName3.gameObject.SetActive(true);
                 InGameUI.Instance.LevProgress.SetActive(true);
-
+            }
             // 触发下一波：必须设置成负数，确保进入 `timeUntilNextWave < 0` 分支
             Board.Instance.timeUntilNextWave = -0.01f;
             Board.Instance.NewZombieUpdate();
+        }
+    }
+
+    private static void SetJumpWave(List<string> args)
+    {
+        if (Board.Instance != null && args.Count > 0 && int.TryParse(args[0], out var wave))
+        {
+            if (Board.Instance.theWave == 0 && InGameUI.Instance != null && InGameUI.Instance.LevProgress != null)
+            {
+                InGameUI.Instance.LevelName2.gameObject.SetActive(false);
+                InGameUI.Instance.LevelName3.gameObject.SetActive(true);
+                InGameUI.Instance.LevProgress.SetActive(true);
+            }
+            Board.Instance.theWave = Math.Min(wave, Board.Instance.theMaxWave);
         }
     }
 
@@ -1044,7 +1065,7 @@ public class DataProcessor : MonoBehaviour
             try
             {
                 var plants = JsonSerializer.Deserialize<List<PlantInfo>>(formationCode);
-                if (plants is not null)
+                if (plants != null)
                 {
                     foreach (var plant in plants)
                     {
@@ -1072,7 +1093,7 @@ public class DataProcessor : MonoBehaviour
             // 高数模式（原生字符串格式 + 压缩）
             List<string> zombieDataList = [];
             foreach (var zombie in Board.Instance.zombieArray!)
-                if (zombie is not null && zombie.gameObject is not null && !zombie.isMindControlled)
+                if (zombie != null && zombie.gameObject != null && !zombie.isMindControlled)
                 {
                     // 使用原始坐标精度（保持 7.8724456 的完整精度）
                     var zombieData =
@@ -1095,7 +1116,7 @@ public class DataProcessor : MonoBehaviour
             // JSON 模式（保留完整对象结构）
             List<ZombieInfo> zombies = [];
             foreach (var zombie in Board.Instance.zombieArray!)
-                if (zombie is not null && zombie.gameObject is not null && !zombie.isMindControlled)
+                if (zombie != null && zombie.gameObject != null && !zombie.isMindControlled)
                     zombies.Add(new ZombieInfo
                     {
                         ID = (int)zombie.theZombieType,
@@ -1152,7 +1173,7 @@ public class DataProcessor : MonoBehaviour
             try
             {
                 var fieldZombies = JsonSerializer.Deserialize<List<ZombieInfo>>(formationCode);
-                if (fieldZombies is not null)
+                if (fieldZombies != null)
                 {
                     foreach (var z in fieldZombies)
                         global::CreateZombie.Instance.SetZombie(z.Row, (ZombieType)z.ID, z.X);
@@ -1170,7 +1191,7 @@ public class DataProcessor : MonoBehaviour
     {
         List<string> zombieDataList = [];
         foreach (var zombie in Board.Instance.zombieArray!)
-            if (zombie is not null && zombie.gameObject is not null && !zombie.isMindControlled)
+            if (zombie != null && zombie.gameObject != null && !zombie.isMindControlled)
             {
                 // 使用原始坐标精度（保持 7.8724456 的完整精度）
                 var zombieData =
@@ -1309,11 +1330,11 @@ public class DataProcessor : MonoBehaviour
         try
         {
             var fieldVases = JsonSerializer.Deserialize<List<VaseInfo>>(formationCode);
-            if (fieldVases is not null)
+            if (fieldVases != null)
             {
                 if (ClearOnWritingVases)
                     for (var i = Board.Instance.griditemArray.Count - 1; i >= 0; i--)
-                        if (Board.Instance.griditemArray[i] is not null &&
+                        if (Board.Instance.griditemArray[i] != null &&
                             Board.Instance.griditemArray[i].theItemType is (GridItemType)4
                                 or (GridItemType)5 or (GridItemType)6)
                         {
@@ -1724,6 +1745,14 @@ public class DataProcessor : MonoBehaviour
             RecordData(data.stageWins, 3);
 
         InGameText.Instance?.ShowText("已解锁全部难度与模式", 5);
+    }
+
+    private static void GodEvolutionChooseBuff(List<string> _)
+    {
+        if (InGame && Board.Instance.TryGetComponent<ShootingManager>(out var shooting)&&FindObjectsOfTypeAll(Il2CppType.Of<MultipleChoiceMenu>()).Count is 0)
+        {
+            shooting.ShowBuff();
+        }
     }
 
     private static void SpawnPetGargantuar(List<string> _)

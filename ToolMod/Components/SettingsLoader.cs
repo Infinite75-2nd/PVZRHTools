@@ -242,6 +242,13 @@ public static class SettingsLoader
 
             #endregion
 
+            #region 诸神进化
+
+            PatchDataCache.GodEvolutionCheatHard = settings.GodEvolutionCheatHard;
+            PatchDataCache.GodEvolutionForceExpertBuff = settings.GodEvolutionForceExpertBuff;
+
+            #endregion
+
             #region 深渊/神秘
 
             // 神秘模式

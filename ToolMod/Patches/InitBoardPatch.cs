@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using BepInEx.Unity.IL2CPP.Utils;
+using GameLevel.RogueShooting;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using ToolMod.Components;
@@ -261,5 +262,9 @@ public static class InitBoardPatch
             }
         }
         yield return null;
+        if (Board.Instance?.TryGetComponent<ShootingManager>(out var shooting) is true&&GodEvolutionCheatHard)
+        {
+            shooting.CheatHard();
+        }
     }
 }

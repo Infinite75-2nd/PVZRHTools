@@ -10,7 +10,7 @@ using static ToolMod.Utils;
 namespace ToolMod.Patches;
 
 [HarmonyPatch(typeof(MultipleChoiceMenu))]
-public static class MultipleChoiceMenuRefreshPatch
+public static class MultipleChoiceMenuPatch
 {
     private static FieldInfo? _refreshCountField;
 

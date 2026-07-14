@@ -1,10 +1,6 @@
 using System;
 using System.IO;
 using System.Linq.Expressions;
-using System.Reactive.Linq;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using PVZRHTools.Models;
 using PVZRHTools.ViewModels;
 using ReactiveUI;
 using ToolData;
@@ -63,7 +59,7 @@ public static class ToolUtils
                 SyncData data = new()
                 {
                     Command = propertyName,
-                    Parameters = [$"{value}"]
+                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : "-1.0"]
                 };
                 vm.DataSyncService.SendCommand(data);
             });
@@ -91,7 +87,7 @@ public static class ToolUtils
                 SyncData data = new()
                 {
                     Command = propertyName,
-                    Parameters = [$"{value}"]
+                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : "-1"]
                 };
                 vm.DataSyncService.SendCommand(data);
             });

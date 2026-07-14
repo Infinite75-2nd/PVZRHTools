@@ -60,6 +60,40 @@ public class ShootingManagerPatch
         
     }
     
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(ShootingManager.RegisterExpertBuff))]
+    public static bool PreRegisterExpertBuff(ShootingManager __instance, MultipleChoiceMenu menu)
+    {
+        if (!GodEvolutionForceExpertBuff) return true;
+        // Only offer plants the player doesn't already own
+        var candidates = new Il2CppSystem.Collections.Generic.List<PlantType>();
+        foreach (var p in __instance.ExpertPlants)
+        {
+            if (!__instance.YourPlants.Contains(p))
+                candidates.Add(p);
+        }
+        if (candidates.Count == 0)
+            return false;
+
+        // Pick a random unowned expert plant
+        var displayClass = new ShootingManager.__c__DisplayClass61_0
+        {
+            __4__this = __instance,
+            plantType = candidates.GetRandom()
+        };
+
+        string description = "获得新植物：" + Lawnf.GetName(displayClass.plantType);
+
+        menu.RegisterOption(
+            "专家邀请",
+            description,
+            (UnityAction)displayClass._RegisterExpertBuff_b__1,
+            displayClass.plantType,
+            (ZombieType)(-1),
+            Quality.diamond);
+        return false;
+    }
+    
     [HarmonyPostfix]
     [HarmonyPatch(nameof(ShootingManager.RegisterOtherBuff))]
     public static void PostRegisterOtherBuff(ShootingManager __instance,MultipleChoiceMenu menu,ref bool __state)
@@ -71,45 +105,52 @@ public class ShootingManagerPatch
                 case 0:
                     // 超质变：腐化
                     // Note: The mod patch adds a TravelAdvanced(2007) guard here
-                    menu.RegisterOption(
-                        "超质变：腐化",
-                        "获得词条：腐化",
-                        ShootingManager.__c.__9__60_13 ?? (ShootingManager.__c.__9__60_13 = (UnityAction)ShootingManager.__c.__9._RegisterOtherBuff_b__60_13),
-                        (PlantType)254,
-                        (ZombieType)(-1),
-                        Quality.diamond);
+                    if(!Lawnf.TravelAdvanced((AdvBuff)2007))
+                        menu.RegisterOption(
+                            "超质变：腐化",
+                            "获得词条：腐化",
+                            ShootingManager.__c.__9__60_13 ?? (ShootingManager.__c.__9__60_13 = (UnityAction)ShootingManager.__c.__9._RegisterOtherBuff_b__60_13),
+                            (PlantType)254,
+                            (ZombieType)(-1),
+                            Quality.diamond);
                     break;
 
                 case 1:
                     // 超质变：步步高升
-                    UnityAction action14 = (UnityAction)__instance._RegisterOtherBuff_b__60_14;
-                    menu.RegisterOption(
-                        "超质变：步步高升",
-                        "所有词条一定是最高品质，且钻石词条的加成x5\n注意：部分植物攻速过快时会丢失动画导致无法攻击或攻速降低",
-                        action14,
-                        (PlantType)254,
-                        (ZombieType)(-1),
-                        Quality.diamond);
+                    if (!__instance.superUpgrade)
+                    {
+                        UnityAction action14 = (UnityAction)__instance._RegisterOtherBuff_b__60_14;
+                        menu.RegisterOption(
+                            "超质变：步步高升",
+                            "所有词条一定是最高品质，且钻石词条的加成x5\n注意：部分植物攻速过快时会丢失动画导致无法攻击或攻速降低",
+                            action14,
+                            (PlantType)254,
+                            (ZombieType)(-1),
+                            Quality.diamond);
+                    }
                     break;
 
                 case 2:
                     // 超质变：力量会给予希望
-                    string names = string.Concat(
-                        "获得词条：力量会给予希望\n获得植物：",
-                        Lawnf.GetName((PlantType)969),
-                        "\n获得植物：",
-                        Lawnf.GetName((PlantType)953),
-                        "\n",
-                        Lawnf.GetName((PlantType)953),
-                        "获得600%攻击力加成");
+                    if (Lawnf.TravelAdvanced((AdvBuff.EnumValue3005)))
+                    {
+                        string names = string.Concat(
+                            "获得词条：力量会给予希望\n获得植物：",
+                            Lawnf.GetName((PlantType)969),
+                            "\n获得植物：",
+                            Lawnf.GetName((PlantType)953),
+                            "\n",
+                            Lawnf.GetName((PlantType)953),
+                            "获得600%攻击力加成");
 
-                    menu.RegisterOption(
-                        "超质变：力量会给予希望",
-                        names,
-                        (UnityAction)__instance._RegisterOtherBuff_b__60_15,
-                        (PlantType)969,
-                        (ZombieType)(-1),
-                        Quality.diamond);
+                        menu.RegisterOption(
+                            "超质变：力量会给予希望",
+                            names,
+                            (UnityAction)__instance._RegisterOtherBuff_b__60_15,
+                            (PlantType)969,
+                            (ZombieType)(-1),
+                            Quality.diamond);
+                    }
                     break;
             }
         }

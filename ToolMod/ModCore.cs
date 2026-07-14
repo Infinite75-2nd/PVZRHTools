@@ -19,6 +19,13 @@ using Paths = ToolData.Paths;
 using static ToolMod.Utils;
 using static ToolMod.Components.PatchDataCache;
 
+[assembly: AssemblyFileVersion(Strings.ModifierVersion)]
+[assembly: AssemblyCompany("PVZRHTools")]
+[assembly: AssemblyConfiguration("Release")]
+[assembly: AssemblyProduct("PVZRHTools")]
+[assembly: AssemblyTitle("PVZRHTools")]
+[assembly: AssemblyVersion(Strings.ModifierVersion)]
+
 namespace ToolMod
 {
     [BepInPlugin("infinite75.toolmod", "PVZRHTools", Strings.ModifierVersion)]
@@ -174,7 +181,7 @@ namespace ToolMod
                 try
                 {
                     // Advanced
-                    if (TravelDictionary.advancedBuffsText is not null && TravelDictionary.advancedBuffsText.Count > 0)
+                    if (TravelDictionary.advancedBuffsText != null && TravelDictionary.advancedBuffsText.Count > 0)
                     {
                         foreach (var advBuffKey in TravelDictionary.advancedBuffsText)
                         {
@@ -200,7 +207,7 @@ namespace ToolMod
                     }
 
                     // Debuff
-                    if (TravelDictionary.debuffData is not null && TravelDictionary.debuffData.Count > 0)
+                    if (TravelDictionary.debuffData != null && TravelDictionary.debuffData.Count > 0)
                     {
                         int maxDebuffKey = -1;
                         foreach (var kvp in TravelDictionary.debuffData)
@@ -278,7 +285,7 @@ namespace ToolMod
                 }
 
                 foreach (var t in GameAPP.resourcesManager.allBullets)
-                    if (GameAPP.resourcesManager.bulletPrefabs[t] is not null)
+                    if (GameAPP.resourcesManager.bulletPrefabs[t] != null)
                     {
                         var text =
                             $"{GameAPP.resourcesManager.bulletPrefabs[t].name} ({(int)t})";

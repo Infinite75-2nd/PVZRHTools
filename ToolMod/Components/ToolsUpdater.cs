@@ -52,7 +52,7 @@ public class ToolsUpdater : MonoBehaviour
         if (!TimeStop && !TimeSlow)
         {
             Time.timeScale =
-                GameSpeedEnabled ? GameSpeed : (GameAPP.config is not null ? GameAPP.config.gameSpeed : 1f);
+                GameSpeedEnabled ? GameSpeed : (GameAPP.config != null ? GameAPP.config.gameSpeed : 1f);
         }
         else if (!TimeStop && TimeSlow)
         {
@@ -66,13 +66,13 @@ public class ToolsUpdater : MonoBehaviour
         try
         {
             Transform slow;
-            if (InGameUI.Instance is not null && !InGameUI.Instance.IsDestroyed())
+            if (InGameUI.Instance != null && !InGameUI.Instance.IsDestroyed())
             {
                 slow = InGameUI.Instance.SlowTrigger.transform;
                 slow.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = $"时停(x{Time.timeScale})";
                 slow.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = $"时停(x{Time.timeScale})";
             }
-            else if (IZBottomMenu.Instance is not null && !IZBottomMenu.Instance.IsDestroyed())
+            else if (IZBottomMenu.Instance != null && !IZBottomMenu.Instance.IsDestroyed())
             {
                 slow = GameObject.Find("SlowTrigger").transform;
                 slow.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = $"时停(x{Time.timeScale})";

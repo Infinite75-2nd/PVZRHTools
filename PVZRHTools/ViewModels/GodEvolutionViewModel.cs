@@ -21,13 +21,15 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool GodEvolutionForceSuperQuality { get; set; }
     [Reactive] public partial bool GodEvolutionUncrashable { get; set; }
     [Reactive] public partial bool GodEvolutionQualityWeightEnabled { get; set; }
-    [Reactive] public partial double GodEvolutionQualityDefault { get; set; } = 55;
-    [Reactive] public partial double GodEvolutionQualitySilver { get; set; } = 25;
-    [Reactive] public partial double GodEvolutionQualityGold { get; set; } = 12;
-    [Reactive] public partial double GodEvolutionQualityDiamond { get; set; } = 3;
+    [Reactive] public partial double GodEvolutionQualityDefault { get; set; } = 65;
+    [Reactive] public partial double GodEvolutionQualitySilver { get; set; } = 23;
+    [Reactive] public partial double GodEvolutionQualityGold { get; set; } = 10;
+    [Reactive] public partial double GodEvolutionQualityDiamond { get; set; } = 2;
     [Reactive] public partial bool GodEvolutionDamageMultiplierEnabled { get; set; }
     [Reactive] public partial double GodEvolutionDamageMultiplier { get; set; } = 1.0;
     [Reactive] public partial bool GodEvolutionMultiSelectBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionCheatHard { get; set; }
+    [Reactive] public partial bool GodEvolutionForceExpertBuff { get; set; }
 
     [ReactiveCommand]
     public void GodEvolutionResetQuality()
@@ -49,6 +51,15 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         });
     }
 
+    [ReactiveCommand]
+    public void GodEvolutionChooseBuff()
+    {
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.GodEvolutionChooseBuff,
+            Parameters = []
+        });
+    }
 
     public GodEvolutionViewModel(IDataSyncService dataSyncService) : base(dataSyncService)
     {
@@ -71,6 +82,8 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         this.SimpleSyncFlaggedDouble(x => x.GodEvolutionDamageMultiplier, x => x.GodEvolutionDamageMultiplierEnabled,
             Strings.GodEvolutionDamageMultiplier);
         this.SimpleOneWaySync(x => x.GodEvolutionMultiSelectBuff, Strings.GodEvolutionMultiSelectBuff);
+        this.SimpleOneWaySync(x => x.GodEvolutionCheatHard, Strings.GodEvolutionCheatHard);
+        this.SimpleOneWaySync(x => x.GodEvolutionForceExpertBuff, Strings.GodEvolutionForceExpertBuff);
 
         // 词条品质权重
         this.SimpleOneWaySync(x => x.GodEvolutionQualityWeightEnabled, Strings.GodEvolutionQualityWeightEnabled);
@@ -103,6 +116,8 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         settings.GodEvolutionDamageMultiplierEnabled = GodEvolutionDamageMultiplierEnabled;
         settings.GodEvolutionDamageMultiplier = GodEvolutionDamageMultiplier;
         settings.GodEvolutionMultiSelectBuff = GodEvolutionMultiSelectBuff;
+        settings.GodEvolutionCheatHard = GodEvolutionCheatHard;
+        settings.GodEvolutionForceExpertBuff = GodEvolutionForceExpertBuff;
     }
 
     public override void LoadSettings(SettingsData settings)
@@ -128,5 +143,7 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         GodEvolutionDamageMultiplierEnabled = settings.GodEvolutionDamageMultiplierEnabled;
         GodEvolutionDamageMultiplier = settings.GodEvolutionDamageMultiplier;
         GodEvolutionMultiSelectBuff = settings.GodEvolutionMultiSelectBuff;
+        GodEvolutionCheatHard = settings.GodEvolutionCheatHard;
+        GodEvolutionForceExpertBuff = settings.GodEvolutionForceExpertBuff;
     }
 }

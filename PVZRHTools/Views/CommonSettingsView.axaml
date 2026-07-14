@@ -142,6 +142,15 @@
                                   IsChecked="{Binding LockMoney,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
+                        <Button Content="修改所在波数"
+                                Command="{Binding SetJumpWaveCommand}" />
+                        <u:NumericUIntUpDown MinWidth="100"
+                                             Minimum="0"
+                                             EmptyInputValue="0"
+                                             Maximum="100"
+                                             Value="{Binding JumpWave, Mode=TwoWay}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
                         <CheckBox Content="暂停出怪"
                                   IsChecked="{Binding PauseSpawn,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                         <CheckBox Content="僵尸进家不死"

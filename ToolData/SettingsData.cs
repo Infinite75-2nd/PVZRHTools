@@ -236,6 +236,8 @@ public class SettingsData
     public bool GodEvolutionDamageMultiplierEnabled { get; set; }
     public double GodEvolutionDamageMultiplier { get; set; } = 1.0;
     public bool GodEvolutionMultiSelectBuff { get; set; }
+    public bool GodEvolutionCheatHard { get; set; }
+    public bool GodEvolutionForceExpertBuff { get; set; }
 }
 
 /// <summary>

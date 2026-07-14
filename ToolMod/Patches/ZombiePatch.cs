@@ -128,34 +128,58 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.Update))]
     public static void PreUpdate(Zombie __instance)
     {
-        if (ZombieSpeedMultiplier is < 0 or 1.0f) return;
-        try
+        if (ZombieSpeedMultiplier >0 )
         {
-            if (__instance == null) return;
-
-            int instanceId = __instance.GetInstanceID();
-
-            // 如果是第一次处理这个僵尸，记录其原始速度
-            if (!ZombieOriginalSpeeds.ContainsKey(instanceId))
+            try
             {
-                ZombieOriginalSpeeds[instanceId] = __instance.theOriginSpeed;
+                if (__instance == null) return;
+
+                int instanceId = __instance.GetInstanceID();
+
+                // 如果是第一次处理这个僵尸，记录其原始速度
+                if (!ZombieOriginalSpeeds.ContainsKey(instanceId))
+                {
+                    ZombieOriginalSpeeds[instanceId] = __instance.theOriginSpeed;
+                }
+
+                float originalSpeed = ZombieOriginalSpeeds[instanceId];
+                float newSpeed = originalSpeed * ZombieSpeedMultiplier;
+
+                // 修改僵尸的速度属性
+                __instance.theSpeed = newSpeed;
+                __instance.theOriginSpeed = newSpeed;
+
+                // 修改动画速度以匹配移动速度
+                if (__instance.anim != null)
+                {
+                    __instance.anim.SetFloat("Speed", newSpeed);
+                }
             }
-
-            float originalSpeed = ZombieOriginalSpeeds[instanceId];
-            float newSpeed = originalSpeed * ZombieSpeedMultiplier;
-
-            // 修改僵尸的速度属性
-            __instance.theSpeed = newSpeed;
-            __instance.theOriginSpeed = newSpeed;
-
-            // 修改动画速度以匹配移动速度
-            if (__instance.anim != null)
+            catch
             {
-                __instance.anim.SetFloat("Speed", newSpeed);
             }
         }
-        catch
+        else
         {
+            try
+            {
+                if (__instance == null) return;
+
+                int instanceId = __instance.GetInstanceID();
+                if (!ZombieOriginalSpeeds.TryGetValue(instanceId, out var speed)) return;
+                // 修改僵尸的速度属性
+                __instance.theSpeed = speed;
+                __instance.theOriginSpeed = speed;
+
+                // 修改动画速度以匹配移动速度
+                if (__instance.anim != null)
+                {
+                    __instance.anim.SetFloat("Speed", speed);
+                }
+            }
+            catch
+            {
+            }
         }
     }
 
@@ -186,27 +210,41 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.AttackEffect))]
     public static void PreAttackEffect(Zombie __instance)
     {
-        if (ZombieAttackMultiplier is < 0 or 1.0f) return;
-        try
+        if (ZombieAttackMultiplier>0)
         {
-            if (__instance == null) return;
-
-            int instanceId = __instance.GetInstanceID();
-
-            // 如果是第一次处理这个僵尸，记录其原始攻击力
-            if (!ZombieOriginalAttackDamages.ContainsKey(instanceId))
+            try
             {
-                ZombieOriginalAttackDamages[instanceId] = __instance.theAttackDamage;
+                if (__instance == null) return;
+
+                int instanceId = __instance.GetInstanceID();
+
+                // 如果是第一次处理这个僵尸，记录其原始攻击力
+                if (!ZombieOriginalAttackDamages.ContainsKey(instanceId))
+                {
+                    ZombieOriginalAttackDamages[instanceId] = __instance.theAttackDamage;
+                }
+
+                int originalDamage = ZombieOriginalAttackDamages[instanceId];
+                int newDamage = Mathf.RoundToInt(originalDamage * ZombieAttackMultiplier);
+
+                // 修改僵尸的攻击伤害
+                __instance.theAttackDamage = newDamage;
             }
-
-            int originalDamage = ZombieOriginalAttackDamages[instanceId];
-            int newDamage = Mathf.RoundToInt(originalDamage * ZombieAttackMultiplier);
-
-            // 修改僵尸的攻击伤害
-            __instance.theAttackDamage = newDamage;
+            catch
+            {
+            }
         }
-        catch
+        else
         {
+            try
+            {
+                if (__instance == null) return;
+                int instanceId = __instance.GetInstanceID();
+                __instance.theAttackDamage =ZombieOriginalAttackDamages[instanceId];
+            }
+            catch
+            {
+            }
         }
     }
 

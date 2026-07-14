@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.8";
-        public const string ModifierVersion = "5.1.1";
+        public const string ModifierVersion = "5.1.2";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -63,6 +63,7 @@ namespace ToolData
         public const string CreateUltimateMeteorite = "CreateUltimateMeteorite";
         public const string CreateSolarMeteorite = "CreateSolarMeteorite";
         public const string NextWave = "NextWave";
+        public const string SetJumpWave = "SetJumpWave";
         public const string SetAward = "SetAward";
         public const string DestroyAward = "DestroyAward";
         public const string ShowText = "ShowText";
@@ -172,6 +173,9 @@ namespace ToolData
         public const string GodEvolutionResetQuality = "GodEvolutionResetQuality";
         public const string GodEvolutionUnlockAll = "GodEvolutionUnlockAll";
         public const string GodEvolutionMultiSelectBuff = "GodEvolutionMultiSelectBuff";
+        public const string GodEvolutionChooseBuff = "GodEvolutionChooseBuff";
+        public const string GodEvolutionCheatHard = "GodEvolutionCheatHard";
+        public const string GodEvolutionForceExpertBuff = "GodEvolutionForceExpertBuff";
 
         #endregion
 

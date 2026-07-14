@@ -50,6 +50,7 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool PauseSpawn { get; set; }
     [Reactive] public partial bool NoFail { get; set; }
     [Reactive] public partial string LevelName { get; set; } = "";
+    [Reactive] public partial uint JumpWave { get; set; }
 
     #endregion
 
@@ -281,6 +282,14 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         {
             Command = Strings.NextWave,
             Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void SetJumpWave() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetJumpWave,
+            Parameters = [JumpWave.ToString()]
         });
 
     [ReactiveCommand]

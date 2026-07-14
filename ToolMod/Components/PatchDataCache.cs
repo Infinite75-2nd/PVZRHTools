@@ -108,8 +108,8 @@ public class PatchDataCache
 
     // 僵尸特性
     public static int ZombieDamageLimit { get; set; } = -1;
-    public static float ZombieSpeedMultiplier { get; set; } = 1.0f;
-    public static float ZombieAttackMultiplier { get; set; } = 1.0f;
+    public static float ZombieSpeedMultiplier { get; set; } = -1.0f;
+    public static float ZombieAttackMultiplier { get; set; } = -1.0f;
     public static int ZombieBulletReflect { get; set; } = -1;
     public static bool ZombieStatusCoexist { get; set; }
     public static bool ZombieImmuneAllDebuffs { get; set; }
@@ -181,12 +181,14 @@ public class PatchDataCache
     public static bool GodEvolutionForceSuperQuality { get; set; }
     public static bool GodEvolutionUncrashable { get; set; }
     public static bool GodEvolutionQualityWeightEnabled { get; set; }
-    public static float GodEvolutionQualityDefault { get; set; } = 55;
-    public static float GodEvolutionQualitySilver { get; set; } =25;
-    public static float GodEvolutionQualityGold { get; set; } = 12;
-    public static float GodEvolutionQualityDiamond { get; set; } = 3;
+    public static float GodEvolutionQualityDefault { get; set; } = 65;
+    public static float GodEvolutionQualitySilver { get; set; } =23;
+    public static float GodEvolutionQualityGold { get; set; } = 10;
+    public static float GodEvolutionQualityDiamond { get; set; } = 2;
     public static float GodEvolutionDamageMultiplier { get; set; } = -1.0f;
     public static bool GodEvolutionMultiSelectBuff { get; set; }
+    public static bool GodEvolutionCheatHard { get; set; }
+    public static bool GodEvolutionForceExpertBuff { get; set; }
 
     public static bool IsRefreshUnlimited =>
         UnlimitedRefresh || GodEvolutionUnlimitedRefresh;
