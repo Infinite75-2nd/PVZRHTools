@@ -6,6 +6,7 @@ using Il2CppInterop.Runtime.Injection;
 using ToolData;
 using UI;
 using UnityEngine;
+using ZenGarden;
 
 namespace ToolMod.Components;
 
@@ -54,6 +55,7 @@ public class PatchDataCache
 
     public static int LockSun { get; set; } = -1;
     public static int LockMoney { get; set; } = -1;
+    public static int LockLightLevel { get; set; } = -1;
     public static bool PauseSpawn { get; set; } = false;
     public static bool NoFail { get; set; } = false;
     public static ZombieSea ZombieSeaData { get; set; } = new();
@@ -241,6 +243,7 @@ public class PatchDataCache
     public static Il2CppSystem.Collections.Generic.Dictionary<AdvBuff, string> AdvancedBuffsText=> TravelDictionary.advancedBuffsText;
 
     [HideFromIl2Cpp] public static TreasureData TreasureData => new();
+    [HideFromIl2Cpp] public static GardenData GardenData => new();
 
     #endregion
 

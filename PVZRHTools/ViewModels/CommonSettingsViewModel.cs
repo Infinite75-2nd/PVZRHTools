@@ -47,6 +47,8 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool LockSun { get; set; }
     [Reactive] public partial int Money { get; set; }
     [Reactive] public partial bool LockMoney { get; set; }
+    [Reactive] public partial bool LockLightLevelEnabled { get; set; }
+    [Reactive] public partial int LockLightLevel { get; set; }
     [Reactive] public partial bool PauseSpawn { get; set; }
     [Reactive] public partial bool NoFail { get; set; }
     [Reactive] public partial string LevelName { get; set; } = "";
@@ -426,6 +428,7 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         //游戏内属性修改
         this.SimpleSyncFlaggedInt(x => x.Sun, x => x.LockSun, Strings.LockSun, true);
         this.SimpleSyncFlaggedInt(x => x.Money, x => x.LockMoney, Strings.LockMoney, true);
+        this.SimpleSyncFlaggedInt(x => x.LockLightLevel, x => x.LockLightLevelEnabled, Strings.LockLightLevel, true);
         this.SimpleOneWaySync(x => x.PauseSpawn, Strings.PauseSpawn);
         this.SimpleOneWaySync(x => x.NoFail, Strings.NoFail);
 
@@ -483,6 +486,8 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         settings.LockSun = LockSun;
         settings.Money = Money;
         settings.LockMoney = LockMoney;
+        settings.LockLightLevelEnabled = LockLightLevelEnabled;
+        settings.LockLightLevel = LockLightLevel;
         settings.PauseSpawn = PauseSpawn;
         settings.NoFail = NoFail;
 
@@ -535,6 +540,8 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         LockSun = settings.LockSun;
         Money = settings.Money;
         LockMoney = settings.LockMoney;
+        LockLightLevelEnabled = settings.LockLightLevelEnabled;
+        LockLightLevel = settings.LockLightLevel;
         PauseSpawn = settings.PauseSpawn;
         NoFail = settings.NoFail;
 

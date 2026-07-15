@@ -94,6 +94,7 @@ public static class SettingsLoader
 
             PatchDataCache.LockSun = settings.LockSun ? settings.Sun : -1;
             PatchDataCache.LockMoney = settings.LockMoney ? settings.Money : -1;
+            PatchDataCache.LockLightLevel = settings.LockLightLevelEnabled ? settings.LockLightLevel : -1;
             PatchDataCache.PauseSpawn = settings.PauseSpawn;
             PatchDataCache.NoFail = settings.NoFail;
 

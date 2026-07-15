@@ -83,6 +83,8 @@
                             Command="{Binding GodEvolutionResetQualityCommand}" />
                     <Button Content="立即选词条"
                             Command="{Binding GodEvolutionChooseBuffCommand}" />
+                    <Button Content="移除究极杨桃大帝星辉buff(卡顿时用)"
+                            Command="{Binding GodEvolutionRemoveStarsStarUpCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>

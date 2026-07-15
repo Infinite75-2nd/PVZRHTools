@@ -39,6 +39,8 @@ public class SettingsData
     public bool LockSun { get; set; }
     public int Money { get; set; }
     public bool LockMoney { get; set; }
+    public bool LockLightLevelEnabled { get; set; }
+    public int LockLightLevel { get; set; }
     public bool PauseSpawn { get; set; }
     public bool NoFail { get; set; }
     public string LevelName { get; set; } = "";
@@ -238,6 +240,11 @@ public class SettingsData
     public bool GodEvolutionMultiSelectBuff { get; set; }
     public bool GodEvolutionCheatHard { get; set; }
     public bool GodEvolutionForceExpertBuff { get; set; }
+
+    // AbyssAndTreasureViewModel - 花园修改
+    public int ZenGardenMoney { get; set; }
+    public int ZenGardenCoin { get; set; }
+    public int ZenGardenPlantType { get; set; }
 }
 
 /// <summary>

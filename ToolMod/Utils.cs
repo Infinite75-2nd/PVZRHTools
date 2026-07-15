@@ -51,6 +51,13 @@ public static class Utils
             CreateSetter(propertyExpression)(Convert.ToInt32(args[0]));
             callBack?.Invoke();
         };
+    
+    public static Action<List<string>> SimpleSyncLong(Expression<Func<long>> propertyExpression, Action? callBack = null)
+        => args =>
+        {
+            CreateSetter(propertyExpression)(Convert.ToInt64(args[0]));
+            callBack?.Invoke();
+        };
 
     public static Action<List<string>> SimpleSyncString(Expression<Func<string>> propertyExpression,
         Action? callBack = null)

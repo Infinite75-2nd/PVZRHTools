@@ -114,14 +114,18 @@ public static class BoardPatch
                 __instance.thePoints = int.MaxValue;
             }
 
-            // 处理诅咒免疫
+            // 处理诅咒免疫：
+            // 1. 移除所有植物上的 PlantCurseEffect（EffectType 103）
+            // 2. 重置视觉颜色
+            // 注：EffectManagerPatch.PreSetEffect 已拦截新的诅咒施加，
+            // 此处仅清理开启前已存在的诅咒效果，作为安全兜底。
             if (CurseImmunity)
             {
                 CurseClearTimer += Time.deltaTime;
                 if (CurseClearTimer >= CurseClearInterval)
                 {
                     CurseClearTimer = 0f;
-                    ClearAllPlantsCurseVisual();
+                    ClearAllPlantsCurseEffect();
                 }
             }
 
@@ -174,7 +178,11 @@ public static class BoardPatch
         }
     }
 
-    private static void ClearAllPlantsCurseVisual()
+    /// <summary>
+    /// 移除所有植物上的诅咒效果（EffectType 103 = PlantCurseEffect）
+    /// 并重置视觉样式
+    /// </summary>
+    private static void ClearAllPlantsCurseEffect()
     {
         try
         {
@@ -187,7 +195,11 @@ public static class BoardPatch
             {
                 if (plant != null && plant.thePlantHealth > 0)
                 {
-                    ClearPlantCurseVisual(plant);
+                    // 1. 移除 PlantCurseEffect（EffectType 103）
+                    RemoveCurseEffect(plant);
+
+                    // 2. 重置视觉颜色
+                    ResetPlantColor(plant);
                 }
             }
         }
@@ -196,24 +208,38 @@ public static class BoardPatch
         }
     }
 
-    private static void ClearPlantCurseVisual(Plant plant)
+    /// <summary>
+    /// 移除单棵植物上的 PlantCurseEffect（EffectType 103）
+    /// 通过 Entity.RemoveBuff 移除 effects 字典中的诅咒条目
+    /// </summary>
+    private static void RemoveCurseEffect(Plant plant)
     {
         try
         {
             if (plant == null || plant.gameObject == null) return;
 
-            var spriteRenderers = plant.GetComponentsInChildren<SpriteRenderer>();
-            if (spriteRenderers != null)
-            {
-                foreach (var sr in spriteRenderers)
-                {
-                    if (sr != null)
-                    {
-                        // 重置颜色到白色（正常状态）
-                        sr.color = Color.white;
-                    }
-                }
-            }
+            // EffectType 103 = PlantCurseEffect
+            // Entity.RemoveBuff 会触发 PlantCurseEffect.OnRemove，清理血条UI和颜色
+            plant.RemoveBuff((EffectType)103);
+        }
+        catch
+        {
+            // Entity.RemoveBuff 可能在植物无此效果时抛出异常，静默处理
+        }
+    }
+
+    /// <summary>
+    /// 重置植物颜色到正常状态（白色）
+    /// 仅作为 RemoveCurseEffect 的补充，确保视觉上完全恢复正常
+    /// </summary>
+    private static void ResetPlantColor(Plant plant)
+    {
+        try
+        {
+            if (plant == null || plant.gameObject == null) return;
+
+            // 调用 Plant.SetColor(1,1,1,1) 重置颜色
+            plant.SetColor(Color.white);
         }
         catch
         {

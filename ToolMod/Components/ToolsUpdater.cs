@@ -258,20 +258,36 @@ public class ToolsUpdater : MonoBehaviour
 
     public void ProcessLockData()
     {
-        if (LockSun >= 0) Board.Instance.theSun = LockSun;
-        if (LockMoney >= 0) Board.Instance.theMoney = LockMoney;
-        if (PauseSpawn) Board.Instance!.iceDoomFreezeTime = 1;
-        //if (CheckLose != null) CheckLose.enabled = !NoFail;
-        if(LastNoFail!=NoFail)
-            foreach (var gameLose in FindObjectsOfTypeAll(Il2CppType.Of<GameLose>()))
+        if (Board.Instance != null)
+        {
+            if (LockSun >= 0) Board.Instance.theSun = LockSun;
+            if (LockMoney >= 0) Board.Instance.theMoney = LockMoney;
+            if (PauseSpawn) Board.Instance.iceDoomFreezeTime = 1;
+
+            if (LockLightLevel >= 0 && Board.Instance.gridSystem != null)
             {
-                if (gameLose==null)
+                var gridEnumerator = Board.Instance.gridSystem.System_Collections_IEnumerable_GetEnumerator();
+                while (gridEnumerator.MoveNext())
                 {
-                    continue;
+                    gridEnumerator.Current.Cast<BoardGrid>().lightLevel = LockLightLevel;
                 }
-                gameLose.GetComponent<BoxCollider2D>().enabled = !NoFail;
             }
-        LastNoFail=NoFail;
+        }
+
+        if (LastNoFail != NoFail)
+        {
+            var gameLoseObjs = FindObjectsOfTypeAll(Il2CppType.Of<GameLose>());
+            if (gameLoseObjs != null)
+            {
+                foreach (var gameLose in gameLoseObjs)
+                {
+                    if (gameLose == null) continue;
+                    var collider = gameLose.GetComponent<BoxCollider2D>();
+                    if (collider != null) collider.enabled = !NoFail;
+                }
+            }
+        }
+        LastNoFail = NoFail;        
     }
 
     public void ProcessZombieSea()

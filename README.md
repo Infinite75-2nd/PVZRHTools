@@ -1,7 +1,7 @@
 # PVZRHTools 5.0 Remake    
 
 作者@Infinite75@梧萱梦汐X@墨染荷韵
-适配游戏版本：3.7
+适配游戏版本：3.8
 
 ## LICENSING & CREDITS
 

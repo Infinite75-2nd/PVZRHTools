@@ -11,8 +11,10 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using ToolData;
 using Unity.VisualScripting;
 using UnityEngine;
+using ZenGarden;
 using static ToolMod.Utils;
 using static ToolMod.Components.PatchDataCache;
+using GardenData = ZenGarden.GardenData;
 using Object = UnityEngine.Object;
 
 namespace ToolMod.Components;
@@ -81,6 +83,7 @@ public class DataProcessor : MonoBehaviour
 
         { Strings.LockSun, SimpleSyncInt(() => LockSun) },
         { Strings.LockMoney, SimpleSyncInt(() => LockMoney) },
+        { Strings.LockLightLevel, SimpleSyncInt(() => LockLightLevel) },
         { Strings.PauseSpawn, SimpleSyncBool(() => PauseSpawn) },
         { Strings.NoFail, SimpleSyncBool(() => NoFail) },
 
@@ -169,6 +172,12 @@ public class DataProcessor : MonoBehaviour
         { Strings.TreasureAllRedCard, SimpleSyncBool(() => TreasureAllRedCard) },
         { Strings.TreasureSetMoney, SimpleSyncInt(()=>TreasureData.treasureMoney) },
         { Strings.TreasureFillCard, TreasureFillCard },
+        { Strings.TreasureSellAllCards, TreasureSellAllCards },
+
+        // 花园修改
+        { Strings.ZenGardenSetMoney, SimpleSyncLong(()=>GameAPP.theMoneyCount) },
+        { Strings.ZenGardenSetCoin, SimpleSyncInt(()=>GardenUI.Data.coinCount) },
+        { Strings.ZenGardenGetPlant, ZenGardenGetPlant },
 
         // 深渊模式
         { Strings.AbyssJumpLevel, AbyssJumpLevel },
@@ -313,6 +322,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.GodEvolutionChooseBuff, GodEvolutionChooseBuff },
         { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard) },
         { Strings.GodEvolutionForceExpertBuff, SimpleSyncBool(() => GodEvolutionForceExpertBuff) },
+        { Strings.GodEvolutionRemoveStarsStarUp, GodEvolutionRemoveStarsStarUp },
         #endregion
 
         #region 游戏内按键绑定
@@ -1749,9 +1759,31 @@ public class DataProcessor : MonoBehaviour
 
     private static void GodEvolutionChooseBuff(List<string> _)
     {
-        if (InGame && Board.Instance.TryGetComponent<ShootingManager>(out var shooting)&&FindObjectsOfTypeAll(Il2CppType.Of<MultipleChoiceMenu>()).Count is 0)
+        if (InGame && Board.Instance.TryGetComponent<ShootingManager>(out var shooting)&&FindObjectsOfTypeAll(Il2CppType.Of<MultipleChoiceMenu>()).Count is 2)
         {
             shooting.ShowBuff();
+        }
+    }
+
+    private static void GodEvolutionRemoveStarsStarUp(List<string> _)
+    {
+        if (InGame && Board.Instance.TryGetComponent<ShootingManager>(out var shooting))
+        {
+            if (shooting.plantBuffRecords.ContainsKey(PlantType.UltimateStar))
+            {
+                if (shooting.plantBuffRecords[PlantType.UltimateStar].ContainsKey("超进化：星辉"))
+                {
+                    shooting.plantBuffRecords[PlantType.UltimateStar].Remove("超进化：星辉");
+                }
+            }
+
+            foreach (var plant in Lawnf.GetAllPlants())
+            {
+                if (plant.thePlantType is PlantType.UltimateStar)
+                {
+                    plant.Die();
+                }
+            }
         }
     }
 
@@ -1896,6 +1928,107 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
+    private static void TreasureSellAllCards(List<string> _)
+    {
+        var menu = TreasureWarehouseMenu.Instance;
+        if (menu!=null)
+        {
+            foreach (var card in menu.cards)
+            {
+                card.Sell();
+            }
+        }
+        else
+        {
+            foreach (var card in TreasureData.treasureCards)
+            {
+                var plantData = PlantDataManager.GetPlantData(card.thePlantType);
+                if (plantData == null)
+                    continue;
+
+                // Base cost (clamped to 1000), then scaled by card level
+                var cost = plantData.cost;
+                if (cost > 1000)
+                    cost = 1000;
+
+                CardLevel level = TreasureData.GetCardLevel(card.thePlantType);
+                switch ((int)level)
+                {
+                    case 0:                     break; // ×1
+                    case 1:  cost *= 2;         break;
+                    case 2:  cost *= 4;         break;
+                    case 3:  cost *= 8;         break;
+                    case 4:  cost *= 32;        break;
+                    case 5:  cost <<= 7;        break; // ×128
+                    default: return;                   // unknown level
+                }
+                
+                int refund;
+                if (card.maxDurability <= 1)
+                {
+                    refund = 0;
+                }
+                else
+                {
+                    refund = Mathf.RoundToInt(card.durability * cost / (float)card.maxDurability);
+                }
+
+                // Refund 80 % of the proportional cost
+                TreasureData.treasureMoney += Mathf.RoundToInt(refund * 0.8f);
+            }
+            TreasureData.treasureCards.Clear();
+        }
+    }
+    
+
+    private static void ZenGardenGetPlant(List<string> args)
+    {
+        var plantType = (PlantType)int.Parse(args[0]);
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+
+        // Replicate TryAddPlantData's position-finding logic:
+        // scan all 64 pages, 8 columns × 4 rows, find first page with an empty slot
+        int targetPage;
+        var available = new System.Collections.Generic.List<Vector2Int>();
+        for (targetPage = 0; targetPage < 64; targetPage++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                for (int row = 0; row < 4; row++)
+                {
+                    var occupied = false;
+                    for (int i = 0; i < data.allPlants.Count; i++)
+                    {
+                        var p = data.allPlants[i];
+                        if (p.page == targetPage && p.thePlantColumn == col && p.thePlantRow == row)
+                        {
+                            occupied = true;
+                            break;
+                        }
+                    }
+
+                    if (!occupied)
+                        available.Add(new Vector2Int(col, row));
+                }
+            }
+
+            if (available.Count > 0)
+                break;
+        }
+
+        if (available.Count == 0) return;
+
+        var index =UnityEngine. Random.Range(0, available.Count);
+        var pos = available[index];
+
+        if (GardenUI.Instance != null)
+            data.CreatePlantObject(plantType, pos.x, pos.y, targetPage, GardenUI.Instance);
+        else
+            data.CreatePlantData(plantType, pos.x, pos.y, targetPage);
+        GardenUI.Data.Save();
+    }
+
     private static void AbyssJumpLevel(List<string> args)
     {
         /*
@@ -1906,14 +2039,6 @@ public class DataProcessor : MonoBehaviour
             //AbyssManager.Instance.abyssData.maxArrivedLevel=level;
             //AbyssManager.Instance.abyssData.tempAbyssData.arrivedLevel=level;
         }*/
-        if (GameAPP.theGameStatus is GameStatus.OutGame)
-        {
-            GameAPP.UIManager.Push(UIType.AbyssMenu, false);
-        }
-        else
-        {
-            Core.InGameText.Instance.ShowText("请在主菜单打开这个模式",5f);
-        }
     }
 
     private static void AbyssMoney(List<string> args)

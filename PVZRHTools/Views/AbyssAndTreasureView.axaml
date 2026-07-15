@@ -26,41 +26,7 @@
         <Border>
             <StackPanel Orientation="Vertical">
                 <u:Divider Content="深渊模式修改"/> 
-                <Button Content="进入未完成的冒险秘境模式（试验性功能）"
-                        Command="{Binding EnterWIPAbyssCommand}"/>
-                <StackPanel Orientation="Horizontal" IsEnabled="False">
-                    <Button Content="跳关"
-                            Command="{Binding AbyssSetJumpLevelCommand}"/>
-                    <u:NumericIntUpDown
-                        Minimum="0"
-                        Value="{Binding AbyssJumpLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Button Content="修改叶绿素"
-                            Command="{Binding AbyssSetMoneyCommand}"/>
-                    <u:NumericIntUpDown
-                        Minimum="0"
-                        Value="{Binding AbyssMoney, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <CheckBox Content="词条无限刷新"
-                              IsChecked="{Binding AbyssLimitlessRefresh, Mode=TwoWay}"/>
-                    <CheckBox Content="取消帝果限制"
-                              IsChecked="{Binding AbyssRemoveSuperSunNutLimit, Mode=TwoWay}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" IsEnabled="False">
-                    <CheckBox Content="修改植物上限"
-                              IsChecked="{Binding AbyssMaxPlantCountEnabled, Mode=TwoWay}"/>
-                    <u:NumericIntUpDown
-                        Minimum="0"
-                        Value="{Binding AbyssMaxPlantCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <CheckBox Content="修改超级植物上限"
-                              IsChecked="{Binding AbyssMaxSuperCountEnabled, Mode=TwoWay}"/>
-                    <u:NumericIntUpDown
-                        Minimum="0"
-                        Value="{Binding AbyssMaxSuperCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <CheckBox Content="修改究极植物上限"
-                              IsChecked="{Binding AbyssMaxUltimateCountEnabled, Mode=TwoWay}"/>
-                    <u:NumericIntUpDown
-                        Minimum="0"
-                        Value="{Binding AbyssMaxUltimateCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
+
             </StackPanel>
         </Border>
         <Border>
@@ -81,12 +47,35 @@
                         InnerRightContent="秒"/>
                     <Button Content="现有卡片满库存"
                             Command="{Binding TreasureFillCardCommand}"/>
+                    <Button Content="一键出售全部植物"
+                            Command="{Binding TreasureSellAllCardsCommand}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Content="大幅提高红卡概率"
                               IsChecked="{Binding TreasureAllRedCard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <CheckBox Content="仓库免费升级" IsChecked="{Binding TreasureFreeUpgrade, Mode=TwoWay}"/>
                     <CheckBox Content="取消撤离等待时间限制" IsChecked="{Binding TreasureFreeWithdraw, Mode=TwoWay}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border>
+            <StackPanel Orientation="Vertical">
+                <u:Divider Content="花园修改"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="修改钱数"
+                            Command="{Binding ZenGardenSetMoneyCommand}"/>
+                    <u:NumericIntUpDown
+                        Value="{Binding ZenGardenMoney,Mode=TwoWay}"/>
+                    <Button Content="修改火红莲币数"
+                            Command="{Binding ZenGardenSetCoinCommand}"/>
+                    <u:NumericIntUpDown
+                        Value="{Binding ZenGardenCoin,Mode=TwoWay}"/>
+                    <Button Content="获得植物"
+                            Command="{Binding ZenGardenGetPlantCommand}"/>
+                    <ComboBox ItemsSource="{Binding InitDataService.InitData.Plants}"
+                              SelectedValue="{Binding ZenGardenPlantType,Mode=TwoWay}"
+                              DisplayMemberBinding="{Binding Value}"
+                              SelectedValueBinding="{Binding Key}"/>
                 </StackPanel>
             </StackPanel>
         </Border>

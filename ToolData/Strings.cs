@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.8";
-        public const string ModifierVersion = "5.1.2";
+        public const string ModifierVersion = "5.1.3";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -38,6 +38,7 @@ namespace ToolData
 
         public const string Sun = "Sun";
         public const string LockSun = "LockSun";
+        public const string LockLightLevel = "LockLightLevel";
         public const string Money = "Money";
         public const string LockMoney = "LockMoney";
         public const string PauseSpawn = "PauseSpawn";
@@ -176,6 +177,7 @@ namespace ToolData
         public const string GodEvolutionChooseBuff = "GodEvolutionChooseBuff";
         public const string GodEvolutionCheatHard = "GodEvolutionCheatHard";
         public const string GodEvolutionForceExpertBuff = "GodEvolutionForceExpertBuff";
+        public const string GodEvolutionRemoveStarsStarUp = "GodEvolutionRemoveStarsStarUp";
 
         #endregion
 
@@ -187,6 +189,15 @@ namespace ToolData
         public const string TreasureMaxTime = "TreasureMaxTime";
         public const string TreasureAllRedCard = "TreasureAllRedCard";
         public const string TreasureFillCard = "TreasureFillCard";
+        public const string TreasureSellAllCards = "TreasureSellAllCards";
+
+        #endregion
+
+        #region 花园修改
+
+        public const string ZenGardenSetMoney = "ZenGardenSetMoney";
+        public const string ZenGardenSetCoin = "ZenGardenSetCoin";
+        public const string ZenGardenGetPlant = "ZenGardenGetPlant";
 
         #endregion
 

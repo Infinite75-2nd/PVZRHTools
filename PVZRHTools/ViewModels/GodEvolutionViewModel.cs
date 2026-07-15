@@ -61,6 +61,14 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         });
     }
 
+    [ReactiveCommand]
+    public void GodEvolutionRemoveStarsStarUp() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.GodEvolutionRemoveStarsStarUp,
+            Parameters = []
+        });
+
     public GodEvolutionViewModel(IDataSyncService dataSyncService) : base(dataSyncService)
     {
         // 刷新与升级

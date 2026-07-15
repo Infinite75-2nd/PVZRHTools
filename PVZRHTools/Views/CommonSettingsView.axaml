@@ -151,6 +151,12 @@
                                              Value="{Binding JumpWave, Mode=TwoWay}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="锁定光照等级"
+                                  IsChecked="{Binding LockLightLevelEnabled,Mode=TwoWay}" />
+                        <u:NumericIntUpDown Minimum="0"
+                                            Value="{Binding LockLightLevel,Mode=TwoWay}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
                         <CheckBox Content="暂停出怪"
                                   IsChecked="{Binding PauseSpawn,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                         <CheckBox Content="僵尸进家不死"
