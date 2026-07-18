@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using PVZRHTools.ViewModels;
+﻿using PVZRHTools.ViewModels;
 using Ursa.Controls;
 using Ursa.ReactiveUIExtension;
 

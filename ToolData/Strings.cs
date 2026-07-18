@@ -2,8 +2,8 @@ namespace ToolData
 {
     public static class Strings
     {
-        public const string GameVersion = "3.8";
-        public const string ModifierVersion = "5.1.3";
+        public const string GameVersion = "3.8.1";
+        public const string ModifierVersion = "5.1.4";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -12,6 +12,7 @@ namespace ToolData
             "a9d8b12bb519944f35aa83ba3f20ef24abc15e672071db605129e98a68759240" => "3.6.1",
             "a436fd03e084010b4d5c19896f12b10ebb1e44d3172534cda335f1c20b591281" => "3.7",
             "8b3ded75fc67104efcf927cbfe6b9937d2b9f99b3d1ef1d4c29473405539653c"=>"3.8",
+            "51346f4dae35cf145f72473fd0ae6f777c427d5cecc7732936d4e0c7bac5ef52"=>"3.8.1",
             _ => "<internal alpha>"
         };
 
@@ -223,7 +224,6 @@ namespace ToolData
         public const string ApplyPotFormation = "ApplyPotFormation";
 
         public const string ApplyBattleFormation = "ApplyBattleFormation";
-        public const string KillUpgrade = "KillUpgrade";
         public const string RandomUpgradeMode = "RandomUpgradeMode";
 
         #endregion

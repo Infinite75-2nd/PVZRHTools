@@ -1,6 +1,4 @@
-using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -8,7 +6,6 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using ToolData;
 using PVZRHTools.Services;
 using PVZRHTools.ViewModels;
 using PVZRHTools.Views;

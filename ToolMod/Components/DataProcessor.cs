@@ -14,7 +14,6 @@ using UnityEngine;
 using ZenGarden;
 using static ToolMod.Utils;
 using static ToolMod.Components.PatchDataCache;
-using GardenData = ZenGarden.GardenData;
 using Object = UnityEngine.Object;
 
 namespace ToolMod.Components;
@@ -216,7 +215,6 @@ public class DataProcessor : MonoBehaviour
 
         #region 布阵器
 
-        { Strings.KillUpgrade, SimpleSyncBool(() => KillUpgrade) },
         { Strings.RandomUpgradeMode, SimpleSyncBool(() => RandomUpgradeMode) },
 
         // 植物布阵
@@ -452,9 +450,9 @@ public class DataProcessor : MonoBehaviour
             {
                 var zombie = Board.Instance.zombieArray[j];
                 if (zombie == null || !zombie||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled&&zombie.isIdle)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled&&zombie.isIdle))
-                    continue;
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                    continue;//todo
                 zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
                 zombie.BodyTakeDamage(2147483647);
                 zombie.Die();
@@ -469,8 +467,8 @@ public class DataProcessor : MonoBehaviour
             {
                 var zombie = (Zombie)zombies[i];
                 if (zombie == null || !zombie||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled&&zombie.isIdle)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled&&zombie.isIdle))
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
                     continue;
                 zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
                 zombie.BodyTakeDamage(2147483647);

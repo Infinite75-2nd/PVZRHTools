@@ -55,6 +55,7 @@ namespace ToolMod
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
             ClassInjector.RegisterTypeInIl2Cpp<DataProcessor>();
             ClassInjector.RegisterTypeInIl2Cpp<ToolsUpdater>();
+            ClassInjector.RegisterTypeInIl2Cpp<PlantStatisticsModifier>();
             Instance = this;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Unload();
         }

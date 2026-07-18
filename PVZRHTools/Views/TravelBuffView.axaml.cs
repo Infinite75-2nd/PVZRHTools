@@ -2,10 +2,8 @@ using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using PVZRHTools.Models;
 using PVZRHTools.ViewModels;
-using ToolData;
 using Ursa.Controls;
 
 namespace PVZRHTools.Views;

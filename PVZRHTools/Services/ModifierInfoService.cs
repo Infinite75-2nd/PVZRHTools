@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text.Json;
-using Avalonia;
 using Avalonia.Controls.Notifications;
 using Avalonia.Threading;
 using PVZRHTools.Models;

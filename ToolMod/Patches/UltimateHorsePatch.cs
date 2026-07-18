@@ -1,6 +1,4 @@
-using System;
 using HarmonyLib;
-using UnityEngine;
 using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Patches;

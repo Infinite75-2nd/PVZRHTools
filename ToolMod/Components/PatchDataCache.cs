@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Il2CppInterop.Runtime.Attributes;
-using Il2CppInterop.Runtime.Injection;
 using ToolData;
 using UI;
 using UnityEngine;
@@ -14,7 +12,6 @@ public class PatchDataCache
 {
     #region 游戏内按键
 
-    public static KeyCode KeySpeedSlow => KeyCode.Alpha3;
     public static KeyCode KeySpeedStop { get; set; } = KeyCode.Alpha6;
     public static KeyCode KeyShowGameInfo { get; set; } = KeyCode.BackQuote;
     public static KeyCode KeyTopMostCardBank { get; set; } = KeyCode.Tab;
@@ -138,7 +135,6 @@ public class PatchDataCache
 
     #region 布阵器
 
-    public static bool KillUpgrade { get; set; }
     public static bool RandomUpgradeMode { get; set; }
     public static PlantType Present1PlantIndex { get; set; } = PlantType.Nothing;
     public static PlantType Present2PlantIndex { get; set; } = PlantType.Nothing;
@@ -254,7 +250,6 @@ public class PatchDataCache
     public static Dictionary<int, int> PlantHealthCache = [];
     public static readonly Dictionary<int, float> ZombieOriginalSpeeds = [];
     public static readonly Dictionary<int, int> ZombieOriginalAttackDamages = [];
-    public static Dictionary<int, PlantType> ZombieLastDamageSource = [];
     public static float TrampleImmunityTimer = 0f;
     public const float TrampleImmunityInterval = 0.1f;
     public static float CurseClearTimer = 0f;

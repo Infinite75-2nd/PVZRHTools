@@ -150,7 +150,7 @@ public static class SettingsLoader
 
             PatchDataCache.ZombieDamageLimit = settings.ZombieDamageLimitEnabled ? settings.ZombieDamageLimit : -1;
             PatchDataCache.ZombieSpeedMultiplier =
-                settings.ZombieSpeedMultiplierEnabled ? (float)settings.ZombieSpeedMultiplier : 1.0f;
+                settings.ZombieSpeedMultiplierEnabled ? (float)settings.ZombieSpeedMultiplier : -1.0f;
             PatchDataCache.ZombieAttackMultiplier = settings.ZombieAttackMultiplierEnabled
                 ? (float)settings.ZombieAttackMultiplier
                 : 1.0f;
@@ -184,7 +184,6 @@ public static class SettingsLoader
 
             #region 布阵器
 
-            PatchDataCache.KillUpgrade = settings.KillUpgrade;
             PatchDataCache.RandomUpgradeMode = settings.RandomUpgradeMode;
             PatchDataCache.Present1PlantIndex = (PlantType)settings.GiftBox1PlantIndex;
             PatchDataCache.Present2PlantIndex = (PlantType)settings.GiftBox2PlantIndex;

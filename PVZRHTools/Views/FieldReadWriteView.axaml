@@ -216,8 +216,6 @@
                                   Theme="{DynamicResource SolidIconButton}"
                                   Classes="Colorful Primary"
                                   Command="{Binding ApplyBattleFormationCommand}" />
-                    <CheckBox Content="击杀升级"
-                              IsChecked="{Binding KillUpgrade}" />
                     <CheckBox Content="随机升级模式"
                               IsChecked="{Binding RandomUpgradeMode}" />
                 </StackPanel>

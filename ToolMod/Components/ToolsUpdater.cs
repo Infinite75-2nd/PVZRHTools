@@ -43,7 +43,7 @@ public class ToolsUpdater : MonoBehaviour
             TimeSlow = false;
         }
 
-        if (Input.GetKeyDown(KeySpeedSlow))
+        if (Input.GetKeyDown(KeyCodeManager.SlowTrigger))
         {
             TimeStop = false;
             TimeSlow = !TimeSlow;

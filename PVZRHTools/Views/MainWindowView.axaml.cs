@@ -1,7 +1,5 @@
 using System.ComponentModel;
-using Avalonia.Controls;
 using PVZRHTools.ViewModels;
-using Ursa.Controls;
 using Ursa.ReactiveUIExtension;
 
 namespace PVZRHTools.Views;

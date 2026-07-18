@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
 using static ToolMod.Components.PatchDataCache;
 
@@ -44,30 +43,16 @@ public static class ZombiePatch
     private static System.Reflection.FieldInfo? _cachedCursedPlantsField = null;
 
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(Zombie.TakeDamage))]
-    public static bool Prefix(Zombie __instance, DamageType theDamageType, ref int theDamage, PlantType reportType,
-        bool fix)
+    [HarmonyPatch(nameof(Zombie.ApplyDamage))]
+    public static void PreApplyDamage(Zombie __instance,ref DamageType theDamageType, ref int dmg)
     {
         // 僵尸限伤功能 - 限制每次伤害最多为设定值
-        if (ZombieDamageLimit > 0 && theDamage > ZombieDamageLimit)
+        if (ZombieDamageLimit > 0 && dmg > ZombieDamageLimit)
         {
-            theDamage = ZombieDamageLimit;
+            dmg = ZombieDamageLimit;
         }
 
-        // 击杀升级功能 - 记录伤害来源植物
-        if (KillUpgrade && reportType != PlantType.Nothing && __instance != null)
-        {
-            try
-            {
-                int zombieId = __instance.GetInstanceID();
-                ZombieLastDamageSource[zombieId] = reportType;
-            }
-            catch
-            {
-            }
-        }
-
-        if (!CurseImmunity) return true;
+        if (!CurseImmunity) return;
         try
         {
             // 性能优化：缓存字段信息
@@ -91,8 +76,6 @@ public static class ZombiePatch
         catch
         {
         }
-
-        return true;
     }
 
     [HarmonyPrefix]
@@ -105,6 +88,7 @@ public static class ZombiePatch
         if (__instance!=null&&ZombieDamageLimit > 0 && theDamage > ZombieDamageLimit)
         {
             theDamage = ZombieDamageLimit;
+            
         }
 
         return true;
@@ -128,7 +112,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.Update))]
     public static void PreUpdate(Zombie __instance)
     {
-        if (ZombieSpeedMultiplier >0 )
+        if (ZombieSpeedMultiplier > 0)
         {
             try
             {
@@ -145,14 +129,20 @@ public static class ZombiePatch
                 float originalSpeed = ZombieOriginalSpeeds[instanceId];
                 float newSpeed = originalSpeed * ZombieSpeedMultiplier;
 
-                // 修改僵尸的速度属性
-                __instance.theSpeed = newSpeed;
+                // 始终更新基础速度，用于冰冻/定身效果结束后正确恢复
                 __instance.theOriginSpeed = newSpeed;
 
-                // 修改动画速度以匹配移动速度
-                if (__instance.anim != null)
+                // 仅在僵尸未被冰冻/黄油定身等控制效果时覆盖当前速度
+                // 修复：滑步入场僵尸被冰冻后一直滑步进家的问题
+                if (__instance.theSpeed > 0f)
                 {
-                    __instance.anim.SetFloat("Speed", newSpeed);
+                    __instance.theSpeed = newSpeed;
+
+                    // 修改动画速度以匹配移动速度
+                    if (__instance.anim != null)
+                    {
+                        __instance.anim.SetFloat("Speed", newSpeed);
+                    }
                 }
             }
             catch
@@ -167,14 +157,20 @@ public static class ZombiePatch
 
                 int instanceId = __instance.GetInstanceID();
                 if (!ZombieOriginalSpeeds.TryGetValue(instanceId, out var speed)) return;
-                // 修改僵尸的速度属性
-                __instance.theSpeed = speed;
+
+                // 始终恢复基础速度
                 __instance.theOriginSpeed = speed;
 
-                // 修改动画速度以匹配移动速度
-                if (__instance.anim != null)
+                // 仅在僵尸未被冰冻/定身时恢复当前速度与动画速度
+                if (__instance.theSpeed > 0f)
                 {
-                    __instance.anim.SetFloat("Speed", speed);
+                    __instance.theSpeed = speed;
+
+                    // 修改动画速度以匹配移动速度
+                    if (__instance.anim != null)
+                    {
+                        __instance.anim.SetFloat("Speed", speed);
+                    }
                 }
             }
             catch

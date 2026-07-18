@@ -74,7 +74,6 @@ public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
 
     #region 斗蛐蛐布阵 - 其他设置
 
-    [Reactive] public partial bool KillUpgrade { get; set; }
     [Reactive] public partial bool RandomUpgradeMode { get; set; }
 
     #endregion
@@ -171,7 +170,6 @@ public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
     {
         InitDataService = initDataService;
         DataSyncService.MessageReceived += MessageReceived;
-        this.SimpleOneWaySync(x => x.KillUpgrade, Strings.KillUpgrade);
         this.SimpleOneWaySync(x => x.RandomUpgradeMode, Strings.RandomUpgradeMode);
     }
 
@@ -201,7 +199,6 @@ public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
         settings.ZombieSlot4Index = ZombieSlot4Index;
         settings.ZombieSlot5Index = ZombieSlot5Index;
         settings.ZombieSlot6Index = ZombieSlot6Index;
-        settings.KillUpgrade = KillUpgrade;
         settings.RandomUpgradeMode = RandomUpgradeMode;
     }
 
@@ -231,7 +228,6 @@ public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
         ZombieSlot4Index = settings.ZombieSlot4Index;
         ZombieSlot5Index = settings.ZombieSlot5Index;
         ZombieSlot6Index = settings.ZombieSlot6Index;
-        KillUpgrade = settings.KillUpgrade;
         RandomUpgradeMode = settings.RandomUpgradeMode;
     }
 }

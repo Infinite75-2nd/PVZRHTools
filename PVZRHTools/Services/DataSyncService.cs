@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using PVZRHTools.Utils;
-using Splat;
 using ToolData;
 
 namespace PVZRHTools.Services;
