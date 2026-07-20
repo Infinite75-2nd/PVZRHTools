@@ -45,8 +45,6 @@ public class ModifierServicesModule : IModule
         resolver.RegisterLazySingleton(() =>
             new SnapshotViewModel(Locator.Current.GetService<IDataSyncService>()!));
         resolver.RegisterLazySingleton(() =>
-            new InGameHotkeysViewModel(Locator.Current.GetService<IDataSyncService>()!));
-        resolver.RegisterLazySingleton(() =>
             new MiscsViewModel());
         resolver.RegisterLazySingleton(() =>
             new GodEvolutionViewModel(Locator.Current.GetService<IDataSyncService>()!));

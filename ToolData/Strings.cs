@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.8.1";
-        public const string ModifierVersion = "5.1.4";
+        public const string ModifierVersion = "5.1.5";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -274,13 +274,7 @@ namespace ToolData
 
         #region 深渊模式修改
 
-        public const string AbyssJumpLevel = "AbyssJumpLevel";
-        public const string AbyssMoney = "AbyssMoney";
-        public const string AbyssLimitlessRefresh = "AbyssLimitlessRefresh";
-        public const string AbyssRemoveSuperSunNutLimit = "AbyssRemoveSuperSunNutLimit";
-        public const string AbyssMaxPlantCount = "AbyssMaxPlantCount";
-        public const string AbyssMaxSuperCount = "AbyssMaxSuperCount";
-        public const string AbyssMaxUltimateCount = "AbyssMaxUltimateCount";
+        
 
         #endregion
 

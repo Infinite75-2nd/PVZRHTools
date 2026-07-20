@@ -12,6 +12,7 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using TMPro;
 using ToolMod.Components;
 using ToolData;
 using UnityEngine;
@@ -56,6 +57,8 @@ namespace ToolMod
             ClassInjector.RegisterTypeInIl2Cpp<DataProcessor>();
             ClassInjector.RegisterTypeInIl2Cpp<ToolsUpdater>();
             ClassInjector.RegisterTypeInIl2Cpp<PlantStatisticsModifier>();
+            ClassInjector.RegisterTypeInIl2Cpp<KeyBindingButton>();
+            ClassInjector.RegisterTypeInIl2Cpp<KeyBindingUI>();
             Instance = this;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Unload();
         }
@@ -67,10 +70,15 @@ namespace ToolMod
             ModifierObject = new("PVZRHTools");
             ModifierObject.AddComponent<DataProcessor>();
             ModifierObject.AddComponent<ToolsUpdater>();
+            CacheObject = new GameObject("CacheObject");
+            CacheObject.SetActive(false);
+            CacheObject.transform.SetParent(ModifierObject.transform);
+            UnityEngine.Object.DontDestroyOnLoad(ModifierObject);
             GenerateInitData();
 
             // 加载并应用保存的设置
             SettingsLoader.LoadAndApplySettings();
+            HotKeysLoader.Load();
 
             DataSync = new DataSync(Strings.PipeName);
             DataSync.Connected += (sender, e) => { Log.LogMessage("修改器已连接"); };
@@ -97,6 +105,16 @@ namespace ToolMod
             };
             var process = Process.Start(startInfo);
             Inited = true;
+            MakeKeyBindingUI();
+
+        }
+
+        private void MakeKeyBindingUI()
+        {
+            var keyBindingUI =UnityEngine.Object.Instantiate(GameAPP.UIManager.UIPrefabs[UIType.UIConfigMenu], CacheObject.transform);
+            keyBindingUI.name = "KeyBindingUI";
+            keyBindingUI.AddComponent<KeyBindingUI>();
+            GameAPP.UIManager.UIPrefabs.Add((UIType)999, keyBindingUI);
         }
 
         private static void MessageReceived(object? sender, string message)
@@ -353,6 +371,7 @@ namespace ToolMod
 
         private DataSync DataSync { get; set; }
         public GameObject ModifierObject { get; set; }
+        public GameObject CacheObject{ get; set; }
         public BootConfig BootConfig { get; set; }
         public string ModifierPath { get; set; }
         public bool Inited { get; private set; } = false;

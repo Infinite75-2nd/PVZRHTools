@@ -54,20 +54,6 @@ public static class SettingsLoader
     {
         try
         {
-            #region 游戏内按键
-
-            PatchDataCache.KeySpeedStop = (KeyCode)settings.KeySpeedStop;
-            PatchDataCache.KeyShowGameInfo = (KeyCode)settings.KeyShowGameInfo;
-            PatchDataCache.KeyTopMostCardBank = (KeyCode)settings.KeyTopMostCardBank;
-            PatchDataCache.KeyRandomCard = (KeyCode)settings.KeyRandomCard;
-            PatchDataCache.KeyAlmanacCreatePlant = (KeyCode)settings.KeyAlmanacCreatePlant;
-            PatchDataCache.KeyAlmanacCreatePlantVase = (KeyCode)settings.KeyAlmanacCreatePlantVase;
-            PatchDataCache.KeyAlmanacCreateZombie = (KeyCode)settings.KeyAlmanacCreateZombie;
-            PatchDataCache.KeyAlmanacCreateZombieVase = (KeyCode)settings.KeyAlmanacCreateZombieVase;
-            PatchDataCache.KeyAlmanacZombieMindCtrl = (KeyCode)settings.KeyAlmanacZombieMindCtrl;
-
-            #endregion
-
             #region 全局属性
 
             PatchDataCache.ColumnPlanting = settings.ColumnPlanting;
@@ -258,11 +244,7 @@ public static class SettingsLoader
             PatchDataCache.TreasureAllRedCard = settings.TreasureAllRedCard;
 
             // 深渊模式
-            PatchDataCache.AbyssLimitlessRefresh = settings.AbyssLimitlessRefresh;
-            PatchDataCache.AbyssRemoveSuperSunNutLimit = settings.AbyssRemoveSuperSunNutLimit;
-            PatchDataCache.AbyssMaxPlantCount = settings.AbyssMaxPlantCountEnabled ? settings.AbyssMaxPlantCount : -1;
-            PatchDataCache.AbyssMaxSuperCount = settings.AbyssMaxSuperCountEnabled ? settings.AbyssMaxSuperCount : -1;
-            PatchDataCache.AbyssMaxUltimateCount = settings.AbyssMaxUltimateCountEnabled ? settings.AbyssMaxUltimateCount : -1;
+
 
             #endregion
         }

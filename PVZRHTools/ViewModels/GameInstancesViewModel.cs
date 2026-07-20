@@ -72,7 +72,7 @@ public partial class GameInstancesViewModel : ViewModelBase
             Buttons = DialogButton.None
         };
         await OverlayDrawer.ShowStandardAsync<LaunchSettingsView, LaunchSettingsViewModel>(vm, null, options);
-        _modifierInfoService.WriteBootConfig(info);
+        _gameBootstrapService.WriteBootConfig(info);
     }
 
     [ReactiveCommand]
@@ -241,6 +241,8 @@ public partial class GameInstancesViewModel : ViewModelBase
                 }
             }
         }
+
+        await CheckOutdatedAndUpdateAsync(gameRootPath);
     }
 
     private async Task HandlePostAddAsync(string gameRootPath)
@@ -319,5 +321,13 @@ public partial class GameInstancesViewModel : ViewModelBase
                 }
             }
         }
+
+        await CheckOutdatedAndUpdateAsync(gameRootPath);
+    }
+
+    private async Task CheckOutdatedAndUpdateAsync(string gameRootPath)
+    {
+        if (_gameBootstrapService.IsGamePathOutdated(gameRootPath))
+            await _gameBootstrapService.ProcessOutdatedModifierAsync(gameRootPath);
     }
 }

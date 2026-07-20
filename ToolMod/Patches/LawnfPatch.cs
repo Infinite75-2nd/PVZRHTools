@@ -10,9 +10,7 @@ public static class LawnfPatch
     [HarmonyPatch(nameof(Lawnf.BannedInAbyss))]
     public static bool PreBannedInAbyss(ref bool __result)
     {
-        if (!AbyssRemoveSuperSunNutLimit) return true;
-        __result = false;
-        return false;
+        return true;
     }
 
 }

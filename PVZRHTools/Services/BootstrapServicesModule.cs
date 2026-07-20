@@ -9,16 +9,16 @@ public class BootstrapServicesModule : IModule
     public void Configure(IMutableDependencyResolver resolver)
     {
         //Services
-        resolver.RegisterLazySingleton(() => new RunGameService(Locator.Current.GetService<IModifierInfoService>()!),
+        resolver.RegisterLazySingleton(() => new RunGameService(Locator.Current.GetService<IGameBootstrapService>()!),
             typeof(IRunGameService));
         resolver.RegisterLazySingleton(() => new NavigationService(), typeof(INavigationService));
         resolver.RegisterLazySingleton(() => new ModsManagementService(), typeof(IModsManagementService));
         resolver.RegisterLazySingleton(
-            () => new ModifierInfoService(Locator.Current.GetService<IModsManagementService>()!),
+            () => new ModifierInfoService(Locator.Current.GetService<IModsManagementService>()!,
+                Locator.Current.GetService<IGameBootstrapService>()!),
             typeof(IModifierInfoService));
         resolver.RegisterLazySingleton(() => new NotificationService(), typeof(INotificationService));
-        resolver.RegisterLazySingleton(() =>
-                new GameBootstrapService(Locator.Current.GetService<IModifierInfoService>()!),
+        resolver.RegisterLazySingleton(() => new GameBootstrapService(),
             typeof(IGameBootstrapService));
 
         //ViewModels

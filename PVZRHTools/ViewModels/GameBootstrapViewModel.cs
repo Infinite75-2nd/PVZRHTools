@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
-using Avalonia.Controls.Notifications;
 using PVZRHTools.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Splat;
 using ToolData;
-using Ursa.Controls;
 
 namespace PVZRHTools.ViewModels;
 
@@ -57,35 +54,12 @@ public partial class GameBootstrapViewModel : ViewModelBase
     {
         try
         {
+            await Task.Delay(3000);
             var outdatedPaths = _modifierInfoService.GetOutdatedGamePaths();
             if (outdatedPaths.Count == 0) return;
-            await Task.Delay(5000);
+
             foreach (var path in outdatedPaths)
-            {
-                var dirName = new DirectoryInfo(path).Name;
-                var result = await OverlayMessageBox.ShowAsync(
-                    $"检测到游戏实例 \"{dirName}\" 中的修改器版本低于当前版本，是否更新？",
-                    "更新修改器",
-                    icon: MessageBoxIcon.Question,
-                    button: MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        _gameBootstrapService.InstallModifier(path);
-                        _notificationService.NotificationManager?.Show(
-                            $"\"{dirName}\" 的修改器已更新完成", NotificationType.Success);
-                    }
-                    catch (Exception ex)
-                    {
-                        await OverlayMessageBox.ShowAsync(
-                            $"更新修改器失败：{ex.Message}",
-                            "更新失败",
-                            icon: MessageBoxIcon.Error,
-                            button: MessageBoxButton.OK);
-                    }
-                }
-            }
+                await _gameBootstrapService.ProcessOutdatedModifierAsync(path);
         }
         catch
         {

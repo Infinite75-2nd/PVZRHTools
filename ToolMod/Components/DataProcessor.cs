@@ -179,31 +179,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.ZenGardenGetPlant, ZenGardenGetPlant },
 
         // 深渊模式
-        { Strings.AbyssJumpLevel, AbyssJumpLevel },
-        { Strings.AbyssMoney, AbyssMoney },
-        { Strings.AbyssLimitlessRefresh, SimpleSyncBool(() => AbyssLimitlessRefresh) },
-        { Strings.AbyssRemoveSuperSunNutLimit, SimpleSyncBool(() => AbyssRemoveSuperSunNutLimit) },
-        { Strings.AbyssMaxPlantCount, SimpleSyncInt(() => AbyssMaxPlantCount, () =>
-        {
-            if (AbyssManager.Instance!=null)
-            {
-                //AbyssManager.Instance.maxPlantCount = AbyssMaxPlantCount>=0?AbyssMaxPlantCount:OriginalAbyssMaxPlantCount;
-            }
-        }) },
-        { Strings.AbyssMaxSuperCount, SimpleSyncInt(() => AbyssMaxSuperCount, () =>
-        {
-            if (AbyssManager.Instance!=null)
-            {
-                //AbyssManager.Instance.superPlantCount = AbyssMaxSuperCount>=0?AbyssMaxSuperCount:OriginalAbyssMaxSuperCount;
-            }
-        })  },
-        { Strings.AbyssMaxUltimateCount, SimpleSyncInt(() => AbyssMaxUltimateCount, () =>
-        {
-            if (AbyssManager.Instance!=null)
-            {
-                //AbyssManager.Instance.ultiPlantCount = AbyssMaxUltimateCount>=0?AbyssMaxUltimateCount:OriginalAbyssMaxUltimateCount;
-            }
-        })  },
+
 
         #endregion
 
@@ -321,20 +297,6 @@ public class DataProcessor : MonoBehaviour
         { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard) },
         { Strings.GodEvolutionForceExpertBuff, SimpleSyncBool(() => GodEvolutionForceExpertBuff) },
         { Strings.GodEvolutionRemoveStarsStarUp, GodEvolutionRemoveStarsStarUp },
-        #endregion
-
-        #region 游戏内按键绑定
-
-        { Strings.KeySpeedStop, SimpleSyncKeyCode(() => KeySpeedStop) },
-        { Strings.KeyShowGameInfo, SimpleSyncKeyCode(() => KeyShowGameInfo) },
-        { Strings.KeyTopMostCardBank, SimpleSyncKeyCode(() => KeyTopMostCardBank) },
-        { Strings.KeyRandomCard, SimpleSyncKeyCode(() => KeyRandomCard) },
-        { Strings.KeyAlmanacCreatePlant, SimpleSyncKeyCode(() => KeyAlmanacCreatePlant) },
-        { Strings.KeyAlmanacCreatePlantVase, SimpleSyncKeyCode(() => KeyAlmanacCreatePlantVase) },
-        { Strings.KeyAlmanacCreateZombie, SimpleSyncKeyCode(() => KeyAlmanacCreateZombie) },
-        { Strings.KeyAlmanacCreateZombieVase, SimpleSyncKeyCode(() => KeyAlmanacCreateZombieVase) },
-        { Strings.KeyAlmanacZombieMindCtrl, SimpleSyncKeyCode(() => KeyAlmanacZombieMindCtrl) },
-
         #endregion
 
         { Strings.PlaySound, PlaySound },

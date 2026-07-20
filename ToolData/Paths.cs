@@ -15,6 +15,7 @@ public static class Paths
     public const string ConfigPath = @"BepInEx\config";
     public const string InitDataPath = @"BepInEx\config\InitData.json";
     public const string SaveSettingsPath = @"BepInEx\config\ModifierSettings.json";
+    public const string HotKeysFileName = @"HotKeys.json";
 
     public const string GithubLink = @"https://github.com/Infinite75-2nd/PVZRHTools";
 

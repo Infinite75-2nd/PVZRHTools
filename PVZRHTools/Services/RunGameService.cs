@@ -7,11 +7,11 @@ using ToolData;
 
 namespace PVZRHTools.Services;
 
-public class RunGameService(IModifierInfoService modifierInfoService) : IRunGameService
+public class RunGameService(IGameBootstrapService gameBootstrapService) : IRunGameService
 {
     public void RunGame(GameInstanceInfo info)
     {
-        modifierInfoService.WriteBootConfig(info);
+        gameBootstrapService.WriteBootConfig(info);
         Process.Start(new ProcessStartInfo
         {
             FileName = Path.Combine(info.GameRootPath, Paths.GameName),

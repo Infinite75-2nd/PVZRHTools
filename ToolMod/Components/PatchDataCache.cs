@@ -15,12 +15,12 @@ public class PatchDataCache
     public static KeyCode KeySpeedStop { get; set; } = KeyCode.Alpha6;
     public static KeyCode KeyShowGameInfo { get; set; } = KeyCode.BackQuote;
     public static KeyCode KeyTopMostCardBank { get; set; } = KeyCode.Tab;
-    public static KeyCode KeyRandomCard { get; set; } = KeyCode.R;
-    public static KeyCode KeyAlmanacCreatePlant { get; set; } = KeyCode.B;
+    public static KeyCode KeyRandomCard { get; set; } = KeyCode.Backslash;
+    public static KeyCode KeyAlmanacCreatePlant { get; set; } = KeyCode.Comma;
     public static KeyCode KeyAlmanacCreatePlantVase { get; set; } = KeyCode.J;
-    public static KeyCode KeyAlmanacCreateZombie { get; set; } = KeyCode.N;
+    public static KeyCode KeyAlmanacCreateZombie { get; set; } = KeyCode.Quote;
     public static KeyCode KeyAlmanacCreateZombieVase { get; set; } = KeyCode.K;
-    public static KeyCode KeyAlmanacZombieMindCtrl { get; set; } = KeyCode.LeftControl;
+    public static KeyCode KeyAlmanacZombieMindCtrl { get; set; } = KeyCode.Slash;
 
     #endregion
 
@@ -210,13 +210,7 @@ public class PatchDataCache
     public static bool TreasureAllRedCard { get; set; }
 
     // 深渊模式
-    public static int AbyssJumpLevel { get; set; }
-    public static int AbyssMoney { get; set; }
-    public static bool AbyssLimitlessRefresh { get; set; }
-    public static bool AbyssRemoveSuperSunNutLimit { get; set; }
-    public static int AbyssMaxPlantCount { get; set; } = -1;
-    public static int AbyssMaxSuperCount { get; set; } = -1;
-    public static int AbyssMaxUltimateCount { get; set; } = -1;
+
 
     #endregion
 
