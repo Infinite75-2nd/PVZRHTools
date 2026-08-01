@@ -219,8 +219,20 @@
                                            Minimum="0.1"
                                            EmptyInputValue="1"
                                            Value="{Binding ZombieAttackMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="僵尸血量倍率"
+                              IsChecked="{Binding ZombieHealthMultiplierEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericDoubleUpDown InnerRightContent="x"
+                                           Minimum="0.1"
+                                           EmptyInputValue="1"
+                                           Value="{Binding ZombieHealthMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
+                    <Button Content="全体僵尸血量翻倍"
+                            Command="{Binding SetZombieHealthRatioCommand}" />
+                    <u:NumericDoubleUpDown MinWidth="100"
+                                           InnerRightContent="x"
+                                           Minimum="0.1"
+                                           Value="{Binding ZombieHealthRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="僵尸反弹子弹概率"
                               IsChecked="{Binding ZombieBulletReflectEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <u:NumericIntUpDown InnerRightContent="%"

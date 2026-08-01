@@ -142,6 +142,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.ZombieDamageLimit, SimpleSyncInt(() => ZombieDamageLimit) },
         { Strings.ZombieSpeedMultiplier, SimpleSyncFloat(() => ZombieSpeedMultiplier) },
         { Strings.ZombieAttackMultiplier, SimpleSyncFloat(() => ZombieAttackMultiplier) },
+        { Strings.ZombieHealthMultiplier, SimpleSyncFloat(() => ZombieHealthMultiplier) },
         { Strings.ZombieBulletReflect, SimpleSyncInt(() => ZombieBulletReflect) },
         { Strings.ZombieStatusCoexist, SimpleSyncBool(() => ZombieStatusCoexist) },
         { Strings.ZombieImmuneAllDebuffs, SimpleSyncBool(() => ZombieImmuneAllDebuffs) },
@@ -172,14 +173,26 @@ public class DataProcessor : MonoBehaviour
         { Strings.TreasureSetMoney, SimpleSyncInt(()=>TreasureData.treasureMoney) },
         { Strings.TreasureFillCard, TreasureFillCard },
         { Strings.TreasureSellAllCards, TreasureSellAllCards },
+        { Strings.TreasureFillWare, TreasureFillWare },
 
         // 花园修改
         { Strings.ZenGardenSetMoney, SimpleSyncLong(()=>GameAPP.theMoneyCount) },
         { Strings.ZenGardenSetCoin, SimpleSyncInt(()=>GardenUI.Data.coinCount) },
         { Strings.ZenGardenGetPlant, ZenGardenGetPlant },
+        { Strings.ZenGardenRemoveAllPlants, ZenGardenRemoveAllPlants },
+        { Strings.ZenGardenGetAllPlants, ZenGardenGetAllPlants },
+        { Strings.ZenGardenWaterAllPlants, ZenGardenWaterAllPlants },
+        { Strings.ZenGardenAllPlantsFullyGrown, ZenGardenAllPlantsFullyGrown },
+        { Strings.ZenGardenAllPlantsFullLove, ZenGardenAllPlantsFullLove },
 
         // 深渊模式
-
+        { Strings.SetAbyssWoodenTicket, SetAbyssWoodenTicket },
+        { Strings.SetAbyssSilverTicket, SetAbyssSilverTicket },
+        { Strings.SetAbyssGoldTicket, SetAbyssGoldTicket },
+        { Strings.SetAbyssDiamondTicket, SetAbyssDiamondTicket },
+        { Strings.SetStarAdvStar, SetStarAdvStar },
+        { Strings.SetStarAdvStarHard, SetStarAdvStarHard },
+        { Strings.StarAdvFreeBuff, SimpleSyncBool(() => StarAdvFreeBuff) },
 
         #endregion
 
@@ -350,6 +363,8 @@ public class DataProcessor : MonoBehaviour
         { Strings.SpawnPetHorse, SpawnPetHorse },
         { Strings.SpawnPetImp, SpawnPetImp },
         { Strings.SpawnPetKirov, SpawnPetKirov },
+        { Strings.SetZombieHealthRatio, SetZombieHealthRatio },
+
     };
 
     #region OverallCommands
@@ -414,7 +429,7 @@ public class DataProcessor : MonoBehaviour
                 if (zombie == null || !zombie||
                     (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
                     (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
-                    continue;//todo
+                    continue;
                 zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
                 zombie.BodyTakeDamage(2147483647);
                 zombie.Die();
@@ -1950,7 +1965,7 @@ public class DataProcessor : MonoBehaviour
         // Replicate TryAddPlantData's position-finding logic:
         // scan all 64 pages, 8 columns × 4 rows, find first page with an empty slot
         int targetPage;
-        var available = new System.Collections.Generic.List<Vector2Int>();
+        var available = new List<Vector2Int>();
         for (targetPage = 0; targetPage < 64; targetPage++)
         {
             for (int col = 0; col < 8; col++)
@@ -1989,6 +2004,118 @@ public class DataProcessor : MonoBehaviour
         GardenUI.Data.Save();
     }
 
+    private static void TreasureFillWare(List<string> _)
+    {
+        TreasureData.treasureCards.Clear();
+        foreach (var type in GameAPP.resourcesManager.allPlants)
+        {
+            TreasureData.treasureCards.Add(new TreasureCardData(type,40,40));
+        }
+    }
+
+    private static void ZenGardenRemoveAllPlants(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        data.allPlants.Clear();
+    }
+
+    private static void ZenGardenGetAllPlants(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        data.allPlants.Clear();
+
+        var allPlants = GameAPP.resourcesManager?.allPlants;
+        if (allPlants == null || allPlants.Count == 0) return;
+
+        // 花园布局：每页 4 行 × 8 列 = 32 格，按顺序依次填入页码与行列号
+        const int rowsPerPage = 4;
+        const int colsPerPage = 8;
+        const int plantsPerPage = rowsPerPage * colsPerPage;
+        const int maxPages = 64;
+
+        var gardenUI = GardenUI.Instance;
+        var index = 0;
+        foreach (var plantType in allPlants)
+        {
+            var page = index / plantsPerPage;
+            if (page >= maxPages) break;
+
+            var row = (index / colsPerPage) % rowsPerPage;
+            var col = index % colsPerPage;
+
+
+            var p=    data.CreatePlantData(plantType, col, row, page);
+            p.growStage = 2;
+            p.love = 100;
+            p.waterLevel = 100;
+            index++;
+        }
+
+        GardenUI.Data.Save();
+    }
+
+    private static void ZenGardenWaterAllPlants(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        foreach (var p in data.allPlants)
+        {
+            if (p != null)
+            {
+                p.waterLevel = 100;
+            }
+        }
+    }
+
+    private static void ZenGardenAllPlantsFullyGrown(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        foreach (var p in data.allPlants)
+        {
+            if (p != null)
+            {
+                p.growStage = 2;
+            }
+        }
+    }
+
+    private static void ZenGardenAllPlantsFullLove(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        foreach (var p in data.allPlants)
+        {
+            if (p != null)
+            {
+                p.growStage = 2;
+                p.waterLevel = 100;
+                p.love = 100;
+                p.needTool = GardenToolType.Default;
+            }
+        }
+    }
+
+    private static void SetZombieHealthRatio(List<string> args)
+    {
+        float ratio=Convert.ToSingle(double.Parse(args[0]));
+        foreach (var z in Board.Instance.zombieArray)
+        {
+            if (z != null)
+            {
+                z.theHealth = (int)(z.theHealth * ratio);
+                z.theFirstArmorHealth = (int)(z.theFirstArmorHealth * ratio);
+                z.theSecondArmorHealth = (int)(z.theSecondArmorHealth * ratio);
+                z.theMaxHealth = (int)(z.theMaxHealth * ratio);
+                z.theFirstArmorMaxHealth = (int)(z.theFirstArmorMaxHealth * ratio);
+                z.theSecondArmorMaxHealth = (int)(z.theSecondArmorMaxHealth * ratio);
+                z.UpdateHealthText();
+            }
+        }
+    }
+
     private static void AbyssJumpLevel(List<string> args)
     {
         /*
@@ -2007,6 +2134,58 @@ public class DataProcessor : MonoBehaviour
         if (AbyssManager.Instance != null)
         {
             //AbyssManager.Instance.abyssData.money=money;
+        }
+    }
+
+    private static void SetAbyssWoodenTicket(List<string> args)
+    {
+        int t=int.Parse(args[0]);
+        if(AbyssManager.Data != null)
+        {
+            AbyssManager.Data.woodenTicket = t;
+        }
+    }
+
+    private static void SetAbyssSilverTicket(List<string> args)
+    {
+        int t=int.Parse(args[0]);
+        if(AbyssManager.Data != null)
+        {
+            AbyssManager.Data.silverTicket = t;
+        }
+    }
+
+    private static void SetAbyssGoldTicket(List<string> args)
+    {
+        int t=int.Parse(args[0]);
+        if(AbyssManager.Data != null)
+        {
+            AbyssManager.Data.goldTicket = t;
+        }
+    }
+
+    private static void SetAbyssDiamondTicket(List<string> args)
+    {
+        int t=int.Parse(args[0]);
+        if(AbyssManager.Data != null)
+        {
+            AbyssManager.Data.diamondTicket = t;
+        }
+    }
+
+    private static void SetStarAdvStar(List<string> args)
+    {
+        if (AdvantureConfig.data != null)
+        {
+            AdvantureConfig.data.enpowerStarCount=int.Parse(args[0]);
+        }
+    }
+
+    private static void SetStarAdvStarHard(List<string> args)
+    {
+        if (AdvantureConfig.data != null)
+        {
+            AdvantureConfig.data.enpowerStarCount_hard=int.Parse(args[0]);
         }
     }
 }

@@ -75,13 +75,13 @@ public static class MousePatch
             }
         }
 
-        OriginalGloveFullCD = Glove.Instance.fullCD;
+        OriginalGloveFullCD = Lawnf.GetGloveCD();
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Mouse.TryToSetZombieByCard))]
     public static void PostTryToSetZombieByCard(Mouse __instance)
     {
-        OriginalGloveFullCD = Glove.Instance.fullCD;
+        OriginalGloveFullCD = Lawnf.GetGloveCD();
     }
 }

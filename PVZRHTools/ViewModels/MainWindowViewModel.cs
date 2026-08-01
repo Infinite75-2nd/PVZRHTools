@@ -106,10 +106,10 @@ public partial class MainWindowViewModel : ModifierPageViewModelBase
             new(_navigationService) { MenuHeader = "布阵器", PageType = typeof(FieldReadWriteViewModel) },
             new(_navigationService) { MenuHeader = "旅行词条修改", PageType = typeof(TravelBuffViewModel) },
             new(_navigationService) { MenuHeader = "旗帜波词条修改", PageType = typeof(FlagWaveBuffsViewModel) },
-            new(_navigationService) { MenuHeader = "深渊/神秘", PageType = typeof(AbyssAndTreasureViewModel) },
-            new(_navigationService) { MenuHeader = "检索分区", PageType = typeof(SearchListViewModel) },
-            new(_navigationService) { MenuHeader = "局内存档/回溯", PageType = typeof(SnapshotViewModel) },
             new(_navigationService) { MenuHeader = "诸神进化", PageType = typeof(GodEvolutionViewModel) },
+            new(_navigationService) { MenuHeader = "深渊/神秘/花园/星辉", PageType = typeof(AbyssAndTreasureViewModel) },
+            new(_navigationService) { MenuHeader = "局内存档/回溯", PageType = typeof(SnapshotViewModel) },
+            new(_navigationService) { MenuHeader = "检索分区", PageType = typeof(SearchListViewModel) },
             new(_navigationService) { MenuHeader = "其他设置", PageType = typeof(MiscsViewModel) },
         };
 

@@ -120,6 +120,9 @@ public class SettingsData
     public double ZombieSpeedMultiplier { get; set; } = 1.0;
     public bool ZombieAttackMultiplierEnabled { get; set; }
     public double ZombieAttackMultiplier { get; set; } = 1.0;
+    public bool ZombieHealthMultiplierEnabled { get; set; }
+    public double ZombieHealthMultiplier { get; set; } = 1.0;
+    public double ZombieHealthRatio { get; set; } = 2.0;
     public bool ZombieBulletReflectEnabled { get; set; }
     public int ZombieBulletReflect { get; set; } = 10;
     public bool ZombieStatusCoexist { get; set; }
@@ -236,6 +239,17 @@ public class SettingsData
     public int ZenGardenMoney { get; set; }
     public int ZenGardenCoin { get; set; }
     public int ZenGardenPlantType { get; set; }
+
+    // AbyssAndTreasureViewModel - 冒险秘境修改
+    public int AbyssWoodenTicket { get; set; }
+    public int AbyssSilverTicket { get; set; }
+    public int AbyssGoldTicket { get; set; }
+    public int AbyssDiamondTicket { get; set; }
+
+    // AbyssAndTreasureViewModel - 星辉冒险修改
+    public int StarAdvStar { get; set; }
+    public int StarAdvStarHard { get; set; }
+    public bool StarAdvFreeBuff { get; set; }
 }
 
 /// <summary>

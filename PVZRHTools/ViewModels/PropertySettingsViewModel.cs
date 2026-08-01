@@ -79,6 +79,9 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial double ZombieSpeedMultiplier { get; set; } = 1.0;
     [Reactive] public partial bool ZombieAttackMultiplierEnabled { get; set; }
     [Reactive] public partial double ZombieAttackMultiplier { get; set; } = 1.0;
+    [Reactive] public partial bool ZombieHealthMultiplierEnabled { get; set; }
+    [Reactive] public partial double ZombieHealthMultiplier { get; set; } = 1.0;
+    [Reactive] public partial double ZombieHealthRatio { get; set; } = 2.0;
     [Reactive] public partial bool ZombieBulletReflectEnabled { get; set; }
     [Reactive] public partial int ZombieBulletReflect { get; set; } = 10;
     [Reactive] public partial bool ZombieStatusCoexist { get; set; }
@@ -150,6 +153,14 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         });
 
     [ReactiveCommand]
+    public void SetZombieHealthRatio() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetZombieHealthRatio,
+            Parameters = [ZombieHealthRatio.ToString()]
+        });
+
+    [ReactiveCommand]
     public void ApplyAllPlantSkins() =>
         DataSyncService.SendCommand(new SyncData()
         {
@@ -214,6 +225,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
             Strings.ZombieSpeedMultiplier);
         this.SimpleSyncFlaggedDouble(x => x.ZombieAttackMultiplier, x => x.ZombieAttackMultiplierEnabled,
             Strings.ZombieAttackMultiplier);
+        this.SimpleSyncFlaggedDouble(x => x.ZombieHealthMultiplier, x => x.ZombieHealthMultiplierEnabled,
+            Strings.ZombieHealthMultiplier);
         this.SimpleSyncFlaggedInt(x => x.ZombieBulletReflect, x => x.ZombieBulletReflectEnabled,
             Strings.ZombieBulletReflect);
         this.SimpleOneWaySync(x => x.ZombieStatusCoexist, Strings.ZombieStatusCoexist);
@@ -286,6 +299,9 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         settings.ZombieSpeedMultiplier = ZombieSpeedMultiplier;
         settings.ZombieAttackMultiplierEnabled = ZombieAttackMultiplierEnabled;
         settings.ZombieAttackMultiplier = ZombieAttackMultiplier;
+        settings.ZombieHealthMultiplierEnabled = ZombieHealthMultiplierEnabled;
+        settings.ZombieHealthMultiplier = ZombieHealthMultiplier;
+        settings.ZombieHealthRatio = ZombieHealthRatio;
         settings.ZombieBulletReflectEnabled = ZombieBulletReflectEnabled;
         settings.ZombieBulletReflect = ZombieBulletReflect;
         settings.ZombieStatusCoexist = ZombieStatusCoexist;
@@ -358,6 +374,9 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         ZombieSpeedMultiplier = settings.ZombieSpeedMultiplier;
         ZombieAttackMultiplierEnabled = settings.ZombieAttackMultiplierEnabled;
         ZombieAttackMultiplier = settings.ZombieAttackMultiplier;
+        ZombieHealthMultiplierEnabled = settings.ZombieHealthMultiplierEnabled;
+        ZombieHealthMultiplier = settings.ZombieHealthMultiplier;
+        ZombieHealthRatio = settings.ZombieHealthRatio;
         ZombieBulletReflectEnabled = settings.ZombieBulletReflectEnabled;
         ZombieBulletReflect = settings.ZombieBulletReflect;
         ZombieStatusCoexist = settings.ZombieStatusCoexist;

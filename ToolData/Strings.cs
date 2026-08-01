@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.8.1";
-        public const string ModifierVersion = "5.1.5";
+        public const string ModifierVersion = "5.1.6";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -130,6 +130,8 @@ namespace ToolData
         public const string ZombieDamageLimit = "ZombieDamageLimit";
         public const string ZombieSpeedMultiplier = "ZombieSpeedMultiplier";
         public const string ZombieAttackMultiplier = "ZombieAttackMultiplier";
+        public const string ZombieHealthMultiplier = "ZombieHealthMultiplier";
+        public const string SetZombieHealthRatio = "SetZombieHealthRatio";
         public const string ZombieBulletReflect = "ZombieBulletReflect";
         public const string ZombieStatusCoexist = "ZombieStatusCoexist";
         public const string ZombieImmuneFreeze = "ZombieImmuneFreeze";
@@ -191,6 +193,7 @@ namespace ToolData
         public const string TreasureAllRedCard = "TreasureAllRedCard";
         public const string TreasureFillCard = "TreasureFillCard";
         public const string TreasureSellAllCards = "TreasureSellAllCards";
+        public const string TreasureFillWare = "TreasureFillWare";
 
         #endregion
 
@@ -199,6 +202,11 @@ namespace ToolData
         public const string ZenGardenSetMoney = "ZenGardenSetMoney";
         public const string ZenGardenSetCoin = "ZenGardenSetCoin";
         public const string ZenGardenGetPlant = "ZenGardenGetPlant";
+        public const string ZenGardenRemoveAllPlants = "ZenGardenRemoveAllPlants";
+        public const string ZenGardenGetAllPlants = "ZenGardenGetAllPlants";
+        public const string ZenGardenWaterAllPlants = "ZenGardenWaterAllPlants";
+        public const string ZenGardenAllPlantsFullyGrown = "ZenGardenAllPlantsFullyGrown";
+        public const string ZenGardenAllPlantsFullLove = "ZenGardenAllPlantsFullLove";
 
         #endregion
 
@@ -274,7 +282,18 @@ namespace ToolData
 
         #region 深渊模式修改
 
-        
+        public const string SetAbyssWoodenTicket = "SetAbyssWoodenTicket";
+        public const string SetAbyssSilverTicket = "SetAbyssSilverTicket";
+        public const string SetAbyssGoldTicket = "SetAbyssGoldTicket";
+        public const string SetAbyssDiamondTicket = "SetAbyssDiamondTicket";
+
+        #endregion
+
+        #region 星辉冒险修改
+
+        public const string SetStarAdvStar = "SetStarAdvStar";
+        public const string SetStarAdvStarHard = "SetStarAdvStarHard";
+        public const string StarAdvFreeBuff = "StarAdvFreeBuff";
 
         #endregion
 

@@ -15,6 +15,7 @@ public partial class AbyssAndTreasureViewModel:ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.TreasureFreeWithdraw, Strings.TreasureFreeWithdraw);
         this.SimpleSyncFlaggedInt(x => x.TreasureMaxTime, x => x.TreasureMaxTimeEnabled, Strings.TreasureMaxTime);
         this.SimpleOneWaySync(x => x.TreasureAllRedCard, Strings.TreasureAllRedCard);
+        this.SimpleOneWaySync(x => x.StarAdvFreeBuff, Strings.StarAdvFreeBuff);
 
         // 深渊模式同步
     }
@@ -46,6 +47,14 @@ public partial class AbyssAndTreasureViewModel:ModifierPageViewModelBase
         });
 
     [ReactiveCommand]
+    public void TreasureFillWare() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.TreasureFillWare,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
     public void ZenGardenSetMoney() =>
         DataSyncService.SendCommand(new SyncData()
         {
@@ -68,11 +77,109 @@ public partial class AbyssAndTreasureViewModel:ModifierPageViewModelBase
             Command = Strings.ZenGardenGetPlant,
             Parameters = [ZenGardenPlantType.ToString()]
         });
-    
+
+    [ReactiveCommand]
+    public void ZenGardenRemoveAllPlants() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ZenGardenRemoveAllPlants,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void ZenGardenGetAllPlants() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ZenGardenGetAllPlants,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void ZenGardenWaterAllPlants() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ZenGardenWaterAllPlants,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void ZenGardenAllPlantsFullyGrown() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ZenGardenAllPlantsFullyGrown,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void ZenGardenAllPlantsFullLove() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.ZenGardenAllPlantsFullLove,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void SetAbyssWoodenTicket() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetAbyssWoodenTicket,
+            Parameters = [AbyssWoodenTicket.ToString()]
+        });
+
+    [ReactiveCommand]
+    public void SetAbyssSilverTicket() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetAbyssSilverTicket,
+            Parameters = [AbyssSilverTicket.ToString()]
+        });
+
+    [ReactiveCommand]
+    public void SetAbyssGoldTicket() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetAbyssGoldTicket,
+            Parameters = [AbyssGoldTicket.ToString()]
+        });
+
+    [ReactiveCommand]
+    public void SetAbyssDiamondTicket() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetAbyssDiamondTicket,
+            Parameters = [AbyssDiamondTicket.ToString()]
+        });
+
+    [ReactiveCommand]
+    public void SetStarAdvStar() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetStarAdvStar,
+            Parameters = [StarAdvStar.ToString()]
+        });
+
+    [ReactiveCommand]
+    public void SetStarAdvStarHard() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetStarAdvStarHard,
+            Parameters = [StarAdvStarHard.ToString()]
+        });
 
     #region 深渊模式修改
 
-    
+    [Reactive] public partial int AbyssWoodenTicket { get; set; }
+    [Reactive] public partial int AbyssSilverTicket { get; set; }
+    [Reactive] public partial int AbyssGoldTicket { get; set; }
+    [Reactive] public partial int AbyssDiamondTicket { get; set; }
+
+    #endregion
+
+    #region 星辉冒险修改
+
+    [Reactive] public partial int StarAdvStar { get; set; }
+    [Reactive] public partial int StarAdvStarHard { get; set; }
+    [Reactive] public partial bool StarAdvFreeBuff { get; set; }
 
     #endregion
 
@@ -107,6 +214,15 @@ public partial class AbyssAndTreasureViewModel:ModifierPageViewModelBase
         settings.ZenGardenMoney = ZenGardenMoney;
         settings.ZenGardenCoin = ZenGardenCoin;
         settings.ZenGardenPlantType = ZenGardenPlantType;
+
+        settings.AbyssWoodenTicket = AbyssWoodenTicket;
+        settings.AbyssSilverTicket = AbyssSilverTicket;
+        settings.AbyssGoldTicket = AbyssGoldTicket;
+        settings.AbyssDiamondTicket = AbyssDiamondTicket;
+
+        settings.StarAdvStar = StarAdvStar;
+        settings.StarAdvStarHard = StarAdvStarHard;
+        settings.StarAdvFreeBuff = StarAdvFreeBuff;
     }
 
     public override void LoadSettings(SettingsData settings)
@@ -121,5 +237,14 @@ public partial class AbyssAndTreasureViewModel:ModifierPageViewModelBase
         ZenGardenMoney = settings.ZenGardenMoney;
         ZenGardenCoin = settings.ZenGardenCoin;
         ZenGardenPlantType = settings.ZenGardenPlantType;
+
+        AbyssWoodenTicket = settings.AbyssWoodenTicket;
+        AbyssSilverTicket = settings.AbyssSilverTicket;
+        AbyssGoldTicket = settings.AbyssGoldTicket;
+        AbyssDiamondTicket = settings.AbyssDiamondTicket;
+
+        StarAdvStar = settings.StarAdvStar;
+        StarAdvStarHard = settings.StarAdvStarHard;
+        StarAdvFreeBuff = settings.StarAdvFreeBuff;
     }
 }

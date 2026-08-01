@@ -7,7 +7,7 @@ namespace ToolMod.Patches;
 public static class AbyssSwordStarPatch
 {
     [HarmonyPrefix]
-    [HarmonyPatch("Awake")]
+    [HarmonyPatch(nameof(AbyssSwordStar.Awake))]
     public static void PreAwake(ref GameStatus __state)
     {
         __state = GameAPP.theGameStatus;
@@ -18,14 +18,14 @@ public static class AbyssSwordStarPatch
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch("Awake")]
+    [HarmonyPatch(nameof(AbyssSwordStar.Awake))]
     public static void PostAwake(ref GameStatus __state)
     {
         GameAPP.theGameStatus = __state;
     }
 
     [HarmonyPrefix]
-    [HarmonyPatch("Awake")]
+    [HarmonyPatch(nameof(AbyssSwordStar.Start))]
     public static void PreStart(ref LevelType __state)
     {
         __state = GameAPP.theBoardType;
@@ -36,7 +36,7 @@ public static class AbyssSwordStarPatch
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch("Awake")]
+    [HarmonyPatch(nameof(AbyssSwordStar.Start))]
     public static void PostStart(ref LevelType __state)
     {
         GameAPP.theBoardType = __state;

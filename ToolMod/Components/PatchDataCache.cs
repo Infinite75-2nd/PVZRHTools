@@ -18,7 +18,7 @@ public class PatchDataCache
     public static KeyCode KeyRandomCard { get; set; } = KeyCode.Backslash;
     public static KeyCode KeyAlmanacCreatePlant { get; set; } = KeyCode.Comma;
     public static KeyCode KeyAlmanacCreatePlantVase { get; set; } = KeyCode.J;
-    public static KeyCode KeyAlmanacCreateZombie { get; set; } = KeyCode.Quote;
+    public static KeyCode KeyAlmanacCreateZombie { get; set; } = KeyCode.Period;
     public static KeyCode KeyAlmanacCreateZombieVase { get; set; } = KeyCode.K;
     public static KeyCode KeyAlmanacZombieMindCtrl { get; set; } = KeyCode.Slash;
 
@@ -42,7 +42,7 @@ public class PatchDataCache
     public static bool FreePlanting { get; set; }
     public static bool CardFreeCD { get; set; }
     public static bool RemoveFusionLimit { get; set; }
-    public static float NewZombieUpdateCD { get; set; }
+    public static float NewZombieUpdateCD { get; set; } = -1;
     public static bool UnlimitedScore { get; set; }
     public static bool UnlimitedRefresh { get; set; }
 
@@ -109,6 +109,7 @@ public class PatchDataCache
     public static int ZombieDamageLimit { get; set; } = -1;
     public static float ZombieSpeedMultiplier { get; set; } = -1.0f;
     public static float ZombieAttackMultiplier { get; set; } = -1.0f;
+    public static float ZombieHealthMultiplier { get; set; } = -1.0f;
     public static int ZombieBulletReflect { get; set; } = -1;
     public static bool ZombieStatusCoexist { get; set; }
     public static bool ZombieImmuneAllDebuffs { get; set; }
@@ -210,6 +211,7 @@ public class PatchDataCache
     public static bool TreasureAllRedCard { get; set; }
 
     // 深渊模式
+    public static bool StarAdvFreeBuff { get; set; }
 
 
     #endregion
@@ -234,6 +236,7 @@ public class PatchDataCache
 
     [HideFromIl2Cpp] public static TreasureData TreasureData => new();
     [HideFromIl2Cpp] public static GardenData GardenData => new();
+    [HideFromIl2Cpp] public static TypeMgr TypeMgr => new();
 
     #endregion
 
@@ -275,6 +278,7 @@ public class PatchDataCache
     public static int OriginalAbyssMaxPlantCount;
     public static int OriginalAbyssMaxSuperCount;
     public static int OriginalAbyssMaxUltimateCount;
+    public static float OriginalWaveInterval;
 
     #endregion
 

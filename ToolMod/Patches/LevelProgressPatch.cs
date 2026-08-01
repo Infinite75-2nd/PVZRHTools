@@ -52,7 +52,7 @@ public static class ProgressMgrPatch
                     if (refreshCD <= 0f && currentWave > 0 && currentWave < maxWave)
                     {
                         // 检查 NewZombieUpdateCD 是否有效（通常在 0-30 秒之间）
-                        if (NewZombieUpdateCD > 0f && NewZombieUpdateCD <= 30f)
+                        if (NewZombieUpdateCD > 0f)
                         {
                             // 使用 NewZombieUpdateCD 作为临时显示值
                             // 游戏会在 NewZombieUpdate() 中更新 timeUntilNextWave

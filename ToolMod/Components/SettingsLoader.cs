@@ -139,7 +139,10 @@ public static class SettingsLoader
                 settings.ZombieSpeedMultiplierEnabled ? (float)settings.ZombieSpeedMultiplier : -1.0f;
             PatchDataCache.ZombieAttackMultiplier = settings.ZombieAttackMultiplierEnabled
                 ? (float)settings.ZombieAttackMultiplier
-                : 1.0f;
+                : -1.0f;
+            PatchDataCache.ZombieHealthMultiplier = settings.ZombieHealthMultiplierEnabled
+                ? (float)settings.ZombieHealthMultiplier
+                : -1.0f;
             PatchDataCache.ZombieBulletReflect =
                 settings.ZombieBulletReflectEnabled ? settings.ZombieBulletReflect : -1;
             PatchDataCache.ZombieStatusCoexist = settings.ZombieStatusCoexist;
@@ -244,7 +247,7 @@ public static class SettingsLoader
             PatchDataCache.TreasureAllRedCard = settings.TreasureAllRedCard;
 
             // 深渊模式
-
+            PatchDataCache.StarAdvFreeBuff = settings.StarAdvFreeBuff;
 
             #endregion
         }

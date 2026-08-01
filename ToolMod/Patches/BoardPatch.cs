@@ -34,12 +34,15 @@ public static class BoardPatch
     {
         try
         {
-            if (NewZombieUpdateCD > 0f && NewZombieUpdateCD <= 30f && Board.Instance != null)
+            if (Board.Instance != null && Board.Instance.config != null)
             {
-                // 确保waveInterval不超过设置的最大值
-                if (Board.Instance.config != null && Board.Instance.config.waveInterval > NewZombieUpdateCD)
+                if (NewZombieUpdateCD > 0f)
                 {
                     Board.Instance.config.waveInterval = NewZombieUpdateCD;
+                }
+                else
+                {
+                    Board.Instance.config.waveInterval = OriginalWaveInterval;
                 }
             }
         }
@@ -139,12 +142,15 @@ public static class BoardPatch
             }
 
             // 处理两波间最大刷怪CD - 持续设置waveInterval，防止被游戏重置
-            if (NewZombieUpdateCD > 0f && NewZombieUpdateCD <= 30f && __instance != null)
+            if (__instance != null && __instance.config != null)
             {
-                // 确保waveInterval不超过设置的最大值
-                if (__instance.config != null && __instance.config.waveInterval > NewZombieUpdateCD)
+                if (NewZombieUpdateCD > 0f)
                 {
                     __instance.config.waveInterval = NewZombieUpdateCD;
+                }
+                else
+                {
+                    __instance.config.waveInterval = OriginalWaveInterval;
                 }
             }
 
@@ -318,13 +324,14 @@ public static class BoardPatch
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Board.Start))]
-    public static void PostStart()
+    public static void PostStart(Board __instance)
     {
         // 清除复制的卡片列表
         CopiedCards.Clear();
         // 应用初始词条（仅在游戏开始时应用一次）
         try
         {
+            OriginalWaveInterval = __instance.config.waveInterval;
             // 先检查是否真正“配置了”任何初始词条：
             // - 若所有数组都为 null / 长度为 0 / 全是 false，则认为没有设置初始词条，直接跳过，
             //   避免在场景切换时用一堆 false 覆盖当前已有的词条状态。
