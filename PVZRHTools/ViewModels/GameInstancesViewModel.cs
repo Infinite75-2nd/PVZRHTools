@@ -95,6 +95,32 @@ public partial class GameInstancesViewModel : ViewModelBase
     {
         try
         {
+            if (!_gameBootstrapService.IsBepInExInstalled(info.GameRootPath))
+            {
+                var confirm = await OverlayMessageBox.ShowAsync(
+                    $"\"{new DirectoryInfo(info.GameRootPath).Name}\" 中未检测到BepInEx环境，是否先安装？",
+                    "安装BepInEx",
+                    icon: MessageBoxIcon.Question,
+                    button: MessageBoxButton.YesNo);
+                if (confirm != MessageBoxResult.Yes) return;
+
+                _gameBootstrapService.InstallBepInEx(info.GameRootPath);
+                _gameBootstrapService.EnableBepInEx(info.GameRootPath);
+                _notificationService.NotificationManager?.Show("BepInEx已安装完成", NotificationType.Success);
+            }
+            else if (!ToolUtils.GetBepInExEnabled(info.GameRootPath))
+            {
+                var confirm = await OverlayMessageBox.ShowAsync(
+                    $"\"{new DirectoryInfo(info.GameRootPath).Name}\" 的BepInEx已安装但未启用，是否启用？",
+                    "启用BepInEx",
+                    icon: MessageBoxIcon.Question,
+                    button: MessageBoxButton.YesNo);
+                if (confirm != MessageBoxResult.Yes) return;
+
+                _gameBootstrapService.EnableBepInEx(info.GameRootPath);
+                _notificationService.NotificationManager?.Show("BepInEx已启用", NotificationType.Success);
+            }
+
             _gameBootstrapService.InstallModifier(info.GameRootPath);
             _notificationService.NotificationManager?.Show(
                 $"\"{new DirectoryInfo(info.GameRootPath).Name}\" 的修改器已安装完成", NotificationType.Success);

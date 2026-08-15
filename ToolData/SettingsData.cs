@@ -126,6 +126,7 @@ public class SettingsData
     public bool ZombieBulletReflectEnabled { get; set; }
     public int ZombieBulletReflect { get; set; } = 10;
     public bool ZombieStatusCoexist { get; set; }
+    public bool HardZombie { get; set; }
     public bool ZombieImmuneAllDebuffs { get; set; }
     public bool ZombieImmuneFreeze { get; set; }
     public bool ZombieImmuneCold { get; set; }

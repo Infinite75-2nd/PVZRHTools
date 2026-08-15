@@ -146,6 +146,7 @@ public static class SettingsLoader
             PatchDataCache.ZombieBulletReflect =
                 settings.ZombieBulletReflectEnabled ? settings.ZombieBulletReflect : -1;
             PatchDataCache.ZombieStatusCoexist = settings.ZombieStatusCoexist;
+            PatchDataCache.HardZombie = settings.HardZombie;
             PatchDataCache.ZombieImmuneAllDebuffs = settings.ZombieImmuneAllDebuffs;
             PatchDataCache.ZombieImmuneFreeze = settings.ZombieImmuneFreeze;
             PatchDataCache.ZombieImmuneCold = settings.ZombieImmuneCold;

@@ -145,6 +145,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.ZombieHealthMultiplier, SimpleSyncFloat(() => ZombieHealthMultiplier) },
         { Strings.ZombieBulletReflect, SimpleSyncInt(() => ZombieBulletReflect) },
         { Strings.ZombieStatusCoexist, SimpleSyncBool(() => ZombieStatusCoexist) },
+        { Strings.HardZombie, SimpleSyncBool(() => HardZombie) },
         { Strings.ZombieImmuneAllDebuffs, SimpleSyncBool(() => ZombieImmuneAllDebuffs) },
         { Strings.ZombieImmuneFreeze, SimpleSyncBool(() => ZombieImmuneFreeze) },
         { Strings.ZombieImmuneCold, SimpleSyncBool(() => ZombieImmuneCold) },
@@ -309,7 +310,6 @@ public class DataProcessor : MonoBehaviour
         { Strings.GodEvolutionChooseBuff, GodEvolutionChooseBuff },
         { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard) },
         { Strings.GodEvolutionForceExpertBuff, SimpleSyncBool(() => GodEvolutionForceExpertBuff) },
-        { Strings.GodEvolutionRemoveStarsStarUp, GodEvolutionRemoveStarsStarUp },
         #endregion
 
         { Strings.PlaySound, PlaySound },
@@ -430,8 +430,9 @@ public class DataProcessor : MonoBehaviour
                     (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
                     (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
                     continue;
-                zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
-                zombie.BodyTakeDamage(2147483647);
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
                 zombie.Die();
             }
             catch
@@ -447,8 +448,9 @@ public class DataProcessor : MonoBehaviour
                     (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
                     (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
                     continue;
-                zombie.ApplyDamage(DamageType.MaxDamage, 2147483647);
-                zombie.BodyTakeDamage(2147483647);
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
                 zombie.Die();
             }
             catch
@@ -1737,28 +1739,6 @@ public class DataProcessor : MonoBehaviour
         if (InGame && Board.Instance.TryGetComponent<ShootingManager>(out var shooting)&&FindObjectsOfTypeAll(Il2CppType.Of<MultipleChoiceMenu>()).Count is 2)
         {
             shooting.ShowBuff();
-        }
-    }
-
-    private static void GodEvolutionRemoveStarsStarUp(List<string> _)
-    {
-        if (InGame && Board.Instance.TryGetComponent<ShootingManager>(out var shooting))
-        {
-            if (shooting.plantBuffRecords.ContainsKey(PlantType.UltimateStar))
-            {
-                if (shooting.plantBuffRecords[PlantType.UltimateStar].ContainsKey("超进化：星辉"))
-                {
-                    shooting.plantBuffRecords[PlantType.UltimateStar].Remove("超进化：星辉");
-                }
-            }
-
-            foreach (var plant in Lawnf.GetAllPlants())
-            {
-                if (plant.thePlantType is PlantType.UltimateStar)
-                {
-                    plant.Die();
-                }
-            }
         }
     }
 

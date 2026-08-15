@@ -244,6 +244,8 @@
                               IsChecked="{Binding ZombieStatusCoexist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="僵尸免疫全部状态"
                               IsChecked="{Binding ZombieImmuneAllDebuffs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="僵尸无敌"
+                              IsChecked="{Binding HardZombie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="效果免疫" />

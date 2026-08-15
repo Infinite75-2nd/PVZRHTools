@@ -85,6 +85,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool ZombieBulletReflectEnabled { get; set; }
     [Reactive] public partial int ZombieBulletReflect { get; set; } = 10;
     [Reactive] public partial bool ZombieStatusCoexist { get; set; }
+    [Reactive] public partial bool HardZombie { get; set; }
     [Reactive] public partial bool ZombieImmuneAllDebuffs { get; set; }
     [Reactive] public partial bool ZombieImmuneFreeze { get; set; }
     [Reactive] public partial bool ZombieImmuneCold { get; set; }
@@ -230,6 +231,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         this.SimpleSyncFlaggedInt(x => x.ZombieBulletReflect, x => x.ZombieBulletReflectEnabled,
             Strings.ZombieBulletReflect);
         this.SimpleOneWaySync(x => x.ZombieStatusCoexist, Strings.ZombieStatusCoexist);
+        this.SimpleOneWaySync(x => x.HardZombie, Strings.HardZombie);
         this.SimpleOneWaySync(x => x.ZombieImmuneAllDebuffs, Strings.ZombieImmuneAllDebuffs);
         this.SimpleOneWaySync(x => x.ZombieImmuneFreeze, Strings.ZombieImmuneFreeze);
         this.SimpleOneWaySync(x => x.ZombieImmuneCold, Strings.ZombieImmuneCold);
@@ -305,6 +307,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         settings.ZombieBulletReflectEnabled = ZombieBulletReflectEnabled;
         settings.ZombieBulletReflect = ZombieBulletReflect;
         settings.ZombieStatusCoexist = ZombieStatusCoexist;
+        settings.HardZombie = HardZombie;
         settings.ZombieImmuneAllDebuffs = ZombieImmuneAllDebuffs;
         settings.ZombieImmuneFreeze = ZombieImmuneFreeze;
         settings.ZombieImmuneCold = ZombieImmuneCold;
@@ -380,6 +383,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         ZombieBulletReflectEnabled = settings.ZombieBulletReflectEnabled;
         ZombieBulletReflect = settings.ZombieBulletReflect;
         ZombieStatusCoexist = settings.ZombieStatusCoexist;
+        HardZombie = settings.HardZombie;
         ZombieImmuneAllDebuffs = settings.ZombieImmuneAllDebuffs;
         ZombieImmuneFreeze = settings.ZombieImmuneFreeze;
         ZombieImmuneCold = settings.ZombieImmuneCold;

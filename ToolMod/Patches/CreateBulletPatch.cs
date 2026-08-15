@@ -26,8 +26,8 @@ public static class CreateBulletPatch
             if (__result.shootByZombie || __result.from_zombie != null) return;
 
             // 老版黑曜石子弹：至少穿透两次
-            if (__result.penetrationTimes < 2)
-                __result.penetrationTimes = 2;
+            if (__result.maxHitCount < 2)
+                __result.maxHitCount = 2;
         }
         catch
         {

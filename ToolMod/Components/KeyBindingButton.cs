@@ -47,7 +47,7 @@ public class KeyBindingButton : MonoBehaviour
     [HideFromIl2Cpp]
     public Action<KeyCode> OnKeyBindingChanged { get; set; }
 
-    /// <summary>是否允许按 Escape 取消检测（默认 true）</summary>
+    /// <summary>是否允许按 Escape 取消检测并将按键设为 None（默认 true）</summary>
     public bool AllowCancelWithEscape { get; set; } = true;
 
     /// <summary>是否将鼠标按键也视为合法绑定（默认 false，仅绑定键盘按键）</summary>
@@ -98,7 +98,10 @@ public class KeyBindingButton : MonoBehaviour
 
         if (AllowCancelWithEscape && Input.GetKeyDown(KeyCode.Escape))
         {
+            // ★ 按 Escape：清空所选键值为 None 并停止检测
+            SetKey(KeyCode.None);
             CancelListening();
+            HotKeysLoader.Save();
             return;
         }
 

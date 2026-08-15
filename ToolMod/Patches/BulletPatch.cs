@@ -48,18 +48,18 @@ public class BulletPatch
         // 性能优化：先做最廉价判定，再做来源判断，避免在高频 Die 上产生额外开销。
         if (OldObsidianBullet &&
             __instance.theBulletType == BulletType.Bullet_steelPea &&
-            __instance.hitTimes < 2 &&
+            __instance.hitCount < 2 &&
             !__instance.shootByZombie &&
             __instance.from_zombie == null)
         {
-            __instance.hit = false;
+            __instance.isLand = false;//todo
             return false;
         }
 
         if (UndeadBullet && !__instance.shootByZombie && __instance.from_zombie == null)
         {
-            __instance.hit = false;
-            __instance.penetrationTimes = int.MaxValue;
+            __instance.isLand = false;
+            __instance.maxHitCount = int.MaxValue;
             return false;
         }
 
@@ -104,7 +104,7 @@ public class BulletPatch
             if (__instance == null || IsFromZombie(__instance)) return true;
 
             // 检查子弹是否已经命中过
-            if (__instance.hit) return true;
+            if (__instance.isLand) return true;
 
             // 检查碰撞对象是否是僵尸
             if (collision == null) return true;
@@ -122,7 +122,7 @@ public class BulletPatch
             if (randomValue >= ZombieBulletReflect) return true;
 
             // 标记子弹已命中，防止后续处理
-            __instance.hit = true;
+            __instance.isLand = true;
 
             // 创建反弹的铁豆子弹
             CreateReflectedBullet(__instance, zombie);

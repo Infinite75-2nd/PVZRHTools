@@ -14,7 +14,7 @@ public static class OptionMenuPatch
     {
         var keyBinding= Object.Instantiate(__instance.transform.FindChild("Buttons").GetChild(5).gameObject,
             __instance.transform.FindChild("Buttons"));
-        keyBinding.transform.localPosition = new(410, -438.7f, 0);
+        keyBinding.transform.localPosition = new(80, 157.5f, 0);
         keyBinding.GetComponent<UIButton>().clickEvent=new UnityEvent();
         keyBinding.GetComponent<UIButton>().clickEvent.AddListener((UnityAction)(() => GameAPP.UIManager.Push((UIType)999)));
         keyBinding.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "PVZRHTools\n按键绑定";

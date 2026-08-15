@@ -2,8 +2,8 @@ namespace ToolData
 {
     public static class Strings
     {
-        public const string GameVersion = "3.8.1";
-        public const string ModifierVersion = "5.1.6";
+        public const string GameVersion = "3.9";
+        public const string ModifierVersion = "5.2.0";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -13,6 +13,7 @@ namespace ToolData
             "a436fd03e084010b4d5c19896f12b10ebb1e44d3172534cda335f1c20b591281" => "3.7",
             "8b3ded75fc67104efcf927cbfe6b9937d2b9f99b3d1ef1d4c29473405539653c"=>"3.8",
             "51346f4dae35cf145f72473fd0ae6f777c427d5cecc7732936d4e0c7bac5ef52"=>"3.8.1",
+            "dc9281b7638a57d8d95a535dcdc3fe85c0ce3b6789db26e02e4f21ec24390c3a"=>"3.9",
             _ => "<internal alpha>"
         };
 
@@ -134,6 +135,7 @@ namespace ToolData
         public const string SetZombieHealthRatio = "SetZombieHealthRatio";
         public const string ZombieBulletReflect = "ZombieBulletReflect";
         public const string ZombieStatusCoexist = "ZombieStatusCoexist";
+        public const string HardZombie = "HardZombie";
         public const string ZombieImmuneFreeze = "ZombieImmuneFreeze";
         public const string ZombieImmuneCold = "ZombieImmuneCold";
         public const string ZombieImmuneButter = "ZombieImmuneButter";

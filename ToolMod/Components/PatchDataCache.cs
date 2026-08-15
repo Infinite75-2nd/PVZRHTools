@@ -112,6 +112,7 @@ public class PatchDataCache
     public static float ZombieHealthMultiplier { get; set; } = -1.0f;
     public static int ZombieBulletReflect { get; set; } = -1;
     public static bool ZombieStatusCoexist { get; set; }
+    public static bool HardZombie { get; set; }
     public static bool ZombieImmuneAllDebuffs { get; set; }
     public static bool ZombieImmuneFreeze { get; set; }
     public static bool ZombieImmuneCold { get; set; }

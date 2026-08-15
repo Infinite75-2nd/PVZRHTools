@@ -104,7 +104,9 @@ public class ToolsUpdater : MonoBehaviour
         if (Input.GetKeyDown(KeyRandomCard))
             RandomCard = !RandomCard;
 
-        if (Input.GetKeyDown(KeyAlmanacCreatePlant) && AlmanacSeedType is not PlantType.Nothing)
+        // 图鉴种植 - 鼠标在棋盘网格内时才在鼠标所在格子种植物（网格外不识别任何格子）
+        if (Input.GetKeyDown(KeyAlmanacCreatePlant) && AlmanacSeedType is not PlantType.Nothing &&
+            IsMouseInsideGrid())
         {
             if (CreatePlant.Instance != null)
                 CreatePlant.Instance.SetPlant(Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow,
@@ -115,9 +117,10 @@ public class ToolsUpdater : MonoBehaviour
         if (Input.GetKeyDown(KeyAlmanacZombieMindCtrl))
             AlmanacZombieMindCtrl = !AlmanacZombieMindCtrl;
 
-        // 放置僵尸
+        // 放置僵尸 - 鼠标在棋盘网格内时才放置（网格外不识别任何格子）
         if (Input.GetKeyDown(KeyAlmanacCreateZombie) &&
-            AlmanacZombieType is not ZombieType.Nothing)
+            AlmanacZombieType is not ZombieType.Nothing &&
+            IsMouseInsideGrid())
         {
             if (CreateZombie.Instance != null)
             {
@@ -130,8 +133,9 @@ public class ToolsUpdater : MonoBehaviour
             }
         }
 
-        // 植物罐子 - 使用 ScaryPot_plant 类型
-        if (Input.GetKeyDown(KeyAlmanacCreatePlantVase) && AlmanacSeedType is not PlantType.Nothing)
+        // 植物罐子 - 使用 ScaryPot_plant 类型（网格外不识别任何格子）
+        if (Input.GetKeyDown(KeyAlmanacCreatePlantVase) && AlmanacSeedType is not PlantType.Nothing &&
+            IsMouseInsideGrid())
         {
             var gridItem = GridItem.SetGridItem(Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow,
                 GridItemType.ScaryPot_plant);
@@ -145,9 +149,10 @@ public class ToolsUpdater : MonoBehaviour
             }
         }
 
-        // 僵尸罐子 - 使用 ScaryPot_zombie 类型
+        // 僵尸罐子 - 使用 ScaryPot_zombie 类型（网格外不识别任何格子）
         if (Input.GetKeyDown(KeyAlmanacCreateZombieVase) &&
-            AlmanacZombieType is not ZombieType.Nothing)
+            AlmanacZombieType is not ZombieType.Nothing &&
+            IsMouseInsideGrid())
         {
             var gridItem = GridItem.SetGridItem(Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow,
                 GridItemType.ScaryPot_zombie);
@@ -166,8 +171,11 @@ public class ToolsUpdater : MonoBehaviour
         {
             if (StarUpBuff && Board.Instance != null && Mouse.Instance != null)
             {
-                // 左键点击植物来应用星辉buff
-                if (Input.GetMouseButtonDown(0))
+                // 左键点击植物来应用星辉buff。
+                // 游戏内部 Mouse.GetColumnFromX/GetRowFromY 会把网格外的点击 clamp 到最近的合法格子，
+                // 仅靠 theMouseColumn/theMouseRow 无法区分点击是否在网格外，
+                // 因此先判断鼠标是否真的落在棋盘网格区域内，网格外不识别任何格子。
+                if (Input.GetMouseButtonDown(0) && IsMouseInsideGrid())
                 {
                     int column = Mouse.Instance.theMouseColumn;
                     int row = Mouse.Instance.theMouseRow;
@@ -195,8 +203,8 @@ public class ToolsUpdater : MonoBehaviour
         {
             if (RandomUpgradeMode && Board.Instance != null && Mouse.Instance != null)
             {
-                // 左键点击植物来操控，再次点击同一植物则停止操控
-                if (Input.GetMouseButtonDown(0))
+                // 左键点击植物来操控，再次点击同一植物则停止操控（网格外点击不识别任何格子）
+                if (Input.GetMouseButtonDown(0) && IsMouseInsideGrid())
                 {
                     int column = Mouse.Instance.theMouseColumn;
                     int row = Mouse.Instance.theMouseRow;
@@ -253,6 +261,39 @@ public class ToolsUpdater : MonoBehaviour
         }
         catch
         {
+        }
+    }
+
+    /// <summary>
+    /// 判断鼠标世界坐标是否位于棋盘网格区域内。
+    /// 游戏内部 Mouse.GetColumnFromX / GetRowFromY 对网格外的点击总是 clamp 到最近格子的坐标，
+    /// 因此必须用原始鼠标世界坐标（mouseX/mouseY）与游戏自身的网格边界
+    /// （Board.gridSystem.GridMinX/GridMaxX/GridMinY/GridMaxY）比对，
+    /// 才能实现"点网格之外不识别到任何格子"。
+    /// </summary>
+    private static bool IsMouseInsideGrid()
+    {
+        try
+        {
+            var board = Board.Instance;
+            var mouse = Mouse.Instance;
+            if (board == null || mouse == null) return false;
+
+            var grid = board.gridSystem;
+            if (grid == null) return false;
+
+            float x = mouse.mouseX;
+            float y = mouse.mouseY;
+
+            // GridMinX/GridMaxX/GridMinY/GridMaxY 由游戏自身 Lawnf.GetBoxXFromColumn/GetBoxYFromRow 计算，
+            // 与点击→格子的映射一致，即为棋盘网格的精确外边界。
+            return x >= grid.GridMinX && x <= grid.GridMaxX &&
+                   y >= grid.GridMinY && y <= grid.GridMaxY;
+        }
+        catch
+        {
+            // 出错时保守放行，避免影响星辉功能
+            return true;
         }
     }
 

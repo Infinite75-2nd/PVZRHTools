@@ -47,7 +47,7 @@ public static class ZombiePatch
     public static void PreApplyDamage(Zombie __instance,ref DamageType theDamageType, ref int dmg)
     {
         // 僵尸限伤功能 - 限制每次伤害最多为设定值
-        if (ZombieDamageLimit > 0 && dmg > ZombieDamageLimit)
+        if (ZombieDamageLimit >= 0 && dmg > ZombieDamageLimit)
         {
             dmg = ZombieDamageLimit;
         }
@@ -84,8 +84,9 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.SecondArmorTakeDamage))]
     public static bool PreBodyTakeDamage(Zombie __instance, ref int theDamage)
     {
+        if (HardZombie) return false;
         // 僵尸限伤功能 - 限制每次伤害最多为设定值
-        if (__instance!=null&&ZombieDamageLimit > 0 && theDamage > ZombieDamageLimit)
+        if (__instance!=null&&ZombieDamageLimit >= 0 && theDamage > ZombieDamageLimit)
         {
             theDamage = ZombieDamageLimit;
             
@@ -99,7 +100,7 @@ public static class ZombiePatch
     public static bool PreBodyJalaedExplode(Zombie __instance, ref int damage)
     {
         // 僵尸限伤功能 - 限制每次伤害最多为设定值
-        if (ZombieDamageLimit > 0 && damage > ZombieDamageLimit)
+        if (ZombieDamageLimit >= 0 && damage > ZombieDamageLimit)
         {
             damage = ZombieDamageLimit;
         }
@@ -252,7 +253,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.SetMindControl))]
     public static bool PreSetMindControl(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmuneMindControl) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie &&!ZombieImmuneMindControl) return true;
         try
         {
             if (__instance == null) return true;
@@ -274,7 +275,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.SetFreeze))]
     public static bool PreSetFreeze(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmuneFreeze) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie&& !ZombieImmuneFreeze) return true;
         try
         {
             if (__instance == null) return true;
@@ -296,7 +297,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.SetCold))]
     public static bool PreSetCold(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmuneCold) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie&& !ZombieImmuneCold) return true;
         try
         {
             if (__instance == null) return true;
@@ -318,7 +319,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.Buttered))]
     public static bool PreButtered(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmuneButter) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie &&!ZombieImmuneButter) return true;
         try
         {
             if (__instance == null) return true;
@@ -340,7 +341,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.SetPoison))]
     public static bool PreSetPoison(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmunePoison) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie&& !ZombieImmunePoison) return true;
         try
         {
             if (__instance == null) return true;
@@ -362,7 +363,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.AddPoisonLevel))]
     public static bool PreAddPoisonLevel(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmunePoison) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie&& !ZombieImmunePoison) return true;
         try
         {
             if (__instance == null) return true;
@@ -384,7 +385,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.EatGarlic))]
     public static bool PreEatGarlic(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmunePoison) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie &&!ZombieImmunePoison) return true;
         try
         {
             if (__instance == null) return true;
@@ -406,7 +407,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.Garliced))]
     public static bool PreGarliced(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmunePoison) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie &&!ZombieImmunePoison) return true;
         try
         {
             if (__instance == null) return true;
@@ -428,7 +429,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.KnockBack))]
     public static bool PreKnockBack(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmuneKnockback) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie &&!ZombieImmuneKnockback) return true;
         try
         {
             if (__instance == null) return true;
@@ -441,6 +442,18 @@ public static class ZombiePatch
         }
     }
 
+    [HarmonyPatch(nameof(Zombie.Die))]
+    [HarmonyPrefix]
+    public static bool PreDie(Zombie __instance)
+    {
+        if (HardZombie)
+        {
+            __instance.theHealth = __instance.theMaxHealth;
+            return false;
+        }
+        return true;
+    }
+
 
     /// <summary>
     /// 僵尸免疫红温补丁 - Zombie.SetJalaed
@@ -450,7 +463,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.SetJalaed))]
     public static bool PreSetJalaed(Zombie __instance)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmuneJalaed) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie &&!ZombieImmuneJalaed) return true;
         try
         {
             if (__instance == null) return true;
@@ -472,7 +485,7 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.SetEmbered))]
     public static bool PreSetEmbered(Zombie __instance, bool ulti = false)
     {
-        if (!ZombieImmuneAllDebuffs && !ZombieImmuneEmbered) return true;
+        if (!ZombieImmuneAllDebuffs&&!HardZombie &&!ZombieImmuneEmbered) return true;
         try
         {
             // 严格的对象有效性检查

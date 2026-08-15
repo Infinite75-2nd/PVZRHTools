@@ -169,7 +169,7 @@ public struct ZombieHealthInfo
 {
     public int Row { get; set; }
     public int ZombieType { get; set; }
-    public int Health { get; set; }
+    public long Health { get; set; }
 }
 
 public struct CardSnapshot

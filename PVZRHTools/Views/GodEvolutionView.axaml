@@ -5,10 +5,15 @@
              xmlns:vm="using:PVZRHTools.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:utils="using:PVZRHTools.Utils"
+             xmlns:converters="using:PVZRHTools.Converters"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
              x:CompileBindings="True"
              x:Class="PVZRHTools.Views.GodEvolutionView"
              x:DataType="vm:GodEvolutionViewModel">
+
+    <UserControl.Resources>
+        <converters:PercentConverter x:Key="PercentConverter" />
+    </UserControl.Resources>
 
     <UserControl.Styles>
         <Style Selector="u|NumericDoubleUpDown">
@@ -32,8 +37,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" >
                     <CheckBox Content="幸运值" IsChecked="{Binding GodEvolutionLuckyEnabled, Mode=TwoWay}" />
-                    <Border Width="100"><u:NumericDoubleUpDown Value="{Binding GodEvolutionLucky, Mode=TwoWay}" 
-                                           FormatString="F2" /></Border>
+                    <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionLucky, Mode=TwoWay, Converter={StaticResource PercentConverter}}" /></Border>
                     <CheckBox Content="难度" IsChecked="{Binding GodEvolutionDifficultyEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionDifficulty, Mode=TwoWay}" /></Border>
                     <CheckBox Content="最大植物数" IsChecked="{Binding GodEvolutionMaxPlantCountEnabled, Mode=TwoWay}" />
@@ -83,8 +87,6 @@
                             Command="{Binding GodEvolutionResetQualityCommand}" />
                     <Button Content="立即选词条"
                             Command="{Binding GodEvolutionChooseBuffCommand}" />
-                    <Button Content="移除究极杨桃大帝星辉buff(卡顿时用)"
-                            Command="{Binding GodEvolutionRemoveStarsStarUpCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>
