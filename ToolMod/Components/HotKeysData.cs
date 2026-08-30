@@ -15,4 +15,5 @@ public class HotKeysData
     public int KeyAlmanacCreateZombie { get; set; } = 110;      // KeyCode.N
     public int KeyAlmanacCreateZombieVase { get; set; } = 107;  // KeyCode.K
     public int KeyAlmanacZombieMindCtrl { get; set; } = 306;    // KeyCode.LeftControl
+    public int KeyGodEvolutionChooseBuff { get; set; } = 61;   //  KeyCode.Equals
 }

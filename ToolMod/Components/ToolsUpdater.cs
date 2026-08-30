@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
+using GameLevel.RogueShooting;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
@@ -166,10 +167,15 @@ public class ToolsUpdater : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyGodEvolutionChooseBuff) && InGame && ShootingManager.Instance !=null && GameAPP.canvasUp.GetComponentsInChildren<MultipleChoiceMenu>().Count is 0)
+        {
+            ShootingManager.Instance.ShowBuff();
+        }
+
         // 星辉buff功能 - 点击植物解锁星辉buff模式（如果该植物有星辉buff功能）
         try
         {
-            if (StarUpBuff && Board.Instance != null && Mouse.Instance != null)
+            if (PatchDataCache.StarUpBuff && Board.Instance != null && Mouse.Instance != null)
             {
                 // 左键点击植物来应用星辉buff。
                 // 游戏内部 Mouse.GetColumnFromX/GetRowFromY 会把网格外的点击 clamp 到最近的合法格子，
@@ -379,8 +385,24 @@ public class ToolsUpdater : MonoBehaviour
                     if (coroutine != null) zombie.StartCoroutine_Auto(coroutine);
                 }
             }
+        }
 
-            ;
+        if (PlantsAllUpgrade)
+        {
+            foreach (var plant in Board.Instance.boardEntity.plantArray)
+            {
+                if(plant.theLevel<3)
+                    plant.Upgrade(3);
+            }
+        }
+
+        if (PlantsAllStarUp)
+        {
+            foreach (var plant in Board.Instance.boardEntity.plantArray)
+            {
+                if(plant!=null)
+                    ApplyStarUpBuff(plant);
+            }
         }
 
         // 免疫强制扣血 - 通过缓存植物血量并在异常扣血时恢复来实现

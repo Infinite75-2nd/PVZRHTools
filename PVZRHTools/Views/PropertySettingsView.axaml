@@ -135,8 +135,8 @@
                               IsChecked="{Binding UnlockRedCardPlants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="砸罐子修复"
                               IsChecked="{Binding PotSmashingFix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox Content="取消冰冻特效"
-                              IsChecked="{Binding DisableIceEffect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="解锁全部选卡"
+                              IsChecked="{Binding EnableAllCards, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -168,6 +168,8 @@
                               IsChecked="{Binding UltimateSuperGatling, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="磁力坚果无限"
                               IsChecked="{Binding MagnetNutUnlimited, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物子弹秒杀僵尸"
+                              IsChecked="{Binding HardBullet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Content="魅帝菇无CD"
@@ -180,8 +182,10 @@
                               IsChecked="{Binding CobCannonNoCD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="超桃无CD"
                               IsChecked="{Binding SuperStarNoCD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox Content="植物升级"
-                              IsChecked="{Binding PlantUpgrade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物全升级"
+                              IsChecked="{Binding PlantsAllUpgrade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物全星辉"
+                              IsChecked="{Binding PlantsAllStarUp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Content="锁定大麦变植物"
@@ -194,6 +198,8 @@
                             Command="{Binding ObtainAllPlantSkinsCommand}" />
                     <Button Content="一键应用全部植物皮肤"
                             Command="{Binding ApplyAllPlantSkinsCommand}" />
+                    <Button Content="图鉴全解锁"
+                            Command="{Binding UnlockAllAlmanacCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -265,8 +271,6 @@
                               IsChecked="{Binding ZombieImmuneKnockback, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="魅惑"
                               IsChecked="{Binding ZombieImmuneMindControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox Content="吞噬"
-                              IsChecked="{Binding ZombieImmuneDevour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </StackPanel>
 
@@ -287,8 +291,12 @@
                               IsChecked="{Binding RandomBullet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="自动音游"
                               IsChecked="{Binding AutoRhythmGame, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox Content="星辉buff"
-                              IsChecked="{Binding StarUpBuff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="点击添加星辉buff"
+                              IsChecked="{Binding StarUpBuff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />                    
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="点击植物升级"
+                              IsChecked="{Binding PlantUpgrade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </StackPanel>
         </Border>

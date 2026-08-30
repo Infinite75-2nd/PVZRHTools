@@ -19,7 +19,7 @@ public static class TravelMgrPatch
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetNormalBuff))]
-    public static void PostGetNormalBuff(TravelMgr __instance, AdvBuff __0)
+    public static void PostGetNormalBuff(TravelMgr __instance)
     {
         if (OperatingBuff) return;
         try
@@ -38,7 +38,7 @@ public static class TravelMgrPatch
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetUltiBuff))]
-    public static void PostGetUltiBuff(TravelMgr __instance, UltiBuff __0, bool __1)
+    public static void PostGetUltiBuff(TravelMgr __instance)
     {
         if (OperatingBuff) return;
         try
@@ -57,7 +57,7 @@ public static class TravelMgrPatch
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetDebuff))]
-    public static void PostGetDebuff(TravelMgr __instance, TravelDebuff __0)
+    public static void PostGetDebuff(TravelMgr __instance)
     {
         if (OperatingBuff) return;
         try
@@ -76,13 +76,14 @@ public static class TravelMgrPatch
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetInvestBuff))]
-    public static void PostGetInvestBuff(TravelMgr __instance, InvestBuff __0)
+    public static void PostGetInvestBuff(TravelMgr __instance)
     {
         if (OperatingBuff) return;
         try
         {
             // 延迟一小段时间后同步，确保游戏状态已更新
             __instance.StartCoroutine(SyncBuffsDelayed());
+            
         }
         catch (System.Exception ex)
         {
@@ -95,7 +96,7 @@ public static class TravelMgrPatch
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.UnlockPlant))]
-    public static void PostUnlockPlant(TravelMgr __instance, TravelUnlocks __0)
+    public static void PostUnlockPlant(TravelMgr __instance)
     {
         if (OperatingBuff) return;
         try
@@ -133,6 +134,84 @@ public static class TravelMgrPatch
             {
                 ModCore.Instance.Log?.LogWarning(
                     $"[PVZRHTools] GetNormalBuff 发生异常，已忽略：{__exception.GetType().Name} - {__exception.Message}");
+            }
+            catch
+            {
+            }
+
+            return null; // 吞掉异常，防止崩溃
+        }
+
+        return null;
+    }
+    
+    [HarmonyFinalizer]
+    [HarmonyPatch(nameof(TravelMgr.GetUltiBuff))]
+    public static Exception Finalizer_GetGetUltiBuff(Exception __exception)
+    {
+        if (__exception != null)
+        {
+            try
+            {
+                ModCore.Instance.Log?.LogWarning(
+                    $"[PVZRHTools] GetUltiBuff 发生异常，已忽略：{__exception.GetType().Name} - {__exception.Message}");
+            }
+            catch
+            {
+            }
+
+            return null; // 吞掉异常，防止崩溃
+        }
+
+        return null;
+    }    [HarmonyFinalizer]
+    [HarmonyPatch(nameof(TravelMgr.GetDebuff))]
+    public static Exception Finalizer_GetDebuff(Exception __exception)
+    {
+        if (__exception != null)
+        {
+            try
+            {
+                ModCore.Instance.Log?.LogWarning(
+                    $"[PVZRHTools] GetDebuff 发生异常，已忽略：{__exception.GetType().Name} - {__exception.Message}");
+            }
+            catch
+            {
+            }
+
+            return null; // 吞掉异常，防止崩溃
+        }
+
+        return null;
+    }    [HarmonyFinalizer]
+    [HarmonyPatch(nameof(TravelMgr.GetInvestBuff))]
+    public static Exception Finalizer_GetInvestBuff(Exception __exception)
+    {
+        if (__exception != null)
+        {
+            try
+            {
+                ModCore.Instance.Log?.LogWarning(
+                    $"[PVZRHTools] GetInvestBuff 发生异常，已忽略：{__exception.GetType().Name} - {__exception.Message}");
+            }
+            catch
+            {
+            }
+
+            return null; // 吞掉异常，防止崩溃
+        }
+
+        return null;
+    }    [HarmonyFinalizer]
+    [HarmonyPatch(nameof(TravelMgr.UnlockPlant))]
+    public static Exception Finalizer_UnlockPlant(Exception __exception)
+    {
+        if (__exception != null)
+        {
+            try
+            {
+                ModCore.Instance.Log?.LogWarning(
+                    $"[PVZRHTools] UnlockPlant 发生异常，已忽略：{__exception.GetType().Name} - {__exception.Message}");
             }
             catch
             {

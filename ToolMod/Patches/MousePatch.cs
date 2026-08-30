@@ -13,7 +13,7 @@ public static class MousePatch
     [HarmonyPatch(nameof(Mouse.TryToSetPlantByGlove))]
     public static bool PreTryToSetPlantByGlove(Mouse __instance)
     {
-        if (ColumnGlove)
+        if (ColumnGlove&&__instance.thePlantOnGlove.thePlantRow==__instance.theMouseRow)
         {
             aa = __instance.thePlantOnGlove;
             int vcol = __instance.theMouseColumn - __instance.thePlantOnGlove.thePlantColumn;

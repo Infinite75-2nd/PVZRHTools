@@ -22,6 +22,7 @@ public static class BoardPatch
         var t = __instance.boardTag;
         t.isColumn |= ColumnPlanting;
         t.isSeedRain |= SeedRain;
+        t.isTravel |= RemoveFusionLimit;
         t.enableTravelPlant |= RemoveFusionLimit;
         t.enableAllTravelPlant |= RemoveFusionLimit;
         __instance.boardTag = t;

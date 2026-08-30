@@ -14,13 +14,25 @@ public static class MultipleChoiceMenuPatch
 {
     private static FieldInfo? _refreshCountField;
 
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(MultipleChoiceMenu.Start))]
+    public static void PostfixStart(MultipleChoiceMenu __instance)
+    {
+        if (GodEvolutionDebuffClosable&&Board.Instance != null && Board.Instance.GetComponent<ShootingManager>() != null )
+        {
+            __instance.SetCancelable(true);
+        }
+    }
+    
     [HarmonyPrefix]
     [HarmonyPatch(nameof(MultipleChoiceMenu.SetRefreshable))]
-    public static void PrefixSetRefreshable(ref int refreshCount, ref bool interactable)
+    public static void PrefixSetRefreshable(MultipleChoiceMenu __instance, ref int refreshCount, ref bool interactable,ref bool refreshable)
     {
-        if (!ShouldFixGodEvolutionRefreshButton) return;
-        refreshCount = GetGodEvolutionMenuRefreshCount();
-        interactable = true;
+        if (ShouldFixGodEvolutionRefreshButton)
+        {
+            refreshCount = GetGodEvolutionMenuRefreshCount();
+            interactable = true;
+        }
     }
 
     [HarmonyPostfix]
@@ -279,7 +291,7 @@ public static class MultipleChoiceMenuPatch
             if (_selectedIndices.Count == 0)
             {
                 // 未选择任何词条：播放错误音效 + 显示提示字幕，不执行原始 Confirm
-                GameAPP.PlaySound(26, 0.5f, 1.0f);
+                GameAPP.PlaySound(26);
                 Core.InGameText.Instance.ShowText("你还没有选择选项", 3.0f, false);
                 return false;
             }

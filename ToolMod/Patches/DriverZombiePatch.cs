@@ -14,9 +14,11 @@ public static class DriverZombiePatch
         try
         {
             if (__instance == null || Board.Instance == null) return;
-            for (var i = 0; i < Board.Instance.iceRoads.Count; i++)
-                if (Board.Instance.iceRoads[i].theRow == __instance.theZombieRow)
-                    Board.Instance.iceRoads[i].fadeTimer = 0;
+            foreach (var t in Board.Instance.iceRoads)
+            {
+                t.fadeTimer = 0;
+                t.x = 10;
+            }
         }
         catch
         {

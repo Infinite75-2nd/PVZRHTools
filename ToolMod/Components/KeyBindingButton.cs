@@ -47,6 +47,14 @@ public class KeyBindingButton : MonoBehaviour
     [HideFromIl2Cpp]
     public Action<KeyCode> OnKeyBindingChanged { get; set; }
 
+    /// <summary>
+    /// 按键绑定变化后的保存动作。
+    /// 修改器按键默认保存到 HotKeys.json；
+    /// 游戏原版按键菜单可替换为 <see cref="GameKeysLoader.Save"/>。
+    /// </summary>
+    [HideFromIl2Cpp]
+    public Action SaveAction { get; set; } = HotKeysLoader.Save;
+
     /// <summary>是否允许按 Escape 取消检测并将按键设为 None（默认 true）</summary>
     public bool AllowCancelWithEscape { get; set; } = true;
 
@@ -101,7 +109,7 @@ public class KeyBindingButton : MonoBehaviour
             // ★ 按 Escape：清空所选键值为 None 并停止检测
             SetKey(KeyCode.None);
             CancelListening();
-            HotKeysLoader.Save();
+            SaveAction?.Invoke();
             return;
         }
 
@@ -119,7 +127,7 @@ public class KeyBindingButton : MonoBehaviour
                 CurrentlyListening = null;
             UpdateLabel();
             OnKeyBindingChanged?.Invoke(key);
-            HotKeysLoader.Save();
+            SaveAction?.Invoke();
             return;
         }
     }

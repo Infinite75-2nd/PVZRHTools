@@ -20,5 +20,14 @@ public static class OptionMenuPatch
         keyBinding.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "PVZRHTools\n按键绑定";
         keyBinding.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "PVZRHTools\n按键绑定";
         __instance.collider2Ds.Add(keyBinding.GetComponent<BoxCollider2D>());
+
+        var gameKeyBinding = Object.Instantiate(__instance.transform.FindChild("Buttons").GetChild(5).gameObject,
+            __instance.transform.FindChild("Buttons"));
+        gameKeyBinding.transform.localPosition = new(-198, 157, 0);
+        gameKeyBinding.GetComponent<UIButton>().clickEvent=new UnityEvent();
+        gameKeyBinding.GetComponent<UIButton>().clickEvent.AddListener((UnityAction)(() => GameAPP.UIManager.Push((UIType)998)));
+        gameKeyBinding.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "PVZRHTools\n游戏原版按键绑定";
+        gameKeyBinding.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "PVZRHTools\n游戏原版按键绑定";
+        __instance.collider2Ds.Add(gameKeyBinding.GetComponent<BoxCollider2D>());
     }
 }

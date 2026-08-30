@@ -42,8 +42,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool GarlicDay { get; set; }
     [Reactive] public partial bool UnlimitedSunlight { get; set; }
     [Reactive] public partial bool UnlockRedCardPlants { get; set; }
+    [Reactive] public partial bool EnableAllCards { get; set; }
     [Reactive] public partial bool PotSmashingFix { get; set; }
-    [Reactive] public partial bool DisableIceEffect { get; set; }
 
     #endregion
 
@@ -58,6 +58,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool PickaxeImmunity { get; set; }
     [Reactive] public partial bool UndeadBullet { get; set; }
     [Reactive] public partial bool OldObsidianBullet { get; set; }
+    [Reactive] public partial bool HardBullet { get; set; }
     [Reactive] public partial bool UltimateSuperGatling { get; set; }
     [Reactive] public partial bool HyponoEmperorNoCD { get; set; }
     [Reactive] public partial bool MagnetNutUnlimited { get; set; }
@@ -65,6 +66,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool ChomperNoCD { get; set; }
     [Reactive] public partial bool CobCannonNoCD { get; set; }
     [Reactive] public partial bool PlantUpgrade { get; set; }
+    [Reactive] public partial bool PlantsAllUpgrade { get; set; }
+    [Reactive] public partial bool PlantsAllStarUp { get; set; }
     [Reactive] public partial bool SuperStarNoCD { get; set; }
     [Reactive] public partial bool LockWheatEnabled { get; set; }
     [Reactive] public partial int LockWheat { get; set; }
@@ -177,6 +180,14 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
             Parameters = []
         });
 
+    [ReactiveCommand]
+    public void UnlockAllAlmanac() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.UnlockAllAlmanac,
+            Parameters = []
+        });
+
     #endregion
 
 
@@ -197,8 +208,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.GarlicDay, Strings.GarlicDay);
         this.SimpleOneWaySync(x => x.UnlimitedSunlight, Strings.UnlimitedSunlight);
         this.SimpleOneWaySync(x => x.UnlockRedCardPlants, Strings.UnlockRedCardPlants);
+        this.SimpleOneWaySync(x => x.EnableAllCards, Strings.EnableAllCards);
         this.SimpleOneWaySync(x => x.PotSmashingFix, Strings.PotSmashingFix);
-        this.SimpleOneWaySync(x => x.DisableIceEffect, Strings.DisableIceEffect);
 
         // 植物特性
         this.SimpleOneWaySync(x => x.FastShooting, Strings.FastShooting);
@@ -210,6 +221,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.PickaxeImmunity, Strings.PickaxeImmunity);
         this.SimpleOneWaySync(x => x.UndeadBullet, Strings.UndeadBullet);
         this.SimpleOneWaySync(x => x.OldObsidianBullet, Strings.OldObsidianBullet);
+        this.SimpleOneWaySync(x => x.HardBullet, Strings.HardBullet);
         this.SimpleOneWaySync(x => x.UltimateSuperGatling, Strings.UltimateSuperGatling);
         this.SimpleOneWaySync(x => x.HyponoEmperorNoCD, Strings.HyponoEmperorNoCD);
         this.SimpleOneWaySync(x => x.MagnetNutUnlimited, Strings.MagnetNutUnlimited);
@@ -217,6 +229,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.ChomperNoCD, Strings.ChomperNoCD);
         this.SimpleOneWaySync(x => x.CobCannonNoCD, Strings.CobCannonNoCD);
         this.SimpleOneWaySync(x => x.PlantUpgrade, Strings.PlantUpgrade);
+        this.SimpleOneWaySync(x => x.PlantsAllUpgrade, Strings.PlantsAllUpgrade);
+        this.SimpleOneWaySync(x => x.PlantsAllStarUp, Strings.PlantsAllStarUp);
         this.SimpleOneWaySync(x => x.SuperStarNoCD, Strings.SuperStarNoCD);
         this.SimpleSyncFlaggedInt(x => x.LockWheat, x => x.LockWheatEnabled, Strings.LockWheat);
 
@@ -270,8 +284,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         settings.GarlicDay = GarlicDay;
         settings.UnlimitedSunlight = UnlimitedSunlight;
         settings.UnlockRedCardPlants = UnlockRedCardPlants;
+        settings.EnableAllCards = EnableAllCards;
         settings.PotSmashingFix = PotSmashingFix;
-        settings.DisableIceEffect = DisableIceEffect;
 
         // 植物特性
         settings.FastShooting = FastShooting;
@@ -283,6 +297,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         settings.PickaxeImmunity = PickaxeImmunity;
         settings.UndeadBullet = UndeadBullet;
         settings.OldObsidianBullet = OldObsidianBullet;
+        settings.HardBullet = HardBullet;
         settings.UltimateSuperGatling = UltimateSuperGatling;
         settings.HyponoEmperorNoCD = HyponoEmperorNoCD;
         settings.MagnetNutUnlimited = MagnetNutUnlimited;
@@ -290,6 +305,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         settings.ChomperNoCD = ChomperNoCD;
         settings.CobCannonNoCD = CobCannonNoCD;
         settings.PlantUpgrade = PlantUpgrade;
+        settings.PlantsAllUpgrade = PlantsAllUpgrade;
+        settings.PlantsAllStarUp = PlantsAllStarUp;
         settings.SuperStarNoCD = SuperStarNoCD;
         settings.LockWheat = LockWheat;
         settings.LockWheatEnabled = LockWheatEnabled;
@@ -346,8 +363,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         GarlicDay = settings.GarlicDay;
         UnlimitedSunlight = settings.UnlimitedSunlight;
         UnlockRedCardPlants = settings.UnlockRedCardPlants;
+        EnableAllCards = settings.EnableAllCards;
         PotSmashingFix = settings.PotSmashingFix;
-        DisableIceEffect = settings.DisableIceEffect;
 
         // 植物特性
         FastShooting = settings.FastShooting;
@@ -359,6 +376,7 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         PickaxeImmunity = settings.PickaxeImmunity;
         UndeadBullet = settings.UndeadBullet;
         OldObsidianBullet = settings.OldObsidianBullet;
+        HardBullet = settings.HardBullet;
         UltimateSuperGatling = settings.UltimateSuperGatling;
         HyponoEmperorNoCD = settings.HyponoEmperorNoCD;
         MagnetNutUnlimited = settings.MagnetNutUnlimited;
@@ -366,6 +384,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         ChomperNoCD = settings.ChomperNoCD;
         CobCannonNoCD = settings.CobCannonNoCD;
         PlantUpgrade = settings.PlantUpgrade;
+        PlantsAllUpgrade = settings.PlantsAllUpgrade;
+        PlantsAllStarUp = settings.PlantsAllStarUp;
         SuperStarNoCD = settings.SuperStarNoCD;
         LockWheat = settings.LockWheat;
         LockWheatEnabled = settings.LockWheatEnabled;

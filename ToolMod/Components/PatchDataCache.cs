@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using GameLevel.RogueShooting;
 using Il2CppInterop.Runtime.Attributes;
 using ToolData;
 using UI;
@@ -21,6 +22,7 @@ public class PatchDataCache
     public static KeyCode KeyAlmanacCreateZombie { get; set; } = KeyCode.Period;
     public static KeyCode KeyAlmanacCreateZombieVase { get; set; } = KeyCode.K;
     public static KeyCode KeyAlmanacZombieMindCtrl { get; set; } = KeyCode.Slash;
+    public static KeyCode KeyGodEvolutionChooseBuff { get; set; } = KeyCode.Equals;
 
     #endregion
 
@@ -82,8 +84,8 @@ public class PatchDataCache
     public static bool GarlicDay { get; set; }
     public static bool UnlimitedSunlight { get; set; }
     public static bool UnlockRedCardPlants { get; set; }
+    public static bool EnableAllCards { get; set; }
     public static bool PotSmashingFix { get; set; }
-    public static bool DisableIceEffect { get; set; }
 
     // 植物特性
     public static bool FastShooting { get; set; }
@@ -95,6 +97,7 @@ public class PatchDataCache
     public static bool PickaxeImmunity { get; set; }
     public static bool UndeadBullet { get; set; }
     public static bool OldObsidianBullet { get; set; }
+    public static bool HardBullet { get; set; }
     public static bool UltimateSuperGatling { get; set; }
     public static bool HyponoEmperorNoCD { get; set; }
     public static bool MagnetNutUnlimited { get; set; }
@@ -102,6 +105,8 @@ public class PatchDataCache
     public static bool ChomperNoCD { get; set; }
     public static bool CobCannonNoCD { get; set; }
     public static bool PlantUpgrade { get; set; }
+    public static bool PlantsAllUpgrade { get; set; }
+    public static bool PlantsAllStarUp { get; set; }
     public static bool SuperStarNoCD { get; set; }
     public static int LockWheat { get; set; } = -1;
 
@@ -172,11 +177,11 @@ public class PatchDataCache
     #region 诸神进化
 
     public static bool GodEvolutionUnlimitedRefresh { get; set; }
-    public static bool GodEvolutionFreeUpgradeQuality { get; set; }
-    public static float GodEvolutionLucky { get; set; } = -1.0f;
+    public static float GodEvolutionLucky { get; set; } = float.NegativeInfinity;
     public static int GodEvolutionDifficulty { get; set; } = -1;
     public static int GodEvolutionRefreshCount { get; set; } = -1;
     public static int GodEvolutionMaxPlantCount { get; set; } = -1;
+    public static int GodEvolutionNonDiamondCount { get; set; } = -1;
     public static bool GodEvolutionSuperUpgrade { get; set; }
     public static bool GodEvolutionForceSuperQuality { get; set; }
     public static bool GodEvolutionUncrashable { get; set; }
@@ -186,9 +191,17 @@ public class PatchDataCache
     public static float GodEvolutionQualityGold { get; set; } = 10;
     public static float GodEvolutionQualityDiamond { get; set; } = 2;
     public static float GodEvolutionDamageMultiplier { get; set; } = -1.0f;
+    public static int GodEvolutionDifficultyPoint { get; set; } = int.MinValue;
     public static bool GodEvolutionMultiSelectBuff { get; set; }
     public static bool GodEvolutionCheatHard { get; set; }
     public static bool GodEvolutionForceExpertBuff { get; set; }
+    public static bool GodEvolutionForceStarUpBuff { get; set; }
+    public static bool GodEvolutionForceMutationBuff { get; set; }
+    public static bool GodEvolutionForceMissionBuff { get; set; }
+    public static bool GodEvolutionForceIridescentBuff { get; set; }
+    public static bool GodEvolutionForceRandomBuff { get; set; }
+    public static bool GodEvolutionDebuffRefreshable { get; set; }
+    public static bool GodEvolutionDebuffClosable { get; set; }
 
     public static bool IsRefreshUnlimited =>
         UnlimitedRefresh || GodEvolutionUnlimitedRefresh;
@@ -238,6 +251,7 @@ public class PatchDataCache
     [HideFromIl2Cpp] public static TreasureData TreasureData => new();
     [HideFromIl2Cpp] public static GardenData GardenData => new();
     [HideFromIl2Cpp] public static TypeMgr TypeMgr => new();
+    [HideFromIl2Cpp] public static Il2CppSystem.Collections.Generic. Dictionary<PlantType, BaseConfig> Configs=>Config.configs;
 
     #endregion
 

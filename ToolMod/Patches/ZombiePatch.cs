@@ -46,6 +46,12 @@ public static class ZombiePatch
     [HarmonyPatch(nameof(Zombie.ApplyDamage))]
     public static void PreApplyDamage(Zombie __instance,ref DamageType theDamageType, ref int dmg)
     {
+        if (HardBullet)
+        {
+            __instance.Die();
+            return;
+        }
+        
         // 僵尸限伤功能 - 限制每次伤害最多为设定值
         if (ZombieDamageLimit >= 0 && dmg > ZombieDamageLimit)
         {

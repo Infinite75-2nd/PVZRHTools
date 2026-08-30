@@ -103,6 +103,70 @@ public static class ToolUtils
             vm.DataSyncService.SendCommand(data);
         });
     }
+
+    /// <summary>
+    /// 带启用开关的 double 同步。关闭时发送 -Infinity（负无穷）作为禁用标志，
+    /// 从而允许负数值作为合法输入（区别于旧版用 -1 作为关闭标志）。
+    /// </summary>
+    public static void SimpleSyncFlaggedDoubleNegInf<TSender>(this TSender vm,
+        Expression<Func<TSender, double>> expressionDouble, Expression<Func<TSender, bool>> expressionBool,
+        string propertyName, bool onlyFlag = false) where TSender : ModifierPageViewModelBase
+    {
+        if (!onlyFlag)
+        {
+            vm.WhenAnyValue(expressionDouble).Subscribe(value =>
+            {
+                SyncData data = new()
+                {
+                    Command = propertyName,
+                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : "-Infinity"]
+                };
+                vm.DataSyncService.SendCommand(data);
+            });
+        }
+
+        vm.WhenAnyValue(expressionBool).Subscribe(value =>
+        {
+            SyncData data = new()
+            {
+                Command = propertyName,
+                Parameters = [value ? $"{expressionDouble.Compile()(vm)}" : "-Infinity"]
+            };
+            vm.DataSyncService.SendCommand(data);
+        });
+    }
+
+    /// <summary>
+    /// 带启用开关的 int 同步。关闭时发送 int.MinValue（-inf 的整型等价）作为禁用标志，
+    /// 从而允许负数值作为合法输入（区别于旧版用 -1 作为关闭标志）。
+    /// </summary>
+    public static void SimpleSyncFlaggedIntNegInf<TSender>(this TSender vm,
+        Expression<Func<TSender, int>> expressionInt, Expression<Func<TSender, bool>> expressionBool,
+        string propertyName, bool onlyFlag = false) where TSender : ModifierPageViewModelBase
+    {
+        if (!onlyFlag)
+        {
+            vm.WhenAnyValue(expressionInt).Subscribe(value =>
+            {
+                SyncData data = new()
+                {
+                    Command = propertyName,
+                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : $"{int.MinValue}"]
+                };
+                vm.DataSyncService.SendCommand(data);
+            });
+        }
+
+        vm.WhenAnyValue(expressionBool).Subscribe(value =>
+        {
+            SyncData data = new()
+            {
+                Command = propertyName,
+                Parameters = [value ? $"{expressionInt.Compile()(vm)}" : $"{int.MinValue}"]
+            };
+            vm.DataSyncService.SendCommand(data);
+        });
+    }
 }
 
 //copy from UnityEngine.KeyCode

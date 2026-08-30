@@ -30,6 +30,7 @@ public class KeyBindingUI : MonoBehaviour
         ("图鉴种植僵尸",           () => () => KeyAlmanacCreateZombie),
         ("图鉴种植僵尸(花瓶)",     () => () => KeyAlmanacCreateZombieVase),
         ("图鉴僵尸魅惑控制",       () => () => KeyAlmanacZombieMindCtrl),
+        ("诸神进化立即选词条",     ()=>()=>KeyGodEvolutionChooseBuff)
     };
 
     #region 构造函数（Il2CppInterop 注入必需）
@@ -51,7 +52,7 @@ public class KeyBindingUI : MonoBehaviour
     {
         // 禁用原 UIConfigMenu 脚本
         GetComponent<UIConfigMenu>().enabled = false;
-        
+
         // 标题
         var title = transform.GetChild(0).GetChild(0);
         title.GetComponent<TextMeshProUGUI>().text = "PVZRHTools按键绑定";
@@ -59,6 +60,18 @@ public class KeyBindingUI : MonoBehaviour
         // 布局容器
         var layout = transform.GetChild(2);
 
+        BuildRows(layout, _bindings, HotKeysLoader.Save);
+    }
+
+    /// <summary>
+    /// 隐藏布局默认字段后，为每条绑定逐行创建按键绑定 UI。
+    /// 修改器按键与游戏原版按键共用此构建逻辑，saveAction 决定保存到哪个存档文件。
+    /// </summary>
+    public static void BuildRows(
+        Transform layout,
+        (string Label, Func<System.Linq.Expressions.Expression<Func<KeyCode>>> BindingExpr)[] bindings,
+        Action saveAction)
+    {
         // 隐藏布局中的其他默认字段
         foreach (var field in layout)
             field.TryCast<Transform>()?.gameObject.SetActive(false);
@@ -67,17 +80,18 @@ public class KeyBindingUI : MonoBehaviour
         var template = BuildTemplate(layout);
 
         // 遍历所有绑定项，逐行创建
-        foreach (var (label, exprFactory) in _bindings)
+        foreach (var (label, exprFactory) in bindings)
         {
             var row = Instantiate(template, layout.transform);
             row.SetActive(true);
             row.GetComponent<TextMeshProUGUI>().text = label;
-            row.transform.GetChild(1).GetComponent<KeyBindingButton>().Bind(exprFactory());
+            var button = row.transform.GetChild(1).GetComponent<KeyBindingButton>();
+            button.Bind(exprFactory());
+            button.SaveAction = saveAction;
         }
 
         // 清理模板
         Destroy(template);
-
     }
 
     #endregion

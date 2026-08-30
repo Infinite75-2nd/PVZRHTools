@@ -104,8 +104,8 @@ public static class SettingsLoader
             PatchDataCache.GarlicDay = settings.GarlicDay;
             PatchDataCache.UnlimitedSunlight = settings.UnlimitedSunlight;
             PatchDataCache.UnlockRedCardPlants = settings.UnlockRedCardPlants;
+            PatchDataCache.EnableAllCards = settings.EnableAllCards;
             PatchDataCache.PotSmashingFix = settings.PotSmashingFix;
-            PatchDataCache.DisableIceEffect = settings.DisableIceEffect;
 
             #endregion
 
@@ -120,6 +120,7 @@ public static class SettingsLoader
             PatchDataCache.PickaxeImmunity = settings.PickaxeImmunity;
             PatchDataCache.UndeadBullet = settings.UndeadBullet;
             PatchDataCache.OldObsidianBullet = settings.OldObsidianBullet;
+            PatchDataCache.HardBullet = settings.HardBullet;
             PatchDataCache.UltimateSuperGatling = settings.UltimateSuperGatling;
             PatchDataCache.HyponoEmperorNoCD = settings.HyponoEmperorNoCD;
             PatchDataCache.MagnetNutUnlimited = settings.MagnetNutUnlimited;
@@ -127,6 +128,8 @@ public static class SettingsLoader
             PatchDataCache.ChomperNoCD = settings.ChomperNoCD;
             PatchDataCache.CobCannonNoCD = settings.CobCannonNoCD;
             PatchDataCache.PlantUpgrade = settings.PlantUpgrade;
+            PatchDataCache.PlantsAllUpgrade = settings.PlantsAllUpgrade;
+            PatchDataCache.PlantsAllStarUp = settings.PlantsAllStarUp;
             PatchDataCache.SuperStarNoCD = settings.SuperStarNoCD;
             PatchDataCache.LockWheat = settings.LockWheatEnabled ? settings.LockWheat : -1;
 
@@ -236,6 +239,22 @@ public static class SettingsLoader
 
             PatchDataCache.GodEvolutionCheatHard = settings.GodEvolutionCheatHard;
             PatchDataCache.GodEvolutionForceExpertBuff = settings.GodEvolutionForceExpertBuff;
+            PatchDataCache.GodEvolutionForceStarUpBuff = settings.GodEvolutionForceStarUpBuff;
+            PatchDataCache.GodEvolutionForceMutationBuff = settings.GodEvolutionForceMutationBuff;
+            PatchDataCache.GodEvolutionForceMissionBuff = settings.GodEvolutionForceMissionBuff;
+            PatchDataCache.GodEvolutionForceIridescentBuff = settings.GodEvolutionForceIridescentBuff;
+            PatchDataCache.GodEvolutionForceRandomBuff = settings.GodEvolutionForceRandomBuff;
+            PatchDataCache.GodEvolutionDebuffRefreshable = settings.GodEvolutionDebuffRefreshable;
+            PatchDataCache.GodEvolutionDebuffClosable = settings.GodEvolutionDebuffClosable;
+            PatchDataCache.GodEvolutionLucky = settings.GodEvolutionLuckyEnabled
+                ? (float)settings.GodEvolutionLucky
+                : float.NegativeInfinity;
+            PatchDataCache.GodEvolutionDifficultyPoint = settings.GodEvolutionDifficultyPointEnabled
+                ? settings.GodEvolutionDifficultyPoint
+                : int.MinValue;
+            PatchDataCache.GodEvolutionNonDiamondCount = settings.GodEvolutionNonDiamondCountEnabled
+                ? settings.GodEvolutionNonDiamondCount
+                : -1;
 
             #endregion
 

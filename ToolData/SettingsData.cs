@@ -44,6 +44,7 @@ public class SettingsData
     public bool PauseSpawn { get; set; }
     public bool NoFail { get; set; }
     public string LevelName { get; set; } = "";
+    public int RemoveAllZombiesRow { get; set; }
 
     // CommonSettingsViewModel - 游戏内生成操作
     public int Row { get; set; } = 0;
@@ -89,8 +90,8 @@ public class SettingsData
     public bool GarlicDay { get; set; }
     public bool UnlimitedSunlight { get; set; }
     public bool UnlockRedCardPlants { get; set; }
+    public bool EnableAllCards { get; set; }
     public bool PotSmashingFix { get; set; }
-    public bool DisableIceEffect { get; set; }
 
     // PropertySettingsViewModel - 植物特性
     public bool FastShooting { get; set; }
@@ -102,6 +103,7 @@ public class SettingsData
     public bool PickaxeImmunity { get; set; }
     public bool UndeadBullet { get; set; }
     public bool OldObsidianBullet { get; set; }
+    public bool HardBullet { get; set; }
     public bool UltimateSuperGatling { get; set; }
     public bool HyponoEmperorNoCD { get; set; }
     public bool MagnetNutUnlimited { get; set; }
@@ -109,6 +111,8 @@ public class SettingsData
     public bool ChomperNoCD { get; set; }
     public bool CobCannonNoCD { get; set; }
     public bool PlantUpgrade { get; set; }
+    public bool PlantsAllUpgrade { get; set; }
+    public bool PlantsAllStarUp { get; set; }
     public bool SuperStarNoCD { get; set; }
     public bool LockWheatEnabled { get; set; }
     public int LockWheat { get; set; }
@@ -218,6 +222,8 @@ public class SettingsData
     public int GodEvolutionRefreshCount { get; set; }
     public bool GodEvolutionMaxPlantCountEnabled { get; set; }
     public int GodEvolutionMaxPlantCount { get; set; }
+    public bool GodEvolutionNonDiamondCountEnabled { get; set; }
+    public int GodEvolutionNonDiamondCount { get; set; }
     public bool GodEvolutionOptionCountEnabled { get; set; }
     public int GodEvolutionOptionCount { get; set; }
     public bool GodEvolutionUpgradeBuffChanceEnabled { get; set; }
@@ -232,9 +238,18 @@ public class SettingsData
     public double GodEvolutionQualityDiamond { get; set; } = 1.0;
     public bool GodEvolutionDamageMultiplierEnabled { get; set; }
     public double GodEvolutionDamageMultiplier { get; set; } = 1.0;
+    public bool GodEvolutionDifficultyPointEnabled { get; set; }
+    public int GodEvolutionDifficultyPoint { get; set; } = 1;
     public bool GodEvolutionMultiSelectBuff { get; set; }
     public bool GodEvolutionCheatHard { get; set; }
     public bool GodEvolutionForceExpertBuff { get; set; }
+    public bool GodEvolutionForceStarUpBuff { get; set; }
+    public bool GodEvolutionForceMutationBuff { get; set; }
+    public bool GodEvolutionForceMissionBuff { get; set; }
+    public bool GodEvolutionForceIridescentBuff { get; set; }
+    public bool GodEvolutionForceRandomBuff { get; set; }
+    public bool GodEvolutionDebuffRefreshable { get; set; }
+    public bool GodEvolutionDebuffClosable { get; set; }
 
     // AbyssAndTreasureViewModel - 花园修改
     public int ZenGardenMoney { get; set; }

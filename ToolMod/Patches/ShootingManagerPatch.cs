@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using GameLevel.RogueShooting;
+using GameLevel.RogueShooting.CurseBuffs;
 using HarmonyLib;
+using Il2CppSystem;
+using Il2CppSystem.Collections.Generic;
+using Il2CppSystem.Linq;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
 using static ToolMod.Utils;
 using static ToolMod.Components.PatchDataCache;
+using Random = UnityEngine.Random;
 
 namespace ToolMod.Patches;
 
@@ -20,7 +24,7 @@ public class ShootingManagerPatch
         if (__instance == null) return;
         try
         {
-            if (GodEvolutionLucky >= 0)
+            if (!float.IsNegativeInfinity(GodEvolutionLucky))
                 __instance.Lucky = GodEvolutionLucky;
             if (GodEvolutionDifficulty >= 0)
                 __instance.difficulty = GodEvolutionDifficulty;
@@ -28,11 +32,10 @@ public class ShootingManagerPatch
                 __instance.refreshCount = GetGodEvolutionMenuRefreshCount();
             if (GodEvolutionMaxPlantCount >= 0)
                 __instance.maxPlantCount = GodEvolutionMaxPlantCount;
-            if (GodEvolutionSuperUpgrade)
-                __instance.superUpgrade = GodEvolutionSuperUpgrade;
-            if (GodEvolutionUncrashable)
-                (_uncrashableField ??= typeof(ShootingManager).GetField("uncrashable",
-                    BindingFlags.Instance | BindingFlags.NonPublic))?.SetValue(__instance, true);
+            if (GodEvolutionDifficultyPoint != int.MinValue)
+                __instance.debuffPoint = GodEvolutionDifficultyPoint;
+            if (GodEvolutionNonDiamondCount >= 0)
+                __instance.pityThreshold = GodEvolutionNonDiamondCount;
             if (GodEvolutionQualityWeightEnabled)
             {
                 __instance.qualityWeights[Quality.Default] = GodEvolutionQualityDefault;
@@ -109,7 +112,7 @@ public class ShootingManagerPatch
                         ShootingManager.__c.__9__96_14 ?? (ShootingManager.__c.__9__96_14 = (UnityAction)(ShootingManager.__c.__9._RegisterOtherBuff_b__96_14)),
                         (PlantType)254,
                         (ZombieType)(-1),
-                        Quality.diamond);
+                        Quality.iridescent);
                     break;
 
                 case 1: // 超质变：步步高升
@@ -119,7 +122,7 @@ public class ShootingManagerPatch
                         (UnityAction)(__instance._RegisterOtherBuff_b__96_15),
                         (PlantType)254,
                         (ZombieType)(-1),
-                        Quality.diamond);
+                        Quality.iridescent);
                     break;
 
                 case 2: // 超质变：力量会给予希望
@@ -137,7 +140,7 @@ public class ShootingManagerPatch
                         (UnityAction)(__instance._RegisterOtherBuff_b__96_16),
                         (PlantType)969,
                         (ZombieType)(-1),
-                        Quality.diamond);
+                        Quality.iridescent);
                     break;
 
                 case 3: // 超质变：神秘大炮 — NEW
@@ -147,13 +150,111 @@ public class ShootingManagerPatch
                         ShootingManager.__c.__9__96_17 ?? (ShootingManager.__c.__9__96_17 = (UnityAction)(ShootingManager.__c.__9._RegisterOtherBuff_b__96_17)),
                         (PlantType)3,
                         (ZombieType)(-1),
-                        Quality.diamond);
+                        Quality.iridescent);
                     break;
             }
         }
     }
-    
-    
+
+    [HarmonyPatch(nameof(ShootingManager.RegisterCoreBuff))]
+    [HarmonyPrefix]
+    public static bool PreRegisterCoreBuff(ShootingManager __instance,MultipleChoiceMenu menu)
+    {
+        if (!GodEvolutionForceMutationBuff) return true;
+        foreach (var plantType in __instance.CurrentPlants)
+        {
+            if (!Config.configs.TryGetValue(plantType, out var config))
+                continue;
+
+            // Damage share of this plant across the whole run
+            float totalDamage = __instance.board.damageReporter.totalDamage;
+            if (totalDamage == 0f)
+                totalDamage = 1f;
+            float damageShare =
+                __instance.board.damageReporter.GetDamage(plantType) / totalDamage;
+
+            int buffCount = __instance.GetPlantBuffsCount(plantType);
+
+            foreach (var buff in config.Buffs)
+            {
+                var dc = new ShootingManager.__c__DisplayClass94_0
+                {
+                    __4__this = __instance
+                };
+
+                string buffTitle = buff.Title;
+                int choiceCount = __instance.GetBuffChoiceCount(plantType, buffTitle);
+
+                // Skip buffs at their limit or not currently available
+                if (choiceCount >= buff.MaxCount || !buff.CanAppear)
+                    continue;
+
+                // 质变 (mutation) buffs: skip if one is already recorded
+                bool hasMutation = false;
+                if (buffTitle.Contains("质变")
+                    && __instance.plantBuffRecords.TryGetValue(plantType, out var records))
+                {
+                    foreach (var record in records)
+                    {
+                        if (record.Key.Contains("质变"))
+                        {
+                            hasMutation = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasMutation)
+                {
+                    continue;
+                }
+
+                // 非质变词条保留原版的幸运加成出现概率判定，
+                // 避免“质变词条概率大幅提升”把超进化等稀有词条也变成必出
+                if (!buffTitle.Contains("质变"))
+                {
+                    float chance = buff.AppearWeight;
+                    if (chance < 1f
+                        && Random.value > (__instance._lucky * 0.3f + 1f) * chance)
+                    {
+                        continue;
+                    }
+                }
+
+                dc.capturedPlant = plantType;
+                dc.capturedBuffTitle = buffTitle;
+                dc.originalOnGet = (UnityAction)buff.OnGet;
+
+                string description = choiceCount > 0
+                    ? string.Format("{0}\n已选了{1}次", buff.Description, choiceCount)
+                    : buff.Description;
+
+                // UpgradeBuff: append the plant's role/position name
+                if (buff.TryCast<UpgradeBuff>()!=null)
+                {
+                    if (Config.configs.TryGetValue(buff.TryCast<UpgradeBuff>()!.ShowType, out var plantConfig))
+                        description += "\n\n定位：" + plantConfig.Role;
+                }
+                // GeneralBuff: append damage share + buff count stats
+                else if (buff.TryCast<GeneralBuff>() != null)
+                {
+                    description += string.Format(
+                        "\n\n伤害占比：{0:F2}%\n总词条数：{1}",
+                        damageShare * 100f,
+                        buffCount);
+                }
+
+                menu.RegisterOption(
+                    buffTitle,
+                    description,
+                    (UnityAction)dc.Method_Internal_Void_PDM_0,
+                    buff.ShowType,
+                    (ZombieType)(-1),
+                    buff.Rarity);
+            }
+        }
+
+        return false;
+    }
     
     [HarmonyPostfix]
     [HarmonyPatch(nameof(ShootingManager.GetQualityValue), typeof(float), typeof(Quality))]
@@ -169,6 +270,14 @@ public class ShootingManagerPatch
     {
         if (GodEvolutionDamageMultiplier >= 0)
             __result = Mathf.RoundToInt(__result * GodEvolutionDamageMultiplier);
+    }
+
+    [HarmonyPatch(nameof(ShootingManager.GetRandomQuality))]
+    [HarmonyPostfix]
+    public static void PostGetRandomQuality(ref Quality __result)
+    {
+        if (GodEvolutionForceRandomBuff) __result = Quality.random;
+        if (GodEvolutionForceIridescentBuff) __result = Quality.iridescent;
     }
 
     [HarmonyPrefix]
@@ -187,5 +296,8 @@ public class ShootingManagerPatch
         OriginalQualityWeights[Quality.silver] = __instance.qualityWeights[Quality.silver];
         OriginalQualityWeights[Quality.gold] = __instance.qualityWeights[Quality.gold];
         OriginalQualityWeights[Quality.diamond] = __instance.qualityWeights[Quality.diamond];
+        
+        __instance.superUpgrade = GodEvolutionSuperUpgrade;
+
     }
 }

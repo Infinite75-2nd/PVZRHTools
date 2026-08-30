@@ -41,6 +41,7 @@ public static class HotKeysLoader
             KeyAlmanacCreateZombie = (KeyCode)data.KeyAlmanacCreateZombie;
             KeyAlmanacCreateZombieVase = (KeyCode)data.KeyAlmanacCreateZombieVase;
             KeyAlmanacZombieMindCtrl = (KeyCode)data.KeyAlmanacZombieMindCtrl;
+            KeyGodEvolutionChooseBuff = (KeyCode)data.KeyGodEvolutionChooseBuff;
         }
         catch (Exception ex)
         {
@@ -67,6 +68,7 @@ public static class HotKeysLoader
                 KeyAlmanacCreateZombie = (int)KeyAlmanacCreateZombie,
                 KeyAlmanacCreateZombieVase = (int)KeyAlmanacCreateZombieVase,
                 KeyAlmanacZombieMindCtrl = (int)KeyAlmanacZombieMindCtrl,
+                KeyGodEvolutionChooseBuff = (int)KeyGodEvolutionChooseBuff,
             };
 
             var dir = Path.GetDirectoryName(SavePath);

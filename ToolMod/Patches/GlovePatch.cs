@@ -18,8 +18,13 @@ public static class GlovePatch
             if (__instance == null || Board.Instance.boardTag.isShooting) return;
             __instance.gameObject.transform.GetChild(0).gameObject.SetActive(!GloveNoCD);
 
-            __instance.fullCD = GloveFullCD >= 0 ? GloveFullCD : OriginalGloveFullCD;
-            if (GloveNoCD) __instance.CD = __instance.fullCD;
+            // 仅当主动开启"无CD"或"自定义全CD"时才覆盖 fullCD；
+            // 否则交由游戏按模式实时计算，避免把陈旧的 OriginalGloveFullCD(可能为0)写回导致错误无CD
+            if (GloveNoCD || GloveFullCD >= 0)
+            {
+                __instance.fullCD = GloveFullCD >= 0 ? GloveFullCD : OriginalGloveFullCD;
+                if (GloveNoCD) __instance.CD = __instance.fullCD;
+            }
             var cdChild = __instance.transform.FindChild("ModifierGloveCD");
             if (cdChild == null) return;
             if (__instance.avaliable || !ShowGameInfo)
@@ -42,6 +47,8 @@ public static class GlovePatch
     [HarmonyPatch(nameof(Glove.Start))]
     public static void PostStart(Glove __instance)
     {
+        // 采集开局基线，避免 OriginalGloveFullCD 为 0 导致错误无CD
+        OriginalGloveFullCD = __instance.fullCD;
         GameObject obj = new("ModifierGloveCD");
         var text = obj.AddComponent<TextMeshProUGUI>();
         text.font = Resources.Load<TMP_FontAsset>("Fonts/ContinuumBold SDF");

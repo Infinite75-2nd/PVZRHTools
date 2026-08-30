@@ -53,6 +53,7 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool NoFail { get; set; }
     [Reactive] public partial string LevelName { get; set; } = "";
     [Reactive] public partial uint JumpWave { get; set; }
+    [Reactive] public partial int RemoveAllZombiesRow { get; set; }
 
     #endregion
 
@@ -111,6 +112,30 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         DataSyncService.SendCommand(new SyncData()
         {
             Command = Strings.RemoveAllZombies,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void RemoveAllEnemies() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.RemoveAllEnemies,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void RemoveAllMindCtrlZombies() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.RemoveAllMindCtrlZombies,
+            Parameters = []
+        });
+
+    [ReactiveCommand]
+    public void RemoveAllBullets() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.RemoveAllBullets,
             Parameters = []
         });
 
@@ -295,6 +320,14 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         });
 
     [ReactiveCommand]
+    public void RemoveAllZombiesInRow() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.RemoveAllZombiesInRow,
+            Parameters = [RemoveAllZombiesRow.ToString()]
+        });
+
+    [ReactiveCommand]
     public void SetAward() =>
         DataSyncService.SendCommand(new SyncData()
         {
@@ -400,6 +433,146 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
 
     #endregion
 
+    #region 作弊码
+
+    [ReactiveCommand]
+    public void CheatKey_CheatMode() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_CheatMode,
+            Parameters = ["cheatmode"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_MoreSun() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_MoreSun,
+            Parameters = ["moresun"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_BigCannon() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_BigCannon,
+            Parameters = ["bigcannon"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_IrWinner() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_IrWinner,
+            Parameters = ["irwinner"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_ClearPlant() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_ClearPlant,
+            Parameters = ["clearplant"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_ClearZombie() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_ClearZombie,
+            Parameters = ["clearzombie"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_MysMoney() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_MysMoney,
+            Parameters = ["mysmoney"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_GiveCard() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_GiveCard,
+            Parameters = ["givecard"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_Reload() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_Reload,
+            Parameters = ["reload"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_Debug() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_Debug,
+            Parameters = ["debug"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_UpUp() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_UpUp,
+            Parameters = ["upup"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_Kill() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_Kill,
+            Parameters = ["kill"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_Report() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_Report,
+            Parameters = ["report"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_MissionA() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_MissionA,
+            Parameters = ["missiona"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_MissionB() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_MissionB,
+            Parameters = ["missionb"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_ShootHard() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_ShootHard,
+            Parameters = ["shoothard"]
+        });
+
+    [ReactiveCommand]
+    public void CheatKey_OpenBLive() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.CheatKey_OpenBLive,
+            Parameters = ["openblive"]
+        });
+
+    #endregion
+
     public CommonSettingsViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
         dataSyncService)
     {
@@ -490,6 +663,7 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         settings.LockLightLevel = LockLightLevel;
         settings.PauseSpawn = PauseSpawn;
         settings.NoFail = NoFail;
+        settings.RemoveAllZombiesRow = RemoveAllZombiesRow;
 
         //游戏内生成操作
         settings.Row = Row;
@@ -544,6 +718,7 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
         LockLightLevel = settings.LockLightLevel;
         PauseSpawn = settings.PauseSpawn;
         NoFail = settings.NoFail;
+        RemoveAllZombiesRow = settings.RemoveAllZombiesRow;
 
         //游戏内生成操作
         Row = settings.Row;

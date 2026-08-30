@@ -113,8 +113,8 @@ public class DataProcessor : MonoBehaviour
         { Strings.GarlicDay, SimpleSyncBool(() => GarlicDay) },
         { Strings.UnlimitedSunlight, SimpleSyncBool(() => UnlimitedSunlight) },
         { Strings.UnlockRedCardPlants, SimpleSyncBool(() => UnlockRedCardPlants) },
+        { Strings.EnableAllCards, SimpleSyncBool(() => EnableAllCards) },
         { Strings.PotSmashingFix, SimpleSyncBool(() => PotSmashingFix) },
-        { Strings.DisableIceEffect, SimpleSyncBool(() => DisableIceEffect) },
 
         // 植物特性
         { Strings.FastShooting, SimpleSyncBool(() => FastShooting) },
@@ -126,6 +126,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.PickaxeImmunity, SimpleSyncBool(() => PickaxeImmunity) },
         { Strings.UndeadBullet, SimpleSyncBool(() => UndeadBullet) },
         { Strings.OldObsidianBullet, SimpleSyncBool(() => OldObsidianBullet) },
+        { Strings.HardBullet, SimpleSyncBool(() => HardBullet) },
         { Strings.UltimateSuperGatling, SimpleSyncBool(() => UltimateSuperGatling) },
         { Strings.HyponoEmperorNoCD, SimpleSyncBool(() => HyponoEmperorNoCD) },
         { Strings.MagnetNutUnlimited, SimpleSyncBool(() => MagnetNutUnlimited) },
@@ -133,10 +134,13 @@ public class DataProcessor : MonoBehaviour
         { Strings.ChomperNoCD, SimpleSyncBool(() => ChomperNoCD) },
         { Strings.CobCannonNoCD, SimpleSyncBool(() => CobCannonNoCD) },
         { Strings.PlantUpgrade, SimpleSyncBool(() => PlantUpgrade) },
+        { Strings.PlantsAllUpgrade, SimpleSyncBool(() => PlantsAllUpgrade) },
+        { Strings.PlantsAllStarUp, SimpleSyncBool(() => PlantsAllStarUp) },
         { Strings.SuperStarNoCD, SimpleSyncBool(() => SuperStarNoCD) },
         { Strings.LockWheat, SimpleSyncInt(() => LockWheat) },
         { Strings.ApplyAllPlantSkins, ApplyAllPlantSkins },
         { Strings.ObtainAllPlantSkins, ObtainAllPlantSkins },
+        { Strings.UnlockAllAlmanac, UnlockAllAlmanac },
 
         // 僵尸特性
         { Strings.ZombieDamageLimit, SimpleSyncInt(() => ZombieDamageLimit) },
@@ -252,10 +256,6 @@ public class DataProcessor : MonoBehaviour
             Strings.GodEvolutionUnlimitedRefresh,
             SimpleSyncBool(() => GodEvolutionUnlimitedRefresh)
         },
-        {
-            Strings.GodEvolutionFreeUpgradeQuality,
-            SimpleSyncBool(() => GodEvolutionFreeUpgradeQuality)
-        },
         { Strings.GodEvolutionLucky, SimpleSyncFloat(() => GodEvolutionLucky) },
         {
             Strings.GodEvolutionDifficulty,
@@ -270,8 +270,18 @@ public class DataProcessor : MonoBehaviour
             SimpleSyncInt(() => GodEvolutionMaxPlantCount)
         },
         {
+            Strings.GodEvolutionNonDiamondCount,
+            SimpleSyncInt(() => GodEvolutionNonDiamondCount)
+        },
+        {
             Strings.GodEvolutionSuperUpgrade,
-            SimpleSyncBool(() => GodEvolutionSuperUpgrade)
+            SimpleSyncBool(() => GodEvolutionSuperUpgrade, () =>
+            {
+                if (InGame && Board.Instance.GetComponent<ShootingManager>() != null)
+                {
+                    Board.Instance.GetComponent<ShootingManager>().superUpgrade = GodEvolutionSuperUpgrade;
+                }
+            })
         },
         {
             Strings.GodEvolutionForceSuperQuality,
@@ -279,7 +289,13 @@ public class DataProcessor : MonoBehaviour
         },
         {
             Strings.GodEvolutionUncrashable,
-            SimpleSyncBool(() => GodEvolutionUncrashable)
+            SimpleSyncBool(() => GodEvolutionUncrashable, () =>
+            {
+                if (InGame && Board.Instance.GetComponent<ShootingManager>() != null)
+                {
+                    Board.Instance.GetComponent<ShootingManager>().uncrashable = GodEvolutionUncrashable;
+                }
+            })
         },
         {
             Strings.GodEvolutionQualityWeightEnabled,
@@ -305,12 +321,45 @@ public class DataProcessor : MonoBehaviour
             Strings.GodEvolutionDamageMultiplier,
             SimpleSyncFloat(() => GodEvolutionDamageMultiplier)
         },
+        { Strings.GodEvolutionDifficultyPoint, SimpleSyncInt(() => GodEvolutionDifficultyPoint) },
         { Strings.GodEvolutionUnlockAll, GodEvolutionUnlockAll },
         { Strings.GodEvolutionMultiSelectBuff, SimpleSyncBool(() => GodEvolutionMultiSelectBuff) },
         { Strings.GodEvolutionChooseBuff, GodEvolutionChooseBuff },
-        { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard) },
+        { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard, () =>
+        {
+            if (InGame && Board.Instance.GetComponent<ShootingManager>() != null&&Board.Instance.GetComponent<ShootingManager>().cheatHard!=GodEvolutionCheatHard)
+            {
+                Board.Instance.GetComponent<ShootingManager>().CheatHard();
+            }
+        }) },
         { Strings.GodEvolutionForceExpertBuff, SimpleSyncBool(() => GodEvolutionForceExpertBuff) },
+        { Strings.GodEvolutionForceStarUpBuff, SimpleSyncBool(() => GodEvolutionForceStarUpBuff) },
+        { Strings.GodEvolutionForceMutationBuff, SimpleSyncBool(() => GodEvolutionForceMutationBuff) },
+        { Strings.GodEvolutionForceMissionBuff, SimpleSyncBool(() => GodEvolutionForceMissionBuff) },
+        { Strings.GodEvolutionForceIridescentBuff, SimpleSyncBool(() => GodEvolutionForceIridescentBuff) },
+        { Strings.GodEvolutionForceRandomBuff, SimpleSyncBool(() => GodEvolutionForceRandomBuff) },
+        { Strings.GodEvolutionDebuffRefreshable, SimpleSyncBool(() => GodEvolutionDebuffRefreshable) },
+        { Strings.GodEvolutionDebuffClosable, SimpleSyncBool(() => GodEvolutionDebuffClosable) },
         #endregion
+
+        // 作弊码
+        { Strings.CheatKey_CheatMode, ExecuteCheatKey },
+        { Strings.CheatKey_MoreSun, ExecuteCheatKey },
+        { Strings.CheatKey_BigCannon, ExecuteCheatKey },
+        { Strings.CheatKey_IrWinner, ExecuteCheatKey },
+        { Strings.CheatKey_ClearPlant, ExecuteCheatKey },
+        { Strings.CheatKey_ClearZombie, ExecuteCheatKey },
+        { Strings.CheatKey_MysMoney, ExecuteCheatKey },
+        { Strings.CheatKey_GiveCard, ExecuteCheatKey },
+        { Strings.CheatKey_Reload, ExecuteCheatKey },
+        { Strings.CheatKey_Debug, ExecuteCheatKey },
+        { Strings.CheatKey_UpUp, ExecuteCheatKey },
+        { Strings.CheatKey_Kill, ExecuteCheatKey },
+        { Strings.CheatKey_Report, ExecuteCheatKey },
+        { Strings.CheatKey_MissionA, ExecuteCheatKey },
+        { Strings.CheatKey_MissionB, ExecuteCheatKey },
+        { Strings.CheatKey_ShootHard, ExecuteCheatKey },
+        { Strings.CheatKey_OpenBLive, ExecuteCheatKey },
 
         { Strings.PlaySound, PlaySound },
     };
@@ -322,6 +371,10 @@ public class DataProcessor : MonoBehaviour
         { Strings.Money, SimpleSyncInt(() => Board.Instance.theMoney) },
         { Strings.RemoveAllPlants, RemoveAllPlants },
         { Strings.RemoveAllZombies, RemoveAllZombies },
+        { Strings.RemoveAllZombiesInRow, RemoveAllZombiesInRow },
+        { Strings.RemoveAllEnemies, RemoveAllEnemies },
+        { Strings.RemoveAllMindCtrlZombies, RemoveAllMindCtrlZombies },
+        { Strings.RemoveAllBullets, RemoveAllBullets },
         { Strings.MindCtrlAllZombies, MindCtrlAllZombies },
         { Strings.RemoveAllIceRoads, RemoveAllIceRoads },
         { Strings.RemoveAllHoles, RemoveAllHoles },
@@ -354,7 +407,6 @@ public class DataProcessor : MonoBehaviour
         { Strings.PlayParticle, PlayParticle },
         { Strings.GetSnapshot, GetSnapshot },
         { Strings.RestoreSnapshot, RestoreSnapshot },
-        { Strings.GodEvolutionResetQuality, GodEvolutionResetQuality },
         { Strings.SpawnPetGargantuar, SpawnPetGargantuar },
         { Strings.SpawnPetFootball, SpawnPetFootball },
         { Strings.SpawnPetSnowBoss, SpawnPetSnowBoss },
@@ -457,6 +509,139 @@ public class DataProcessor : MonoBehaviour
             {
             }
         }
+    }
+
+    private static void RemoveAllZombiesInRow(List<string> args)
+    {
+        var row= int.Parse(args[0])-1;
+        for (var j = Board.Instance.zombieArray.Count - 1; j >= 0; j--)
+            try
+            {
+                var zombie = Board.Instance.zombieArray[j];
+                if (zombie == null || !zombie||zombie.theZombieRow!=row||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                    continue;
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
+                zombie.Die();
+            }
+            catch
+            {
+            }
+        Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
+        for (var i = zombies.Count - 1; i >= 0; i--)
+        {
+            try
+            {
+                var zombie = (Zombie)zombies[i];
+                if (zombie == null || !zombie||zombie.theZombieRow!=row||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
+                    continue;
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
+                zombie.Die();
+            }
+            catch
+            {
+            }
+        }
+    }
+
+    private static void RemoveAllEnemies(List<string> _)
+    {
+        for (var j = Board.Instance.zombieArray.Count - 1; j >= 0; j--)
+            try
+            {
+                var zombie = Board.Instance.zombieArray[j];
+                if (zombie == null || !zombie||zombie.isMindControlled||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                    continue;
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
+                zombie.Die();
+            }
+            catch
+            {
+            }
+        Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
+        for (var i = zombies.Count - 1; i >= 0; i--)
+        {
+            try
+            {
+                var zombie = (Zombie)zombies[i];
+                if (zombie == null || !zombie||zombie.isMindControlled||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
+                    continue;
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
+                zombie.Die();
+            }
+            catch
+            {
+            }
+        }
+    }
+
+    private static void RemoveAllMindCtrlZombies(List<string> _)
+    {
+        for (var j = Board.Instance.zombieArray.Count - 1; j >= 0; j--)
+            try
+            {
+                var zombie = Board.Instance.zombieArray[j];
+                if (zombie == null || !zombie||!zombie.isMindControlled||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                    continue;
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
+                zombie.Die();
+            }
+            catch
+            {
+            }
+        Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
+        for (var i = zombies.Count - 1; i >= 0; i--)
+        {
+            try
+            {
+                var zombie = (Zombie)zombies[i];
+                if (zombie == null || !zombie||!zombie.isMindControlled||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
+                    continue;
+                zombie.theHealth = 0;
+                zombie.theFirstArmorHealth = 0;
+                zombie.theSecondArmorHealth = 0;
+                zombie.Die();
+            }
+            catch
+            {
+            }
+        }
+    }
+
+    private static void RemoveAllBullets(List<string> _)
+    {
+        for (var j = Board.Instance.boardEntity.bulletArray.Count - 1; j >= 0; j--)
+            try
+            {
+                var bullet = Board.Instance.boardEntity.bulletArray[j];
+                if (bullet == null || !bullet)
+                    continue;
+                bullet.Die();
+            }
+            catch
+            {
+            }
     }
 
     private static void MindCtrlAllZombies(List<string> _)
@@ -1666,25 +1851,6 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    private static void GodEvolutionResetQuality(List<string> _)
-    {
-        GodEvolutionUnlimitedRefresh = false;
-        GodEvolutionFreeUpgradeQuality = false;
-        GodEvolutionLucky = -1f;
-        GodEvolutionDifficulty = -1;
-        GodEvolutionRefreshCount = -1;
-        GodEvolutionMaxPlantCount = -1;
-        GodEvolutionSuperUpgrade = false;
-        GodEvolutionForceSuperQuality = false;
-        GodEvolutionUncrashable = false;
-        GodEvolutionQualityWeightEnabled = false;
-        GodEvolutionQualityDefault = 55f;
-        GodEvolutionQualitySilver = 25f;
-        GodEvolutionQualityGold = 12f;
-        GodEvolutionQualityDiamond = 3f;
-        GodEvolutionDamageMultiplier = -1f;
-    }
-
     /// <summary>
     /// 手动实现 RogueShootingData.Record 逻辑（Il2CppInterop 未暴露该泛型方法）
     /// 在列表中查找匹配 element 的记录并 count+1，找不到则新建记录(count=1)并添加
@@ -1736,9 +1902,9 @@ public class DataProcessor : MonoBehaviour
 
     private static void GodEvolutionChooseBuff(List<string> _)
     {
-        if (InGame && Board.Instance.TryGetComponent<ShootingManager>(out var shooting)&&FindObjectsOfTypeAll(Il2CppType.Of<MultipleChoiceMenu>()).Count is 2)
+        if (InGame && ShootingManager.Instance !=null&&GameAPP.canvasUp.GetComponentsInChildren<MultipleChoiceMenu>().Count is 0)
         {
-            shooting.ShowBuff();
+            ShootingManager.Instance.ShowBuff();
         }
     }
 
@@ -1874,7 +2040,18 @@ public class DataProcessor : MonoBehaviour
             ModCore.Instance.Log.LogError($"ObtainAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
         }
     }
-    
+
+    private static void UnlockAllAlmanac(List<string> _)
+    {
+        GameAPP.config.meetPlants.Clear();
+        GameAPP.config.meetPlant_runTime.Clear();
+        foreach (var plant in GameAPP.resourcesManager.allPlants)
+        {
+            GameAPP.config.meetPlants.Add(plant);
+            GameAPP.config.meetPlant_runTime.Add(plant);
+        }
+    }
+
     private static void TreasureFillCard(List<string> _)
     {
         foreach (var card in TreasureData.treasureCards)
@@ -2168,4 +2345,19 @@ public class DataProcessor : MonoBehaviour
             AdvantureConfig.data.enpowerStarCount_hard=int.Parse(args[0]);
         }
     }
+
+    #region 作弊码
+
+    private static void ExecuteCheatKey(List<string> args)
+    {
+        if (args.Count == 0) return;
+        var key = args[0];
+        var gameApp = GameAPP.Instance;
+        if (gameApp == null) return;
+        var cheatKey = gameApp.GetComponent<CheatKey>();
+        if (cheatKey == null) return;
+        cheatKey.key = key;
+    }
+
+    #endregion
 }

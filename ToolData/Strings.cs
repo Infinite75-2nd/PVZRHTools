@@ -3,7 +3,7 @@ namespace ToolData
     public static class Strings
     {
         public const string GameVersion = "3.9";
-        public const string ModifierVersion = "5.2.0";
+        public const string ModifierVersion = "5.2.3";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -47,6 +47,9 @@ namespace ToolData
         public const string NoFail = "NoFail";
         public const string RemoveAllPlants = "RemoveAllPlants";
         public const string RemoveAllZombies = "RemoveAllZombies";
+        public const string RemoveAllEnemies = "RemoveAllEnemies";
+        public const string RemoveAllMindCtrlZombies = "RemoveAllMindCtrlZombies";
+        public const string RemoveAllBullets = "RemoveAllBullets";
         public const string MindCtrlAllZombies = "MindCtrlAllZombies";
         public const string RemoveAllIceRoads = "RemoveAllIceRoads";
         public const string RemoveAllHoles = "RemoveAllHoles";
@@ -66,6 +69,7 @@ namespace ToolData
         public const string CreateUltimateMeteorite = "CreateUltimateMeteorite";
         public const string CreateSolarMeteorite = "CreateSolarMeteorite";
         public const string NextWave = "NextWave";
+        public const string RemoveAllZombiesInRow = "RemoveAllZombiesInRow";
         public const string SetJumpWave = "SetJumpWave";
         public const string SetAward = "SetAward";
         public const string DestroyAward = "DestroyAward";
@@ -82,7 +86,30 @@ namespace ToolData
         public const string SpawnPetKirov = "SpawnPetKirov";
         public const string ApplyAllPlantSkins = "ApplyAllPlantSkins";
         public const string ObtainAllPlantSkins = "ObtainAllPlantSkins";
+        public const string UnlockAllAlmanac = "UnlockAllAlmanac";
         public const string ZombieSea = "ZombieSea";
+
+        #region 作弊码
+
+        public const string CheatKey_CheatMode = "CheatKey_CheatMode";
+        public const string CheatKey_MoreSun = "CheatKey_MoreSun";
+        public const string CheatKey_BigCannon = "CheatKey_BigCannon";
+        public const string CheatKey_IrWinner = "CheatKey_IrWinner";
+        public const string CheatKey_ClearPlant = "CheatKey_ClearPlant";
+        public const string CheatKey_ClearZombie = "CheatKey_ClearZombie";
+        public const string CheatKey_MysMoney = "CheatKey_MysMoney";
+        public const string CheatKey_GiveCard = "CheatKey_GiveCard";
+        public const string CheatKey_Reload = "CheatKey_Reload";
+        public const string CheatKey_Debug = "CheatKey_Debug";
+        public const string CheatKey_UpUp = "CheatKey_UpUp";
+        public const string CheatKey_Kill = "CheatKey_Kill";
+        public const string CheatKey_Report = "CheatKey_Report";
+        public const string CheatKey_MissionA = "CheatKey_MissionA";
+        public const string CheatKey_MissionB = "CheatKey_MissionB";
+        public const string CheatKey_ShootHard = "CheatKey_ShootHard";
+        public const string CheatKey_OpenBLive = "CheatKey_OpenBLive";
+
+        #endregion
 
         #endregion
 
@@ -106,8 +133,8 @@ namespace ToolData
         public const string GarlicDay = "GarlicDay";
         public const string UnlimitedSunlight = "UnlimitedSunlight";
         public const string UnlockRedCardPlants = "UnlockRedCardPlants";
+        public const string EnableAllCards = "EnableAllCards";
         public const string PotSmashingFix = "PotSmashingFix";
-        public const string DisableIceEffect = "DisableIceEffect";
 
         public const string FastShooting = "FastShooting";
         public const string HardPlant = "HardPlant";
@@ -118,6 +145,7 @@ namespace ToolData
         public const string PickaxeImmunity = "PickaxeImmunity";
         public const string UndeadBullet = "UndeadBullet";
         public const string OldObsidianBullet = "OldObsidianBullet";
+        public const string HardBullet = "HardBullet";
         public const string UltimateSuperGatling = "UltimateSuperGatling";
         public const string HyponoEmperorNoCD = "HyponoEmperorNoCD";
         public const string MagnetNutUnlimited = "MagnetNutUnlimited";
@@ -125,6 +153,8 @@ namespace ToolData
         public const string ChomperNoCD = "ChomperNoCD";
         public const string CobCannonNoCD = "CobCannonNoCD";
         public const string PlantUpgrade = "PlantUpgrade";
+        public const string PlantsAllUpgrade = "PlantsAllUpgrade";
+        public const string PlantsAllStarUp = "PlantsAllStarUp";
         public const string SuperStarNoCD = "SuperStarNoCD";
         public const string LockWheat = "LockWheat";
 
@@ -162,11 +192,11 @@ namespace ToolData
         #region 诸神进化
 
         public const string GodEvolutionUnlimitedRefresh = "GodEvolutionUnlimitedRefresh";
-        public const string GodEvolutionFreeUpgradeQuality = "GodEvolutionFreeUpgradeQuality";
         public const string GodEvolutionLucky = "GodEvolutionLucky";
         public const string GodEvolutionDifficulty = "GodEvolutionDifficulty";
         public const string GodEvolutionRefreshCount = "GodEvolutionRefreshCount";
         public const string GodEvolutionMaxPlantCount = "GodEvolutionMaxPlantCount";
+        public const string GodEvolutionNonDiamondCount = "GodEvolutionNonDiamondCount";
         public const string GodEvolutionSuperUpgrade = "GodEvolutionSuperUpgrade";
         public const string GodEvolutionForceSuperQuality = "GodEvolutionForceSuperQuality";
         public const string GodEvolutionUncrashable = "GodEvolutionUncrashable";
@@ -176,6 +206,7 @@ namespace ToolData
         public const string GodEvolutionQualityGold = "GodEvolutionQualityGold";
         public const string GodEvolutionQualityDiamond = "GodEvolutionQualityDiamond";
         public const string GodEvolutionDamageMultiplier = "GodEvolutionDamageMultiplier";
+        public const string GodEvolutionDifficultyPoint = "GodEvolutionDifficultyPoint";
         public const string GodEvolutionResetQuality = "GodEvolutionResetQuality";
         public const string GodEvolutionUnlockAll = "GodEvolutionUnlockAll";
         public const string GodEvolutionMultiSelectBuff = "GodEvolutionMultiSelectBuff";
@@ -183,6 +214,13 @@ namespace ToolData
         public const string GodEvolutionCheatHard = "GodEvolutionCheatHard";
         public const string GodEvolutionForceExpertBuff = "GodEvolutionForceExpertBuff";
         public const string GodEvolutionRemoveStarsStarUp = "GodEvolutionRemoveStarsStarUp";
+        public const string GodEvolutionForceStarUpBuff = "GodEvolutionForceStarUpBuff";
+        public const string GodEvolutionForceMutationBuff = "GodEvolutionForceMutationBuff";
+        public const string GodEvolutionForceMissionBuff = "GodEvolutionForceMissionBuff";
+        public const string GodEvolutionForceIridescentBuff = "GodEvolutionForceIridescentBuff";
+        public const string GodEvolutionForceRandomBuff = "GodEvolutionForceRandomBuff";
+        public const string GodEvolutionDebuffRefreshable = "GodEvolutionDebuffRefreshable";
+        public const string GodEvolutionDebuffClosable = "GodEvolutionDebuffClosable";
 
         #endregion
 

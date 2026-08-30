@@ -172,9 +172,23 @@
                                 Command="{Binding MindCtrlAllZombiesCommand}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
+                        <Button Content="秒杀非魅惑僵尸"
+                                Command="{Binding RemoveAllEnemiesCommand}" />
+                        <Button Content="秒杀魅惑僵尸"
+                                Command="{Binding RemoveAllMindCtrlZombiesCommand}" />
+                        <Button Content="清除全部子弹"
+                                Command="{Binding RemoveAllBulletsCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
                         <Button Content="清除全部冰道" Command="{Binding RemoveAllIceRoadsCommand}" />
                         <Button Content="清除全部坑洞" Command="{Binding RemoveAllHolesCommand}" />
                         <Button Content="清除全部墓碑" Command="{Binding RemoveAllGravesCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="秒杀指定行僵尸"
+                                Command="{Binding RemoveAllZombiesInRowCommand}" />
+                        <u:NumericIntUpDown Minimum="0"
+                                            Value="{Binding RemoveAllZombiesRow, Mode=TwoWay}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="修改关卡名称"
@@ -393,6 +407,36 @@
                                    Theme="{DynamicResource TagLabel}" />
                         </u:MultiComboBox.InnerLeftContent>
                     </u:MultiComboBox>
+                </StackPanel>
+            </Border>
+            <Border>
+                <StackPanel Orientation="Vertical">
+                    <u:Divider Content="作弊码"/>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Button Content="cheatmode" Command="{Binding CheatKey_CheatModeCommand}" />
+                        <Button Content="moresun" Command="{Binding CheatKey_MoreSunCommand}" />
+                        <Button Content="bigcannon" Command="{Binding CheatKey_BigCannonCommand}" />
+                        <Button Content="irwinner" Command="{Binding CheatKey_IrWinnerCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Button Content="clearplant" Command="{Binding CheatKey_ClearPlantCommand}" />
+                        <Button Content="clearzombie" Command="{Binding CheatKey_ClearZombieCommand}" />
+                        <Button Content="mysmoney" Command="{Binding CheatKey_MysMoneyCommand}" />
+                        <Button Content="givecard" Command="{Binding CheatKey_GiveCardCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Button Content="reload" Command="{Binding CheatKey_ReloadCommand}" />
+                        <Button Content="debug" Command="{Binding CheatKey_DebugCommand}" />
+                        <Button Content="upup" Command="{Binding CheatKey_UpUpCommand}" />
+                        <Button Content="kill" Command="{Binding CheatKey_KillCommand}" />
+                        <Button Content="report" Command="{Binding CheatKey_ReportCommand}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Button Content="missiona" Command="{Binding CheatKey_MissionACommand}" />
+                        <Button Content="missionb" Command="{Binding CheatKey_MissionBCommand}" />
+                        <Button Content="shoothard" Command="{Binding CheatKey_ShootHardCommand}" />
+                        <Button Content="openblive" Command="{Binding CheatKey_OpenBLiveCommand}" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </WrapPanel>

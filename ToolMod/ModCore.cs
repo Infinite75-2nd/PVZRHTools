@@ -59,6 +59,7 @@ namespace ToolMod
             ClassInjector.RegisterTypeInIl2Cpp<PlantStatisticsModifier>();
             ClassInjector.RegisterTypeInIl2Cpp<KeyBindingButton>();
             ClassInjector.RegisterTypeInIl2Cpp<KeyBindingUI>();
+            ClassInjector.RegisterTypeInIl2Cpp<GameKeyBindingUI>();
             Instance = this;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Unload();
         }
@@ -79,6 +80,7 @@ namespace ToolMod
             // 加载并应用保存的设置
             SettingsLoader.LoadAndApplySettings();
             HotKeysLoader.Load();
+            GameKeysLoader.Load();
 
             DataSync = new DataSync(Strings.PipeName);
             DataSync.Connected += (sender, e) => { Log.LogMessage("修改器已连接"); };
@@ -106,6 +108,7 @@ namespace ToolMod
             var process = Process.Start(startInfo);
             Inited = true;
             MakeKeyBindingUI();
+            MakeGameKeyBindingUI();
 
         }
 
@@ -117,10 +120,18 @@ namespace ToolMod
             GameAPP.UIManager.UIPrefabs.Add((UIType)999, keyBindingUI);
         }
 
+        private void MakeGameKeyBindingUI()
+        {
+            var gameKeyBindingUI = UnityEngine.Object.Instantiate(GameAPP.UIManager.UIPrefabs[UIType.UIConfigMenu], CacheObject.transform);
+            gameKeyBindingUI.name = "GameKeyBindingUI";
+            gameKeyBindingUI.AddComponent<GameKeyBindingUI>();
+            GameAPP.UIManager.UIPrefabs.Add((UIType)998, gameKeyBindingUI);
+        }
+
         private static void MessageReceived(object? sender, string message)
         {
 #if DEBUG
-            Instance.Log.LogMessage($"Received Command from Modifier UI: \n{message}");
+            //Instance.Log.LogMessage($"Received Command from Modifier UI: \n{message}");
 #endif
             var data = JsonSerializer.Deserialize<SyncData>(message);
             if (DataProcessor.Instance is null) return;
@@ -139,8 +150,12 @@ namespace ToolMod
                 Parameters = []
             });
             Thread.Sleep(100);
-            DataSync.Stop();
-            DataSync.Dispose();
+            try
+            {
+                DataSync.Stop();
+                DataSync.Dispose();
+            }
+            catch { }
             return true;
         }
 
@@ -340,7 +355,7 @@ namespace ToolMod
                 File.WriteAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath),
                     JsonSerializer.Serialize(InitData));
 #if DEBUG
-                Task.Run(() =>
+                /*Task.Run(() =>
                 {
                     foreach (var line in plants)
                         Log.LogInfo($"Dumping Plant String: {line.Value}");
@@ -356,7 +371,7 @@ namespace ToolMod
                         Log.LogInfo($"Dumping Invest Buff String: {line.Value}");
                     foreach (var line in bullets)
                         Log.LogInfo($"Dumping Bullet String: {line.Value}");
-                });
+                });*/
 #endif
             }
             catch
