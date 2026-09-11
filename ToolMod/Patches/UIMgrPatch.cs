@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using TMPro;
 using ToolData;
 using UnityEngine;
@@ -12,6 +13,18 @@ public static class UIMgrPatch
     [HarmonyPatch(nameof(UIMgr.EnterMainMenu))]
     public static void PostEnterMainMenu()
     {
+        // Android has no PC pause-menu button to trigger LateInit, so boot the
+        // modifier as soon as the main menu (and its UIPrefabs) exist.
+        try
+        {
+            if (ModCore.IsAndroid && ModCore.Instance != null && !ModCore.Instance.Inited)
+                ModCore.Instance.LateInit();
+        }
+        catch (Exception ex)
+        {
+            ModCore.Instance?.Log?.LogError("Android LateInit 失败: " + ex);
+        }
+
         GameObject obj1 = new("ModifierInfo");
         var text1 = obj1.AddComponent<TextMeshProUGUI>();
         text1.font = Resources.Load<TMP_FontAsset>("Fonts/ContinuumBold SDF");

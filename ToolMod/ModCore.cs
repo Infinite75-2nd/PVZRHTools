@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -32,41 +33,86 @@ namespace ToolMod
     [BepInPlugin("infinite75.toolmod", "PVZRHTools", Strings.ModifierVersion)]
     public class ModCore : BasePlugin
     {
+        /// <summary>True on the Android CoreCLR host; UI runs in the launcher, no external exe.</summary>
+        public static bool IsAndroid => OperatingSystem.IsAndroid();
+
+        /// <summary>
+        /// BepInEx config dir shared with the launcher UI. Derived from the plugin's
+        /// own location (`.../BepInEx/plugins` → `.../BepInEx/config`) because
+        /// <see cref="BepInEx.Paths.GameRootPath"/> points elsewhere on this host.
+        /// </summary>
+        public static string SharedConfigDir => Path.GetFullPath(Path.Combine(
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? ".",
+            "..", "config"));
+
+        /// <summary>Allows NaN / ±Infinity (some PatchDataCache floats use -inf as a sentinel).</summary>
+        private static readonly JsonSerializerOptions StateJsonOptions = new()
+        {
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals
+        };
+
         public override void Load()
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            var bootConfigString = File.ReadAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.BootConfigPath));
-            BootConfig = JsonSerializer.Deserialize<BootConfig>(bootConfigString);
-            if (!BootConfig.ModifierEnabled) return;
-            if (File.Exists(Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName)))
-            {
-                ModifierPath = Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName);
-            }
-            else if (File.Exists(BootConfig.ModifierPath))
-            {
-                ModifierPath = BootConfig.ModifierPath;
-            }
+            try { Console.OutputEncoding = Encoding.UTF8; } catch { /* not supported on Android */ }
 
-            if (string.IsNullOrEmpty(ModifierPath))
+            BootConfig = ReadBootConfig();
+            if (!BootConfig.ModifierEnabled) return;
+
+            if (!IsAndroid)
             {
-                Log.LogFatal("PVZRHTools.exe不存在，修改器已禁用");
-                return;
+                // Desktop needs the Avalonia exe; Android drives everything from the launcher UI.
+                if (File.Exists(Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName)))
+                    ModifierPath = Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName);
+                else if (File.Exists(BootConfig.ModifierPath))
+                    ModifierPath = BootConfig.ModifierPath;
+
+                if (string.IsNullOrEmpty(ModifierPath))
+                {
+                    Log.LogFatal("PVZRHTools.exe不存在，修改器已禁用");
+                    return;
+                }
             }
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
-            ClassInjector.RegisterTypeInIl2Cpp<DataProcessor>();
-            ClassInjector.RegisterTypeInIl2Cpp<ToolsUpdater>();
-            ClassInjector.RegisterTypeInIl2Cpp<PlantStatisticsModifier>();
-            ClassInjector.RegisterTypeInIl2Cpp<KeyBindingButton>();
-            ClassInjector.RegisterTypeInIl2Cpp<KeyBindingUI>();
-            ClassInjector.RegisterTypeInIl2Cpp<GameKeyBindingUI>();
             Instance = this;
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => Unload();
+        }
+
+        /// <summary>Reads ModifierBootConfig.json, defaulting to enabled when absent.</summary>
+        private BootConfig ReadBootConfig()
+        {
+            try
+            {
+                var path = Path.Combine(SharedConfigDir, "ModifierBootConfig.json");
+                if (File.Exists(path))
+                {
+                    var cfg = JsonSerializer.Deserialize<BootConfig>(File.ReadAllText(path));
+                    if (cfg.ModifierPath is null && cfg.GameVersion is null && !cfg.ModifierEnabled)
+                        cfg.ModifierEnabled = true;
+                    return cfg;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning("读取 ModifierBootConfig.json 失败，按默认启用处理: " + ex.Message);
+            }
+            return new BootConfig { ModifierEnabled = true, ModifierPath = "", GameVersion = Strings.GameVersion };
         }
 
         public void LateInit()
         {
             if (Inited) return;
+
+            ClassInjector.RegisterTypeInIl2Cpp<DataProcessor>();
+            ClassInjector.RegisterTypeInIl2Cpp<ToolsUpdater>();
+            ClassInjector.RegisterTypeInIl2Cpp<PlantStatisticsModifier>();
+            if (!IsAndroid)
+            {
+                ClassInjector.RegisterTypeInIl2Cpp<KeyBindingButton>();
+                ClassInjector.RegisterTypeInIl2Cpp<KeyBindingUI>();
+                ClassInjector.RegisterTypeInIl2Cpp<GameKeyBindingUI>();
+            }
+
             GameAPP.theGameStatus = GameStatus.OutGame;
             ModifierObject = new("PVZRHTools");
             ModifierObject.AddComponent<DataProcessor>();
@@ -79,37 +125,63 @@ namespace ToolMod
 
             // 加载并应用保存的设置
             SettingsLoader.LoadAndApplySettings();
+            LoadModState();
             HotKeysLoader.Load();
             GameKeysLoader.Load();
 
-            DataSync = new DataSync(Strings.PipeName);
+            if (IsAndroid)
+            {
+                // Launcher UI shares the app sandbox: talk over files in BepInEx/config.
+                DataSync = new FileDataSync(SharedConfigDir);
+            }
+            else
+            {
+                DataSync = new DataSync(Strings.PipeName);
+            }
             DataSync.Connected += (sender, e) => { Log.LogMessage("修改器已连接"); };
             DataSync.MessageReceived += MessageReceived;
             DataSync.Disconnected += (sender, e) =>
             {
                 Log.LogMessage("修改器已断开");
-                Environment.Exit(0);
+                // Desktop exits with the UI window; Android must keep the game alive.
+                if (!IsAndroid) Environment.Exit(0);
             };
             DataSync.Start();
-
-            var startInfo = new ProcessStartInfo()
+            DumpState();
+            // Signal the launcher that InitData/state are ready so it can attach
+            // the modifier UI only now (not during game startup).
+            try
             {
-                FileName = ModifierPath,
-                ArgumentList =
-                {
-                    Strings.RunModifierArgument,
-                    BepInEx.Paths.GameRootPath,
-                    Environment.ProcessId.ToString()
-                },
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-            };
-            var process = Process.Start(startInfo);
-            Inited = true;
-            MakeKeyBindingUI();
-            MakeGameKeyBindingUI();
+                File.WriteAllText(Path.Combine(SharedConfigDir, "toolmod_ready"),
+                    DateTime.UtcNow.Ticks.ToString());
+                Log.LogInfo("modifier ready signal written");
+            }
+            catch (Exception ex) { Log.LogWarning("ready signal failed: " + ex.Message); }
 
+            if (!IsAndroid)
+            {
+                var startInfo = new ProcessStartInfo()
+                {
+                    FileName = ModifierPath,
+                    ArgumentList =
+                    {
+                        Strings.RunModifierArgument,
+                        BepInEx.Paths.GameRootPath,
+                        Environment.ProcessId.ToString()
+                    },
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                };
+                Process.Start(startInfo);
+            }
+            Inited = true;
+
+            if (!IsAndroid)
+            {
+                MakeKeyBindingUI();
+                MakeGameKeyBindingUI();
+            }
         }
 
         private void MakeKeyBindingUI()
@@ -143,17 +215,22 @@ namespace ToolMod
 
         public override bool Unload()
         {
+            SaveModState();
             if (GameAPP.config != null && GameAPP.config.gameSpeed == 0) GameAPP.config.gameSpeed = 1;
-            SendCommand(new()
-            {
-                Command = Strings.Exit,
-                Parameters = []
-            });
-            Thread.Sleep(100);
             try
             {
-                DataSync.Stop();
-                DataSync.Dispose();
+                SendCommand(new()
+                {
+                    Command = Strings.Exit,
+                    Parameters = []
+                });
+                Thread.Sleep(100);
+            }
+            catch { }
+            try
+            {
+                DataSync?.Stop();
+                DataSync?.Dispose();
             }
             catch { }
             return true;
@@ -339,6 +416,56 @@ namespace ToolMod
                     SecondArmorHP.Add((Zombie.SecondArmorType)second, -1);
                 }
 
+                // Union with the previously persisted list: the game only registers the
+                // full travel buff set after it loads its own data (in-game), so without
+                // this the next launch would reset InitData back to the 2 entries visible
+                // at the main menu.
+                try
+                {
+                    var initDataPath = Path.Combine(SharedConfigDir, "InitData.json");
+                    if (File.Exists(initDataPath))
+                    {
+                        var prev = JsonSerializer.Deserialize<InitData>(File.ReadAllText(initDataPath));
+                        if (prev != null)
+                        {
+                            foreach (var kv in prev.AdvBuffs)
+                            {
+                                advBuffs.TryAdd(kv.Key, kv.Value);
+                                Components.PatchDataCache.AdvBuffs.TryAdd((AdvBuff)kv.Key, 0);
+                                Components.PatchDataCache.InGameAdvBuffs.TryAdd((AdvBuff)kv.Key, 0);
+                            }
+                            foreach (var kv in prev.UltiBuffs)
+                            {
+                                ultiBuffs.TryAdd(kv.Key, kv.Value);
+                                Components.PatchDataCache.UltiBuffs.TryAdd((UltiBuff)kv.Key, 0);
+                                Components.PatchDataCache.InGameUltiBuffs.TryAdd((UltiBuff)kv.Key, 0);
+                            }
+                            foreach (var kv in prev.Debuffs)
+                            {
+                                debuffs.TryAdd(kv.Key, kv.Value);
+                                Components.PatchDataCache.Debuffs.TryAdd((TravelDebuff)kv.Key, false);
+                                Components.PatchDataCache.InGameDebuffs.TryAdd((TravelDebuff)kv.Key, false);
+                            }
+                            foreach (var kv in prev.InvestBuffs)
+                            {
+                                investBuffs.TryAdd(kv.Key, kv.Value);
+                                Components.PatchDataCache.InvestBuffs.TryAdd((InvestBuff)kv.Key, false);
+                                Components.PatchDataCache.InGameInvestBuffs.TryAdd((InvestBuff)kv.Key, false);
+                            }
+                            foreach (var kv in prev.UnlockablePlants)
+                            {
+                                unlockablePlants.TryAdd(kv.Key, kv.Value);
+                                Components.PatchDataCache.UnlockedPlants.TryAdd((TravelUnlocks)kv.Key, false);
+                                Components.PatchDataCache.InGameUnlockedPlants.TryAdd((TravelUnlocks)kv.Key, false);
+                            }
+                            foreach (var kv in prev.Plants) plants.TryAdd(kv.Key, kv.Value);
+                            foreach (var kv in prev.Zombies) zombies.TryAdd(kv.Key, kv.Value);
+                            foreach (var kv in prev.Bullets) bullets.TryAdd(kv.Key, kv.Value);
+                        }
+                    }
+                }
+                catch (Exception ex) { Log.LogWarning("InitData union failed: " + ex.Message); }
+                Log.LogInfo($"GenerateInitData: advText={TravelDictionary.advancedBuffsText?.Count ?? -1} adv={advBuffs.Count} ulti={ultiBuffs.Count} deb={debuffs.Count} unl={unlockablePlants.Count} plants={plants.Count} zombies={zombies.Count} invest={investBuffs.Count}");
                 InitData = new()
                 {
                     Plants = new(plants),
@@ -352,7 +479,8 @@ namespace ToolMod
                     InvestBuffs = new(investBuffs),
                     UnlockablePlants = new(unlockablePlants)
                 };
-                File.WriteAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath),
+                Directory.CreateDirectory(SharedConfigDir);
+                File.WriteAllText(Path.Combine(SharedConfigDir, "InitData.json"),
                     JsonSerializer.Serialize(InitData));
 #if DEBUG
                 /*Task.Run(() =>
@@ -379,12 +507,195 @@ namespace ToolMod
             }
         }
 
+        /// <summary>
+        /// Re-reads the travel buff text dictionaries and grows InitData when the
+        /// game has loaded more entries. Safe: only reads TravelDictionary, never
+        /// creates a TravelMgr (which crashed when forced at the main menu).
+        /// </summary>
+        public void RefreshBuffList()
+        {
+            try
+            {
+                if (InitData == null) return;
+                bool changed = false;
+
+                var advText = TravelDictionary.advancedBuffsText;
+                if (advText != null && advText.Count > InitData.AdvBuffs.Count)
+                {
+                    var d = new SortedDictionary<int, string>();
+                    foreach (var kv in advText)
+                    {
+                        d[(int)kv.Key] = $"#{(int)kv.Key} {kv.Value}";
+                        Components.PatchDataCache.AdvBuffs.TryAdd(kv.Key, 0);
+                        Components.PatchDataCache.InGameAdvBuffs.TryAdd(kv.Key, 0);
+                    }
+                    InitData.AdvBuffs = new(d);
+                    changed = true;
+                }
+
+                var ultiText = TravelDictionary.ultimateBuffsText;
+                if (ultiText != null && ultiText.Count > InitData.UltiBuffs.Count)
+                {
+                    var d = new SortedDictionary<int, string>();
+                    foreach (var kv in ultiText)
+                    {
+                        d[(int)kv.Key] = $"#{(int)kv.Key} {kv.Value}";
+                        Components.PatchDataCache.UltiBuffs.TryAdd(kv.Key, 0);
+                        Components.PatchDataCache.InGameUltiBuffs.TryAdd(kv.Key, 0);
+                    }
+                    InitData.UltiBuffs = new(d);
+                    changed = true;
+                }
+
+                var debData = TravelDictionary.debuffData;
+                if (debData != null && debData.Count > InitData.Debuffs.Count)
+                {
+                    var d = new SortedDictionary<int, string>();
+                    foreach (var kv in debData)
+                    {
+                        d[(int)kv.Key] = $"#{(int)kv.Key} {kv.Value.Item1}";
+                        Components.PatchDataCache.Debuffs.TryAdd(kv.Key, false);
+                        Components.PatchDataCache.InGameDebuffs.TryAdd(kv.Key, false);
+                    }
+                    InitData.Debuffs = new(d);
+                    changed = true;
+                }
+
+                var unlText = TravelDictionary.unlocksText;
+                if (unlText != null && unlText.Count > InitData.UnlockablePlants.Count)
+                {
+                    var d = new SortedDictionary<int, string>();
+                    foreach (var kv in unlText)
+                    {
+                        d[(int)kv.Key] = $"#{(int)kv.Key} {kv.Value}";
+                        Components.PatchDataCache.UnlockedPlants.TryAdd(kv.Key, false);
+                        Components.PatchDataCache.InGameUnlockedPlants.TryAdd(kv.Key, false);
+                    }
+                    InitData.UnlockablePlants = new(d);
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    Directory.CreateDirectory(SharedConfigDir);
+                    File.WriteAllText(Path.Combine(SharedConfigDir, "InitData.json"),
+                        JsonSerializer.Serialize(InitData));
+                    DumpState();
+                    Log.LogInfo($"RefreshBuffList: adv={InitData.AdvBuffs.Count} ulti={InitData.UltiBuffs.Count} deb={InitData.Debuffs.Count} unl={InitData.UnlockablePlants.Count}");
+                }
+            }
+            catch (Exception ex) { Log.LogWarning("RefreshBuffList failed: " + ex.Message); }
+        }
+
         public void SendCommand(SyncData data) =>
             Task.Run(async () => await DataSync.SendAsync(JsonSerializer.Serialize(data)));
 
+        /// <summary>
+        /// Writes a snapshot of the primitive PatchDataCache fields to
+        /// toolmod_state.json so the launcher UI can restore switch states.
+        /// Keys are lowercase-first (matching the launcher's stateKey()).
+        /// </summary>
+        public void DumpState()
+        {
+            try
+            {
+                Directory.CreateDirectory(SharedConfigDir);
+                File.WriteAllText(Path.Combine(SharedConfigDir, "toolmod_state.json"),
+                    JsonSerializer.Serialize(DumpStateDict(), StateJsonOptions));
+                Log.LogInfo("DumpState: state written to " + SharedConfigDir);
+                File.WriteAllText(Path.Combine(SharedConfigDir, "toolmod_buffs.json"),
+                    JsonSerializer.Serialize(new
+                    {
+                        initial = new
+                        {
+                            adv = Components.PatchDataCache.AdvBuffs.Where(kv => kv.Value > 0).Select(kv => (int)kv.Key).ToArray(),
+                            ulti = Components.PatchDataCache.UltiBuffs.Where(kv => kv.Value > 0).Select(kv => (int)kv.Key).ToArray(),
+                            unl = Components.PatchDataCache.UnlockedPlants.Where(kv => kv.Value).Select(kv => (int)kv.Key).ToArray(),
+                            deb = Components.PatchDataCache.Debuffs.Where(kv => kv.Value).Select(kv => (int)kv.Key).ToArray(),
+                            inv = Components.PatchDataCache.InvestBuffs.Where(kv => kv.Value).Select(kv => (int)kv.Key).ToArray(),
+                        },
+                        ingame = new
+                        {
+                            adv = Components.PatchDataCache.InGameAdvBuffs.Where(kv => kv.Value > 0).Select(kv => (int)kv.Key).ToArray(),
+                            ulti = Components.PatchDataCache.InGameUltiBuffs.Where(kv => kv.Value > 0).Select(kv => (int)kv.Key).ToArray(),
+                            unl = Components.PatchDataCache.InGameUnlockedPlants.Where(kv => kv.Value).Select(kv => (int)kv.Key).ToArray(),
+                            deb = Components.PatchDataCache.InGameDebuffs.Where(kv => kv.Value).Select(kv => (int)kv.Key).ToArray(),
+                            inv = Components.PatchDataCache.InGameInvestBuffs.Where(kv => kv.Value).Select(kv => (int)kv.Key).ToArray(),
+                        },
+                    }));
+            }
+            catch (Exception ex) { Log.LogWarning("DumpState failed: " + ex); }
+        }
+
+        private static Dictionary<string, object> DumpStateDict()
+        {
+            var dict = new Dictionary<string, object>();
+            foreach (var p in typeof(Components.PatchDataCache)
+                         .GetProperties(BindingFlags.Public | BindingFlags.Static))
+            {
+                if (!p.CanRead) continue;
+                var t = p.PropertyType;
+                if (t != typeof(bool) && t != typeof(int) && t != typeof(float) && t != typeof(string))
+                    continue;
+                try
+                {
+                    var name = p.Name;
+                    var key = char.ToLowerInvariant(name[0]) + name.Substring(1);
+                    dict[key] = p.GetValue(null) ?? "";
+                }
+                catch { }
+            }
+            return dict;
+        }
+
+        /// <summary>保存全部修改条目（仅当 ModSaveEnabled 开启时）。</summary>
+        public void SaveModState()
+        {
+            try
+            {
+                if (!Components.PatchDataCache.ModSaveEnabled) return;
+                Directory.CreateDirectory(SharedConfigDir);
+                File.WriteAllText(Path.Combine(SharedConfigDir, "ModifierSave.json"),
+                    JsonSerializer.Serialize(DumpStateDict()));
+                Log.LogMessage("修改条目已保存");
+            }
+            catch (Exception ex) { Log.LogWarning("保存修改条目失败: " + ex.Message); }
+        }
+
+        /// <summary>启动时加载修改条目。</summary>
+        public void LoadModState()
+        {
+            try
+            {
+                var path = Path.Combine(SharedConfigDir, "ModifierSave.json");
+                if (!File.Exists(path)) return;
+                var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+                    File.ReadAllText(path), StateJsonOptions);
+                if (dict == null) return;
+                foreach (var p in typeof(Components.PatchDataCache)
+                             .GetProperties(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (!p.CanWrite) continue;
+                    var name = p.Name;
+                    var key = char.ToLowerInvariant(name[0]) + name.Substring(1);
+                    if (!dict.TryGetValue(key, out var el)) continue;
+                    try
+                    {
+                        if (p.PropertyType == typeof(bool)) p.SetValue(null, el.GetBoolean());
+                        else if (p.PropertyType == typeof(int)) p.SetValue(null, el.GetInt32());
+                        else if (p.PropertyType == typeof(float)) p.SetValue(null, el.GetSingle());
+                        else if (p.PropertyType == typeof(string)) p.SetValue(null, el.GetString());
+                    }
+                    catch { }
+                }
+                Log.LogMessage("修改条目已加载");
+            }
+            catch (Exception ex) { Log.LogWarning("加载修改条目失败: " + ex.Message); }
+        }
+
         public static ModCore Instance;
 
-        private DataSync DataSync { get; set; }
+        private IToolSync DataSync { get; set; }
         public GameObject ModifierObject { get; set; }
         public GameObject CacheObject{ get; set; }
         public BootConfig BootConfig { get; set; }

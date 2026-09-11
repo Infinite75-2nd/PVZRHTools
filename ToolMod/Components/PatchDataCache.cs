@@ -28,6 +28,10 @@ public class PatchDataCache
 
     #region 全局属性
 
+    public static bool AlmanacPlacePlant { get; set; }
+    public static bool AlmanacPlaceZombie { get; set; }
+    public static bool ModSaveEnabled { get; set; }
+
     public static bool ColumnPlanting { get; set; }
     public static bool SeedRain { get; set; }
     public static bool GameSpeedEnabled { get; set; }

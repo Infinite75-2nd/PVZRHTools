@@ -246,7 +246,11 @@ public class ShootingManagerPatch
                 menu.RegisterOption(
                     buffTitle,
                     description,
+#if ANDROID
+                    (UnityAction)dc.Method_Internal_Void_0,
+#else
                     (UnityAction)dc.Method_Internal_Void_PDM_0,
+#endif
                     buff.ShowType,
                     (ZombieType)(-1),
                     buff.Rarity);

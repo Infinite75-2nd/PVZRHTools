@@ -34,6 +34,28 @@ public class ToolsUpdater : MonoBehaviour
 
     public static ToolsUpdater Instance { get; set; }
 
+    private static int _refreshTick;
+
+    private static int _gridHintTick;
+
+    /// <summary>
+    /// 点击类功能开启时在屏幕底部持续提示操作方式（对齐 Android hook 版 mod_almanac_update）。
+    /// </summary>
+    private static void ProcessGridHint()
+    {
+        if (!AlmanacPlacePlant && !AlmanacPlaceZombie && !PatchDataCache.PlantUpgrade && !PatchDataCache.StarUpBuff) return;
+        if (++_gridHintTick < 60) return;
+        _gridHintTick = 0;
+
+        string msg;
+        if (AlmanacPlacePlant) msg = "图鉴种植植物：点击图鉴选植物，点击格子种植";
+        else if (AlmanacPlaceZombie) msg = "图鉴放置僵尸：点击图鉴选僵尸，点击格子放置";
+        else if (PatchDataCache.PlantUpgrade) msg = "植物升级：点击有植物的格子升级";
+        else msg = "星辉buff：点击有植物的格子施加星辉";
+
+        try { InGameText.Instance?.ShowText(msg, 2.0f, false, -400.0f); } catch { }
+    }
+
     [HideFromIl2Cpp] public PatchDataCache DataObserver { get; set; } = new();
 
     public void ProcessGameSpeed()
@@ -134,6 +156,9 @@ public class ToolsUpdater : MonoBehaviour
             }
         }
 
+        // 点击格子功能（开关式，对齐 Android 版）：开启后点格子直接放置图鉴选中的类型。
+        // 实际点击处理在 MousePatch.Update postfix（Mouse.Update 之后，确保当帧 theMouseRow/Column 已更新）。
+
         // 植物罐子 - 使用 ScaryPot_plant 类型（网格外不识别任何格子）
         if (Input.GetKeyDown(KeyAlmanacCreatePlantVase) && AlmanacSeedType is not PlantType.Nothing &&
             IsMouseInsideGrid())
@@ -172,37 +197,7 @@ public class ToolsUpdater : MonoBehaviour
             ShootingManager.Instance.ShowBuff();
         }
 
-        // 星辉buff功能 - 点击植物解锁星辉buff模式（如果该植物有星辉buff功能）
-        try
-        {
-            if (PatchDataCache.StarUpBuff && Board.Instance != null && Mouse.Instance != null)
-            {
-                // 左键点击植物来应用星辉buff。
-                // 游戏内部 Mouse.GetColumnFromX/GetRowFromY 会把网格外的点击 clamp 到最近的合法格子，
-                // 仅靠 theMouseColumn/theMouseRow 无法区分点击是否在网格外，
-                // 因此先判断鼠标是否真的落在棋盘网格区域内，网格外不识别任何格子。
-                if (Input.GetMouseButtonDown(0) && IsMouseInsideGrid())
-                {
-                    int column = Mouse.Instance.theMouseColumn;
-                    int row = Mouse.Instance.theMouseRow;
-
-                    // 检查点击位置是否有植物
-                    var plants = Lawnf.Get1x1Plants(column, row);
-                    if (plants != null && plants.Count > 0)
-                    {
-                        var plant = plants[0];
-                        if (plant != null && !plant.isCrashed && plant.thePlantHealth > 0)
-                        {
-                            // 使用辅助方法给植物上星辉buff
-                            ApplyStarUpBuff(plant);
-                        }
-                    }
-                }
-            }
-        }
-        catch
-        {
-        }
+        // 星辉buff / 植物升级的点击处理在 MousePatch.Update postfix（Mouse.Update 之后，当帧行列）。
 
         // 随机升级模式 - 点击植物操控，R键切换僵尸显血
         try
@@ -277,7 +272,7 @@ public class ToolsUpdater : MonoBehaviour
     /// （Board.gridSystem.GridMinX/GridMaxX/GridMinY/GridMaxY）比对，
     /// 才能实现"点网格之外不识别到任何格子"。
     /// </summary>
-    private static bool IsMouseInsideGrid()
+    public static bool IsMouseInsideGrid()
     {
         try
         {
@@ -508,40 +503,7 @@ public class ToolsUpdater : MonoBehaviour
             }
         }
 
-        // 植物升级功能 - 右键点击场上植物升级
-
-        if (PlantUpgrade && Board.Instance != null && Mouse.Instance != null)
-        {
-            try
-            {
-                // 检测鼠标右键点击
-                if (Input.GetMouseButtonDown(1))
-                {
-                    // 获取鼠标所在格子的植物
-                    int column = Mouse.Instance.theMouseColumn;
-                    int row = Mouse.Instance.theMouseRow;
-
-                    // 使用 Lawnf.Get1x1Plants 获取该格子的所有植物
-                    var plants = Lawnf.Get1x1Plants(column, row);
-                    if (plants != null && plants.Count > 0)
-                    {
-                        // 遍历该格子的植物，找到可以升级的植物
-                        foreach (var plant in plants)
-                        {
-                            if (plant != null && plant.theLevel < 3)
-                            {
-                                // 升级植物
-                                plant.Upgrade(plant.theLevel + 1, true, false);
-                                break; // 只升级一个植物
-                            }
-                        }
-                    }
-                }
-            }
-            catch
-            {
-            }
-        }
+        // 植物升级功能 - 左键点击场上植物升级（在 MousePatch.Update postfix 处理）
 
         if (RandomCard)
         {
@@ -599,7 +561,13 @@ public class ToolsUpdater : MonoBehaviour
 
     public void Update()
     {
+        if (++_refreshTick % 120 == 0)
+        {
+            try { ModCore.Instance?.RefreshBuffList(); } catch { }
+        }
+
         if (!InGame) return;
+        ProcessGridHint();
         if (GameAPP.theGameStatus is GameStatus.InGame)
         {
             ProcessGameSpeed();

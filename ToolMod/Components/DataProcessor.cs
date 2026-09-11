@@ -53,6 +53,17 @@ public class DataProcessor : MonoBehaviour
             else if (InGame && InGameCommands.ContainsKey(command.Command))
                 InGameCommands[command.Command](command.Parameters);
         }
+        ModCore.Instance?.DumpState();
+        RefreshBuffListPeriodically();
+    }
+
+    private static int _buffListTick;
+
+    /// <summary>Grows the travel buff list as the game loads its data.</summary>
+    private static void RefreshBuffListPeriodically()
+    {
+        if (++_buffListTick % 120 != 0) return;
+        try { ModCore.Instance?.RefreshBuffList(); } catch { }
     }
 
     [HideFromIl2Cpp]
@@ -62,6 +73,9 @@ public class DataProcessor : MonoBehaviour
 
         #region 通用修改
 
+        { Strings.AlmanacPlacePlant, SimpleSyncBool(() => AlmanacPlacePlant) },
+        { Strings.AlmanacPlaceZombie, SimpleSyncBool(() => AlmanacPlaceZombie) },
+        { Strings.ModSaveEnabled, SimpleSyncBool(() => ModSaveEnabled) },
         { Strings.DevMode, SimpleSyncBool(() => GameAPP.developerMode) },
         { Strings.ColumnPlanting, SimpleSyncBool(() => ColumnPlanting) },
         { Strings.SeedRain, SimpleSyncBool(() => SeedRain) },
@@ -79,6 +93,12 @@ public class DataProcessor : MonoBehaviour
         { Strings.NewZombieUpdateCD, SimpleSyncFloat(() => NewZombieUpdateCD) },
         { Strings.UnlimitedScore, SimpleSyncBool(() => UnlimitedScore) },
         { Strings.UnlimitedRefresh, SimpleSyncBool(() => UnlimitedRefresh) },
+
+        { Strings.TimeStop, SimpleSyncBool(() => TimeStop, () => { if (TimeStop) TimeSlow = false; }) },
+        { Strings.TimeSlow, SimpleSyncBool(() => TimeSlow, () => { if (TimeSlow) TimeStop = false; }) },
+        { Strings.ShowGameInfo, SimpleSyncBool(() => ShowGameInfo) },
+        { Strings.VirtualKey, VirtualKey },
+        { Strings.VirtualGameKey, VirtualGameKey },
 
         { Strings.LockSun, SimpleSyncInt(() => LockSun) },
         { Strings.LockMoney, SimpleSyncInt(() => LockMoney) },
@@ -459,6 +479,27 @@ public class DataProcessor : MonoBehaviour
     private static void Exit(List<string> _)
     {
         Application.Quit();
+    }
+
+    private static void VirtualKey(List<string> args)
+    {
+        if (args.Count == 0) return;
+        if (int.TryParse(args[0], out var code))
+            Patches.VirtualKeyPatch.Press((KeyCode)code);
+    }
+
+    /// <summary>按下游戏原版按键（按 KeyCodeManager 当前绑定解析，支持玩家改键）。</summary>
+    private static void VirtualGameKey(List<string> args)
+    {
+        if (args.Count == 0) return;
+        var key = args[0] switch
+        {
+            "CheckPlantAlmanac" => KeyCodeManager.CheckPlantAlmanac,
+            "HideUI" => KeyCodeManager.HideUI,
+            _ => KeyCode.None
+        };
+        if (key != KeyCode.None)
+            Patches.VirtualKeyPatch.Press(key);
     }
 
     #region InGameCommands

@@ -15,9 +15,9 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(InitBoard))]
 public static class InitBoardPatch
 {
-    [HarmonyPrefix]
-    [HarmonyPatch(nameof(InitBoard.RightMoveCamera))]
-    public static void PreRightMoveCamera(InitBoard __instance)
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(InitBoard.Awake))]
+    public static void PostAwake(InitBoard __instance)
     {
         __instance.StartCoroutine(PostInitBoard());
     }

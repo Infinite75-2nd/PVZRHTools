@@ -12,6 +12,10 @@ public static class OptionMenuPatch
     [HarmonyPatch(nameof(OptionMenu.Start))]
     public static void PostStart(OptionMenu __instance)
     {
+        // Android 无物理键盘：按键绑定 UI（KeyBindingUI/GameKeyBindingUI）未注册，
+        // 不往游戏设置菜单里添加这两个按钮。
+        if (ModCore.IsAndroid) return;
+
         var keyBinding= Object.Instantiate(__instance.transform.FindChild("Buttons").GetChild(5).gameObject,
             __instance.transform.FindChild("Buttons"));
         keyBinding.transform.localPosition = new(80, 157.5f, 0);

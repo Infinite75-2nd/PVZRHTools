@@ -1,14 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework Condition="'$(AndroidToolMod)' == 'true'">net10.0</TargetFramework>
+        <TargetFramework Condition="'$(AndroidToolMod)' != 'true'">net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <!-- Android build: interop/core are the flat NextBep device set. -->
+        <AndroidRefRoot Condition="'$(AndroidToolMod)' == 'true'">$(MSBuildThisFileDirectory)..\..\BepInAndroid\out\nextbep-std\dotnet-all</AndroidRefRoot>
+        <!-- Android interop renames compiler-generated closure methods, so a few
+             call sites need platform-specific member names. -->
+        <DefineConstants Condition="'$(AndroidToolMod)' == 'true'">$(DefineConstants);ANDROID</DefineConstants>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(AndroidToolMod)' == 'true'">
+        <AndroidRefFile Include="$(AndroidRefRoot)\*.dll" />
+    </ItemGroup>
+
+    <!-- Item batching only expands metadata inside a target, so add the device
+         interop references just before the compiler resolves them. -->
+    <Target Name="AddAndroidRefs" BeforeTargets="ResolveAssemblyReferences" Condition="'$(AndroidToolMod)' == 'true'">
+        <ItemGroup>
+            <Reference Include="%(AndroidRefFile.Filename)">
+                <HintPath>%(AndroidRefFile.FullPath)</HintPath>
+                <Private>false</Private>
+            </Reference>
+        </ItemGroup>
+    </Target>
+
+    <ItemGroup Condition="'$(AndroidToolMod)' != 'true'">
         <Reference Include="0Harmony">
             <HintPath>..\..\..\rh\BepInEx\core\0Harmony.dll</HintPath>
         </Reference>
@@ -380,12 +401,17 @@
         </Reference>
     </ItemGroup>
 
-    <ItemGroup>
+    <!-- Desktop: ToolData is a shared assembly also used by the Avalonia UI.
+         Android: compile its sources directly into ToolMod so only one DLL ships. -->
+    <ItemGroup Condition="'$(AndroidToolMod)' != 'true'">
         <ProjectReference Include="..\ToolData\ToolData.csproj"/>
     </ItemGroup>
+    <ItemGroup Condition="'$(AndroidToolMod)' == 'true'">
+        <Compile Include="..\ToolData\**\*.cs"
+                 Exclude="..\ToolData\obj\**\*.cs;..\ToolData\bin\**\*.cs" />
+    </ItemGroup>
 
-
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(AndroidToolMod)' != 'true'">
         <Exec Command="xcopy /y &quot;$(OutDir)ToolMod.dll&quot; &quot;D:\Beta\rh\BepInEx\plugins&quot;&#xA;xcopy /y &quot;$(OutDir)ToolData.dll&quot; &quot;D:\Beta\rh\BepInEx\plugins&quot;"/>
         <Exec Command="cd /d &quot;$(OutDir)&quot; &amp;&amp; &quot;C:\Program Files\7-Zip\7z.exe&quot; a -t7z -mx=9 &quot;$(SolutionDir)PVZRHTools\Assets\plugins.7z&quot; ToolMod.dll ToolData.dll"/>
     </Target>

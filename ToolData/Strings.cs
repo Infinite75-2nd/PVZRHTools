@@ -22,6 +22,10 @@ namespace ToolData
 
         #region 通用修改
 
+        public const string AlmanacPlacePlant = "AlmanacPlacePlant";
+        public const string AlmanacPlaceZombie = "AlmanacPlaceZombie";
+        public const string ModSaveEnabled = "ModSaveEnabled";
+
         public const string DevMode = "DevMode";
         public const string GameSpeed = "GameSpeed";
         public const string GameSpeedEnabled = "GameSpeedEnabled";
@@ -37,6 +41,12 @@ namespace ToolData
         public const string NewZombieUpdateCD = "NewZombieUpdateCD";
         public const string UnlimitedScore = "UnlimitedScore";
         public const string UnlimitedRefresh = "UnlimitedRefresh";
+
+        public const string TimeStop = "TimeStop";
+        public const string TimeSlow = "TimeSlow";
+        public const string ShowGameInfo = "ShowGameInfo";
+        public const string VirtualKey = "VirtualKey";
+        public const string VirtualGameKey = "VirtualGameKey";
 
         public const string Sun = "Sun";
         public const string LockSun = "LockSun";

@@ -197,6 +197,7 @@ public static class Utils
                 })
             ]
         });
+        ModCore.Instance?.DumpState();
     }
 
     /// <summary>
@@ -319,6 +320,16 @@ public static class Utils
                 }
             }
 
+            if (TravelDictionary.unlocksText != null && UnlockedPlants.Count < TravelDictionary.unlocksText.Count)
+            {
+                foreach (var unlock in TravelDictionary.unlocksText)
+                {
+                    UnlockedPlants.TryAdd(unlock.Key, false);
+                    InGameUnlockedPlants.TryAdd(unlock.Key, false);
+                }
+                needRefresh = true;
+            }
+
             if (!needRefresh) return;
 
             SortedDictionary<int, string> advBuffs = [];
@@ -339,14 +350,24 @@ public static class Utils
                 debuffs.Add((int)kvp.Key, $"#{(int)kvp.Key} {kvp.Value}");
             }
 
+            SortedDictionary<int, string> unlockablePlants = [];
+            if (TravelDictionary.unlocksText != null)
+                foreach (var kvp in TravelDictionary.unlocksText)
+                    unlockablePlants.Add((int)kvp.Key, $"#{(int)kvp.Key} {kvp.Value}");
+
             // 更新并保存InitData
             ModCore.Instance.InitData.AdvBuffs = new(advBuffs);
             ModCore.Instance.InitData.UltiBuffs = new(ultiBuffs);
             ModCore.Instance.InitData.Debuffs = new(debuffs);
+            if (unlockablePlants.Count > 0)
+                ModCore.Instance.InitData.UnlockablePlants = new(unlockablePlants);
 
-            // 保存更新后的InitData
-            File.WriteAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath),
-                JsonSerializer.Serialize(ModCore.Instance.InitData));
+            // 保存更新后的InitData（安卓写到启动器共享的 config 目录）
+            var initPath = ModCore.IsAndroid
+                ? Path.Combine(ModCore.SharedConfigDir, "InitData.json")
+                : Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(initPath)!);
+            File.WriteAllText(initPath, JsonSerializer.Serialize(ModCore.Instance.InitData));
             ModCore.Instance.SendCommand(new SyncData()
             {
                 Command = Strings.ReloadInitData,

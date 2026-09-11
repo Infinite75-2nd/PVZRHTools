@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework Condition="'$(AndroidToolMod)' == 'true'">net10.0</TargetFramework>
+        <TargetFramework Condition="'$(AndroidToolMod)' != 'true'">net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
-    <Target Name="SyncVersionToUpdateJson" AfterTargets="Build">
+    <Target Name="SyncVersionToUpdateJson" AfterTargets="Build" Condition="'$(AndroidToolMod)' != 'true'">
         <PropertyGroup>
             <_StringsFile>$(MSBuildThisFileDirectory)Strings.cs</_StringsFile>
             <_Content>$([System.IO.File]::ReadAllText('$(_StringsFile)'))</_Content>
