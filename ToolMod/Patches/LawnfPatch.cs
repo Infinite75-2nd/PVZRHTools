@@ -13,8 +13,8 @@ public static class LawnfPatch
         return true;
     }
 
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(Lawnf.CheckIfPlantUnlock))]
+    //[HarmonyPostfix]
+    //[HarmonyPatch(nameof(Lawnf.CheckIfPlantUnlock))]
     public static void PreCheckIfPlantUnlock(ref UnlockType __result)
     {
         if (EnableAllCards)

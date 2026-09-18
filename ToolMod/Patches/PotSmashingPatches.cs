@@ -210,7 +210,7 @@ public static class PotSmashingPatches
 /// <summary>
 /// 巨人僵尸忽略罐子补丁
 /// </summary>
-[HarmonyPatch]
+//[HarmonyPatch]
 public static class GargantuarIgnorePotPatches
 {
     [HarmonyPrefix]
@@ -231,8 +231,8 @@ public static class GargantuarIgnorePotPatches
         }
     }
 
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Gargantuar), nameof(Gargantuar.GargantuarAttackUpdate))]
+    //[HarmonyPrefix]
+    //[HarmonyPatch(typeof(Gargantuar), nameof(Gargantuar.GargantuarAttackUpdate))]
     public static bool Prefix_GargantuarAttackUpdate(Gargantuar __instance)
     {
         if (!PotSmashingFix) return true;
