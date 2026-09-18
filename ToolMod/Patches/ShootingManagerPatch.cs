@@ -64,7 +64,7 @@ public class ShootingManagerPatch
         
     }
     
-    [HarmonyPrefix]
+    /*[HarmonyPrefix]
     [HarmonyPatch(nameof(ShootingManager.RegisterExpertBuff))]
     public static bool PreRegisterExpertBuff(ShootingManager __instance, MultipleChoiceMenu menu)
     {
@@ -254,7 +254,7 @@ public class ShootingManagerPatch
         }
 
         return false;
-    }
+    }*/
     
     [HarmonyPostfix]
     [HarmonyPatch(nameof(ShootingManager.GetQualityValue), typeof(float), typeof(Quality))]
