@@ -39,8 +39,10 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
     [Reactive] public partial bool GodEvolutionForceMissionBuff { get; set; }
     [Reactive] public partial bool GodEvolutionForceIridescentBuff { get; set; }
     [Reactive] public partial bool GodEvolutionForceRandomBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionForceTacticalBuff { get; set; }
     [Reactive] public partial bool GodEvolutionDebuffRefreshable { get; set; }
     [Reactive] public partial bool GodEvolutionDebuffClosable { get; set; }
+    [Reactive] public partial int GodCoin { get; set; }
 
     [ReactiveCommand]
     public void GodEvolutionResetQuality()
@@ -51,6 +53,22 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
             Parameters = []
         });
     }
+
+    [ReactiveCommand]
+    public void SetGodCoin() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.SetGodCoin,
+            Parameters = [GodCoin.ToString()]
+        });
+
+    [ReactiveCommand]
+    public void GodEvolutionBuyAll() =>
+        DataSyncService.SendCommand(new SyncData()
+        {
+            Command = Strings.GodEvolutionBuyAll,
+            Parameters = []
+        });
 
     [ReactiveCommand]
     public void GodEvolutionUnlockAll()
@@ -111,6 +129,7 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.GodEvolutionForceMissionBuff, Strings.GodEvolutionForceMissionBuff);
         this.SimpleOneWaySync(x => x.GodEvolutionForceIridescentBuff, Strings.GodEvolutionForceIridescentBuff);
         this.SimpleOneWaySync(x => x.GodEvolutionForceRandomBuff, Strings.GodEvolutionForceRandomBuff);
+        this.SimpleOneWaySync(x => x.GodEvolutionForceTacticalBuff, Strings.GodEvolutionForceTacticalBuff);
         this.SimpleOneWaySync(x => x.GodEvolutionDebuffRefreshable, Strings.GodEvolutionDebuffRefreshable);
         this.SimpleOneWaySync(x => x.GodEvolutionDebuffClosable, Strings.GodEvolutionDebuffClosable);
 
@@ -156,8 +175,10 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         settings.GodEvolutionForceMissionBuff = GodEvolutionForceMissionBuff;
         settings.GodEvolutionForceIridescentBuff = GodEvolutionForceIridescentBuff;
         settings.GodEvolutionForceRandomBuff = GodEvolutionForceRandomBuff;
+        settings.GodEvolutionForceTacticalBuff = GodEvolutionForceTacticalBuff;
         settings.GodEvolutionDebuffRefreshable = GodEvolutionDebuffRefreshable;
         settings.GodEvolutionDebuffClosable = GodEvolutionDebuffClosable;
+        settings.GodCoin = GodCoin;
     }
 
     public override void LoadSettings(SettingsData settings)
@@ -194,7 +215,9 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         GodEvolutionForceMissionBuff = settings.GodEvolutionForceMissionBuff;
         GodEvolutionForceIridescentBuff = settings.GodEvolutionForceIridescentBuff;
         GodEvolutionForceRandomBuff = settings.GodEvolutionForceRandomBuff;
+        GodEvolutionForceTacticalBuff = settings.GodEvolutionForceTacticalBuff;
         GodEvolutionDebuffRefreshable = settings.GodEvolutionDebuffRefreshable;
         GodEvolutionDebuffClosable = settings.GodEvolutionDebuffClosable;
+        GodCoin = settings.GodCoin;
     }
 }

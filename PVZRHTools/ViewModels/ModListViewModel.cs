@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,22 +11,45 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PVZRHTools.Models;
 using PVZRHTools.Services;
+using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Ursa.Controls;
 using Notification = Ursa.Controls.Notification;
 
 namespace PVZRHTools.ViewModels;
 
-public partial class ModListViewModel(
-    IModsManagementService modsManagementService,
-    INotificationService notificationService) : ViewModelBase
+public partial class ModListViewModel : ViewModelBase
 {
     [Reactive] public partial GameInstanceInfo Info { get; set; }
-    private IModsManagementService _modsManagementService { get; } = modsManagementService;
-    private INotificationService _notificationService { get; } = notificationService;
+    [Reactive] public partial string SearchText { get; set; } = "";
+    private IModsManagementService _modsManagementService { get; }
+    private INotificationService _notificationService { get; }
+
+    public ModListViewModel(
+        IModsManagementService modsManagementService,
+        INotificationService notificationService)
+    {
+        _modsManagementService = modsManagementService;
+        _notificationService = notificationService;
+
+        this.WhenAnyValue(x => x.SearchText)
+            .Subscribe(_ => ApplyFilter());
+        this.WhenAnyValue(x => x.Info)
+            .Subscribe(_ =>
+            {
+                if (!string.IsNullOrEmpty(SearchText))
+                    SearchText = "";
+                else
+                    ApplyFilter();
+            });
+    }
 
     [ReactiveCommand]
-    private void ToggleMod(ModInfo mod) => _modsManagementService.ToggleMod(Info, mod);
+    private void ToggleMod(ModInfo mod)
+    {
+        _modsManagementService.ToggleMod(Info, mod);
+        ApplyFilter();
+    }
 
     [ReactiveCommand]
     private void ShowInExplorer(ModInfo mod)
@@ -37,6 +61,7 @@ public partial class ModListViewModel(
     private void RefreshModList()
     {
         _modsManagementService.SyncModsInfo(Info);
+        ApplyFilter();
     }
 
     [ReactiveCommand]
@@ -104,9 +129,22 @@ public partial class ModListViewModel(
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             _modsManagementService.SyncModsInfo(Info);
+            ApplyFilter();
             _notificationService.NotificationManager?.Show(
                 new Notification($"已添加{validPaths.Count}个模组", null, NotificationType.Success),
                 NotificationType.Success);
         });
+    }
+
+    private void ApplyFilter()
+    {
+        if (Info?.Mods is null) return;
+
+        var searchText = SearchText?.Trim() ?? string.Empty;
+        foreach (var mod in Info.Mods)
+        {
+            mod.IsVisible = string.IsNullOrEmpty(searchText) ||
+                            mod.DisplayName.Contains(searchText, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

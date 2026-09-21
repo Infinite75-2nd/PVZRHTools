@@ -200,6 +200,7 @@ public class PatchDataCache
     public static bool GodEvolutionForceMissionBuff { get; set; }
     public static bool GodEvolutionForceIridescentBuff { get; set; }
     public static bool GodEvolutionForceRandomBuff { get; set; }
+    public static bool GodEvolutionForceTacticalBuff { get; set; }
     public static bool GodEvolutionDebuffRefreshable { get; set; }
     public static bool GodEvolutionDebuffClosable { get; set; }
 

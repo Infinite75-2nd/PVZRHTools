@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq.Expressions;
 using PVZRHTools.ViewModels;
@@ -59,7 +60,7 @@ public static class ToolUtils
                 SyncData data = new()
                 {
                     Command = propertyName,
-                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : "-1.0"]
+                    Parameters = [expressionBool.Compile()(vm) ? value.ToString(CultureInfo.InvariantCulture) : "-1.0"]
                 };
                 vm.DataSyncService.SendCommand(data);
             });
@@ -70,7 +71,7 @@ public static class ToolUtils
             SyncData data = new()
             {
                 Command = propertyName,
-                Parameters = [value ? $"{expressionDouble.Compile()(vm)}" : "-1.0"]
+                Parameters = [value ? expressionDouble.Compile()(vm).ToString(CultureInfo.InvariantCulture) : "-1.0"]
             };
             vm.DataSyncService.SendCommand(data);
         });
@@ -119,7 +120,12 @@ public static class ToolUtils
                 SyncData data = new()
                 {
                     Command = propertyName,
-                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : "-Infinity"]
+                    Parameters =
+                    [
+                        expressionBool.Compile()(vm)
+                            ? value.ToString(CultureInfo.InvariantCulture)
+                            : float.NegativeInfinity.ToString(CultureInfo.InvariantCulture)
+                    ]
                 };
                 vm.DataSyncService.SendCommand(data);
             });
@@ -130,7 +136,12 @@ public static class ToolUtils
             SyncData data = new()
             {
                 Command = propertyName,
-                Parameters = [value ? $"{expressionDouble.Compile()(vm)}" : "-Infinity"]
+                Parameters =
+                [
+                    value
+                        ? expressionDouble.Compile()(vm).ToString(CultureInfo.InvariantCulture)
+                        : float.NegativeInfinity.ToString(CultureInfo.InvariantCulture)
+                ]
             };
             vm.DataSyncService.SendCommand(data);
         });

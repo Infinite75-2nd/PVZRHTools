@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -39,9 +40,32 @@ public static class Utils
         Action? callBack = null)
         => args =>
         {
-            CreateSetter(propertyExpression)(Convert.ToSingle(args[0]));
+            CreateSetter(propertyExpression)(ParseFloat(args[0]));
             callBack?.Invoke();
         };
+
+    /// <summary>
+    /// Convert.ToSingle 无法解析 "-Infinity"/"Infinity"/"NaN"。
+    /// 诸神进化幸运值关闭时会同步 -Infinity 作为禁用标志。
+    /// </summary>
+    public static float ParseFloat(string value)
+    {
+        if (float.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands,
+                CultureInfo.InvariantCulture, out var result))
+            return result;
+        if (float.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands,
+                CultureInfo.CurrentCulture, out result))
+            return result;
+        if (string.Equals(value, "-Infinity", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "-∞", StringComparison.Ordinal))
+            return float.NegativeInfinity;
+        if (string.Equals(value, "Infinity", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "∞", StringComparison.Ordinal))
+            return float.PositiveInfinity;
+        if (string.Equals(value, "NaN", StringComparison.OrdinalIgnoreCase))
+            return float.NaN;
+        throw new FormatException($"Input string was not in a correct format: '{value}'");
+    }
 
     public static Action<List<string>> SimpleSyncInt(Expression<Func<int>> propertyExpression, Action? callBack = null)
         => args =>

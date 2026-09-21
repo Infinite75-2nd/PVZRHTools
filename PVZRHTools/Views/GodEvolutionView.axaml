@@ -50,21 +50,27 @@
                     <Border Width="100"><u:NumericDoubleUpDown Value="{Binding GodEvolutionDamageMultiplier, Mode=TwoWay}" /></Border>
                     <CheckBox Content="难度积分" IsChecked="{Binding GodEvolutionDifficultyPointEnabled, Mode=TwoWay}" />
                     <Border Width="100"><u:NumericIntUpDown Value="{Binding GodEvolutionDifficultyPoint, Mode=TwoWay}" /></Border>
-                    <CheckBox Content="超质变词条概率大幅提升" IsChecked="{Binding GodEvolutionForceSuperQuality, Mode=TwoWay}" />
-                    <CheckBox Content="专家邀请词条概率大幅提升" IsChecked="{Binding GodEvolutionForceExpertBuff, Mode=TwoWay}" />
-
+                    <Button Content="修改诸神币"
+                            Command="{Binding SetGodCoinCommand}" />
+                    <Border Width="100"><u:NumericIntUpDown Value="{Binding GodCoin, Mode=TwoWay}" /></Border>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="超质变词条概率大幅提升" IsChecked="{Binding GodEvolutionForceSuperQuality, Mode=TwoWay}" />
+                    <CheckBox Content="专家邀请词条概率大幅提升" IsChecked="{Binding GodEvolutionForceExpertBuff, Mode=TwoWay}" />
                     <CheckBox Content="超进化词条概率大幅提升"
                               IsChecked="{Binding GodEvolutionForceStarUpBuff, Mode=TwoWay}" />
                     <CheckBox Content="质变词条概率大幅提升"
                               IsChecked="{Binding GodEvolutionForceMutationBuff, Mode=TwoWay}" />
-                    <!--<CheckBox Content="试炼词条概率大幅提升"
-                              IsChecked="{Binding GodEvolutionForceMissionBuff, Mode=TwoWay}" />-->
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="试炼词条概率大幅提升"
+                              IsChecked="{Binding GodEvolutionForceMissionBuff, Mode=TwoWay}" />
                     <CheckBox Content="棱彩词条概率大幅提升"
                               IsChecked="{Binding GodEvolutionForceIridescentBuff, Mode=TwoWay}" />
                     <CheckBox Content="随机词条概率大幅提升"
                               IsChecked="{Binding GodEvolutionForceRandomBuff, Mode=TwoWay}" />
+                    <CheckBox Content="战术词条概率大幅提升"
+                              IsChecked="{Binding GodEvolutionForceTacticalBuff, Mode=TwoWay}" />
                     <CheckBox Content="词条可取消选择"
                               IsChecked="{Binding GodEvolutionDebuffClosable, Mode=TwoWay}" />
                 </StackPanel>
@@ -101,6 +107,13 @@
                                     Command="{Binding GodEvolutionUnlockAllCommand}" />
                     <Button Content="立即选词条"
                             Command="{Binding GodEvolutionChooseBuffCommand}" />
+                    <u:PopConfirm PopupHeader="确定进行此修改？"
+                                  HorizontalAlignment="Left"
+                                  PopupContent="此修改将不可逆"
+                                  Placement="BottomEdgeAlignedRight"
+                                  ConfirmCommand="{Binding GodEvolutionBuyAllCommand}">
+                        <Button Content="一键购买全部植物/路线/词条"/>
+                    </u:PopConfirm>
                 </StackPanel>
             </StackPanel>
         </Border>

@@ -2,8 +2,8 @@ namespace ToolData
 {
     public static class Strings
     {
-        public const string GameVersion = "3.9";
-        public const string ModifierVersion = "5.2.3";
+        public const string GameVersion = "4.0";
+        public const string ModifierVersion = "5.3.0";
         public const string PipeName = "infinite75_pvzrhtools";
         public const string RunModifierArgument = "--run_modifier";
 
@@ -14,6 +14,7 @@ namespace ToolData
             "8b3ded75fc67104efcf927cbfe6b9937d2b9f99b3d1ef1d4c29473405539653c"=>"3.8",
             "51346f4dae35cf145f72473fd0ae6f777c427d5cecc7732936d4e0c7bac5ef52"=>"3.8.1",
             "dc9281b7638a57d8d95a535dcdc3fe85c0ce3b6789db26e02e4f21ec24390c3a"=>"3.9",
+            "3e0d18e51932e416d8578f15831f6acaea1e8ef1b4edbf667790af8337c51ade"=>"4.0",
             _ => "<internal alpha>"
         };
 
@@ -209,6 +210,8 @@ namespace ToolData
         public const string GodEvolutionDifficultyPoint = "GodEvolutionDifficultyPoint";
         public const string GodEvolutionResetQuality = "GodEvolutionResetQuality";
         public const string GodEvolutionUnlockAll = "GodEvolutionUnlockAll";
+        public const string GodEvolutionBuyAll = "GodEvolutionBuyAll";
+        public const string SetGodCoin = "SetGodCoin";
         public const string GodEvolutionMultiSelectBuff = "GodEvolutionMultiSelectBuff";
         public const string GodEvolutionChooseBuff = "GodEvolutionChooseBuff";
         public const string GodEvolutionCheatHard = "GodEvolutionCheatHard";
@@ -219,6 +222,7 @@ namespace ToolData
         public const string GodEvolutionForceMissionBuff = "GodEvolutionForceMissionBuff";
         public const string GodEvolutionForceIridescentBuff = "GodEvolutionForceIridescentBuff";
         public const string GodEvolutionForceRandomBuff = "GodEvolutionForceRandomBuff";
+        public const string GodEvolutionForceTacticalBuff = "GodEvolutionForceTacticalBuff";
         public const string GodEvolutionDebuffRefreshable = "GodEvolutionDebuffRefreshable";
         public const string GodEvolutionDebuffClosable = "GodEvolutionDebuffClosable";
 

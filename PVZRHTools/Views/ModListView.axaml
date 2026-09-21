@@ -11,7 +11,6 @@
              x:Class="PVZRHTools.Views.ModListView"
              MaxHeight="600">
     <UserControl.Resources>
-        <converters:PathToNameConverter x:Key="PathToNameConverter" />
         <converters:PathToFolderConverter x:Key="PathToFolderConverter" />
     </UserControl.Resources>
 
@@ -50,19 +49,23 @@
                                               DropCommand="{Binding DropCommand}" />
                 </Interaction.Behaviors>
             </u:IconButton>
+            <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="搜索模组名称..."
+                     MinWidth="300" />
             <ItemsControl ItemsSource="{Binding Info.Mods}"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2">
+                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2"
+                              IsVisible="{Binding IsVisible}">
                             <CheckBox Grid.Column="0"
                                       IsChecked="{Binding IsEnabled, Mode=TwoWay}"
                                       VerticalAlignment="Center"
                                       Command="{Binding $parent[ItemsControl].((vm:ModListViewModel)DataContext).ToggleModCommand}"
                                       CommandParameter="{Binding}" />
                             <TextBlock Grid.Column="1"
-                                       Text="{Binding ModFilePath, Converter={StaticResource PathToNameConverter}}"
+                                       Text="{Binding DisplayName}"
                                        VerticalAlignment="Center"
                                        Margin="6,0,0,0" />
                             <u:IconButton Grid.Column="2"

@@ -244,6 +244,7 @@ public static class SettingsLoader
             PatchDataCache.GodEvolutionForceMissionBuff = settings.GodEvolutionForceMissionBuff;
             PatchDataCache.GodEvolutionForceIridescentBuff = settings.GodEvolutionForceIridescentBuff;
             PatchDataCache.GodEvolutionForceRandomBuff = settings.GodEvolutionForceRandomBuff;
+            PatchDataCache.GodEvolutionForceTacticalBuff = settings.GodEvolutionForceTacticalBuff;
             PatchDataCache.GodEvolutionDebuffRefreshable = settings.GodEvolutionDebuffRefreshable;
             PatchDataCache.GodEvolutionDebuffClosable = settings.GodEvolutionDebuffClosable;
             PatchDataCache.GodEvolutionLucky = settings.GodEvolutionLuckyEnabled

@@ -2,11 +2,11 @@
 
 namespace ToolMod.Patches;
 
-[HarmonyPatch(typeof(GameAPP))]
+//[HarmonyPatch(typeof(GameAPP))]
 public class GameAPPPatch
 {
-    [HarmonyPostfix]
-    [HarmonyPatch(nameof(GameAPP.Start))]
+    //[HarmonyPostfix]
+    //[HarmonyPatch(nameof(GameAPP.Start))]
     public static void PostStart()
     {
         if (!ModCore.Instance.Inited)

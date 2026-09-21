@@ -8,6 +8,7 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppSystem.Collections.Specialized;
 using ToolData;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -323,6 +324,8 @@ public class DataProcessor : MonoBehaviour
         },
         { Strings.GodEvolutionDifficultyPoint, SimpleSyncInt(() => GodEvolutionDifficultyPoint) },
         { Strings.GodEvolutionUnlockAll, GodEvolutionUnlockAll },
+        { Strings.GodEvolutionBuyAll, GodEvolutionBuyAll },
+        { Strings.SetGodCoin, SetGodCoin },
         { Strings.GodEvolutionMultiSelectBuff, SimpleSyncBool(() => GodEvolutionMultiSelectBuff) },
         { Strings.GodEvolutionChooseBuff, GodEvolutionChooseBuff },
         { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard, () =>
@@ -338,6 +341,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.GodEvolutionForceMissionBuff, SimpleSyncBool(() => GodEvolutionForceMissionBuff) },
         { Strings.GodEvolutionForceIridescentBuff, SimpleSyncBool(() => GodEvolutionForceIridescentBuff) },
         { Strings.GodEvolutionForceRandomBuff, SimpleSyncBool(() => GodEvolutionForceRandomBuff) },
+        { Strings.GodEvolutionForceTacticalBuff, SimpleSyncBool(() => GodEvolutionForceTacticalBuff) },
         { Strings.GodEvolutionDebuffRefreshable, SimpleSyncBool(() => GodEvolutionDebuffRefreshable) },
         { Strings.GodEvolutionDebuffClosable, SimpleSyncBool(() => GodEvolutionDebuffClosable) },
         #endregion
@@ -1874,6 +1878,73 @@ public class DataProcessor : MonoBehaviour
         newPtr[4] = element;
         newPtr[5] = 1;
         list.Add(newRecord);
+    }
+
+    private static void SetGodCoin(List<string> args)
+    {
+        int coin= int.Parse(args[0]);
+        ShootingManager.Data.godCoins = coin;
+    }
+
+    private static void GodEvolutionBuyAll(List<string> _)
+    {
+        var data = ShootingManager.Data;
+        if (data == null) return;
+
+        var catalog = ShootingAlmanacCatalog.Build();
+        if (catalog == null) return;
+
+        if (data.unlockedPlants == null)
+            data.unlockedPlants = new Il2CppSystem.Collections.Generic.List<PlantType>();
+        if (data.unlockedRoutes == null)
+            data.unlockedRoutes = new Il2CppSystem.Collections.Generic.List<string>();
+        if (data.unlockedTacticMaxEntries == null)
+            data.unlockedTacticMaxEntries = new Il2CppSystem.Collections.Generic.List<string>();
+
+        // ShootingAlmanacUnlocks.TryBuyPlant：根植物写入 unlockedPlants，并顺带写入首条路线
+        // ShootingAlmanacUnlocks.TryBuyRoute：RouteId(path) = string.Join("-", path) 写入 unlockedRoutes
+        var roots = catalog.Roots;
+        var rootCount = roots?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<PlantType>>()?.Count ?? 0;
+        for (var i = 0; i < rootCount; i++)
+        {
+            var plant = roots[i];
+            if (!data.unlockedPlants.Contains(plant))
+                data.unlockedPlants.Add(plant);
+
+            var routes = catalog.GetRoutes(plant);
+            var routeCount = routes
+                ?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<
+                    Il2CppSystem.Collections.Generic.List<PlantType>>>()
+                ?.Count ?? 0;
+            for (var j = 0; j < routeCount; j++)
+            {
+                var path = routes[j];
+                if (path == null || path.Count <= 0) continue;
+                var id = ShootingAlmanacUnlocks.RouteId(
+                    path.Cast<Il2CppSystem.Collections.Generic.IEnumerable<PlantType>>());
+                if (!string.IsNullOrEmpty(id) && !data.unlockedRoutes.Contains(id))
+                    data.unlockedRoutes.Add(id);
+            }
+        }
+
+        // ShootingAlmanacUnlocks.TryBuyTacticMax：Tactics 图鉴条目 Id 写入 unlockedTacticMaxEntries
+        var tactics = catalog.GetEntries(ShootingAlmanacCategory.Tactics);
+        var tacticCount = tactics?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<ShootingAlmanacEntry>>()
+            ?.Count ?? 0;
+        for (var i = 0; i < tacticCount; i++)
+        {
+            var entry = tactics[i];
+            if (entry == null || string.IsNullOrEmpty(entry.Id)) continue;
+            if (!data.unlockedTacticMaxEntries.Contains(entry.Id))
+                data.unlockedTacticMaxEntries.Add(entry.Id);
+        }
+
+        data.hasPurchasedAlmanacUnlock = true;
+        if (data.unlockVersion < 2)
+            data.unlockVersion = 2;
+
+        SaveInfo.Instance?.SavePlayerData();
+        InGameText.Instance?.ShowText("已解锁全部植物、路线与战术词条", 5);
     }
 
     private static void GodEvolutionUnlockAll(List<string> _)

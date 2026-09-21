@@ -248,8 +248,10 @@ public class SettingsData
     public bool GodEvolutionForceMissionBuff { get; set; }
     public bool GodEvolutionForceIridescentBuff { get; set; }
     public bool GodEvolutionForceRandomBuff { get; set; }
+    public bool GodEvolutionForceTacticalBuff { get; set; }
     public bool GodEvolutionDebuffRefreshable { get; set; }
     public bool GodEvolutionDebuffClosable { get; set; }
+    public int GodCoin { get; set; }
 
     // AbyssAndTreasureViewModel - 花园修改
     public int ZenGardenMoney { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 
@@ -21,4 +22,16 @@ public partial class ModInfo : ReactiveObject
 {
     [Reactive] public partial string ModFilePath { get; set; } = "";
     [Reactive] public partial bool IsEnabled { get; set; }
+    [Reactive] public partial bool IsVisible { get; set; } = true;
+
+    public string DisplayName
+    {
+        get
+        {
+            var modPath = Path.GetFileNameWithoutExtension(ModFilePath);
+            return Path.HasExtension(modPath) && Path.GetExtension(modPath) is ".dll"
+                ? Path.GetFileNameWithoutExtension(modPath)
+                : modPath;
+        }
+    }
 }
