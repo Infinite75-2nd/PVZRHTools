@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PVZRHTools.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:ctrl="using:PVZRHTools.Controls"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
              x:CompileBindings="True"
              x:Class="PVZRHTools.Views.FlagWaveBuffsView"
@@ -39,12 +40,12 @@
                                 WrapSelection="True">
                                 <u:MultiComboBox.SelectedItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.SelectedItemTemplate>
                                 <u:MultiComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.ItemTemplate>
                                 <u:MultiComboBox.InnerLeftContent>
@@ -67,12 +68,12 @@
                                 WrapSelection="True">
                                 <u:MultiComboBox.SelectedItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.SelectedItemTemplate>
                                 <u:MultiComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.ItemTemplate>
                                 <u:MultiComboBox.InnerLeftContent>
@@ -95,12 +96,12 @@
                                 WrapSelection="True">
                                 <u:MultiComboBox.SelectedItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.SelectedItemTemplate>
                                 <u:MultiComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.ItemTemplate>
                                 <u:MultiComboBox.InnerLeftContent>
@@ -123,12 +124,12 @@
                                 WrapSelection="True">
                                 <u:MultiComboBox.SelectedItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.SelectedItemTemplate>
                                 <u:MultiComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Value}" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Value}" />
                                     </DataTemplate>
                                 </u:MultiComboBox.ItemTemplate>
                                 <u:MultiComboBox.InnerLeftContent>

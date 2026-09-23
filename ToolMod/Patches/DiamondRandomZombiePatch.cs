@@ -7,7 +7,7 @@ using static ToolMod.Utils;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 钻石盲盒僵尸：覆盖 SetRandomZombie，实现按 PvE 槽1 指定僵尸生成
+///     钻石盲盒僵尸：覆盖 SetRandomZombie，实现按 PvE 槽1 指定僵尸生成
 /// </summary>
 [HarmonyPatch(typeof(DiamondRandomZombie), nameof(DiamondRandomZombie.SetRandomZombie))]
 public static class DiamondRandomZombiePatch
@@ -19,8 +19,8 @@ public static class DiamondRandomZombiePatch
         if (!InGame || Board.Instance == null || CreateZombie.Instance == null)
             return true;
 
-        int instId = __instance.GetInstanceID();
-        if (!PveBlindBoxSlotByInstance.TryGetValue(instId, out int slot) || slot != 1)
+        var instId = __instance.GetInstanceID();
+        if (!PveBlindBoxSlotByInstance.TryGetValue(instId, out var slot) || slot != 1)
             return true; // 只处理 PvE 布阵中的那一个钻石盲盒
 
         if (ZombieSlot1Index < 0)
@@ -29,7 +29,7 @@ public static class DiamondRandomZombiePatch
         // 用完就移除，避免后续其它逻辑再次误用
         PveBlindBoxSlotByInstance.Remove(instId);
 
-        float x = pos.x;
+        var x = pos.x;
 
         if (!__instance.isMindControlled)
             __result = CreateZombie.Instance.SetZombie(__instance.theZombieRow, ZombieSlot1Index, x);

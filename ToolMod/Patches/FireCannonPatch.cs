@@ -4,7 +4,7 @@ using ToolMod.Components;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 火焰加农炮无CD装填补丁 - FireCannon.AnimShoot
+///     火焰加农炮无CD装填补丁 - FireCannon.AnimShoot
 /// </summary>
 [HarmonyPatch(typeof(FireCannon))]
 public static class FireCannonPatch

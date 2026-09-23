@@ -12,4 +12,19 @@ public static class CreatePlantPatch
     {
         isFreeSet = FreePlanting || isFreeSet;
     }
+
+    [HarmonyPatch(nameof(CreatePlant.LimTravel))]
+    [HarmonyPatch(nameof(CreatePlant.Lim))]
+    [HarmonyPrefix]
+    public static bool PreLimTravel(ref bool __result)
+    {
+        if (RemoveFusionLimit)
+        {
+            __result = false;
+            return false;
+        }
+
+        ;
+        return true;
+    }
 }

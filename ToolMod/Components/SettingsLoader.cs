@@ -2,23 +2,23 @@ using System;
 using System.IO;
 using System.Text.Json;
 using ToolData;
-using UnityEngine;
+using Paths = BepInEx.Paths;
 
 namespace ToolMod.Components;
 
 /// <summary>
-/// 用于读取配置文件并同步到PatchDataCache
+///     用于读取配置文件并同步到PatchDataCache
 /// </summary>
 public static class SettingsLoader
 {
     /// <summary>
-    /// 在模组启动时加载配置文件并应用设置
+    ///     在模组启动时加载配置文件并应用设置
     /// </summary>
     public static void LoadAndApplySettings()
     {
         try
         {
-            var settingsPath = Path.Combine(BepInEx.Paths.GameRootPath, ToolData.Paths.SaveSettingsPath);
+            var settingsPath = Path.Combine(Paths.GameRootPath, ToolData.Paths.SaveSettingsPath);
 
             if (!File.Exists(settingsPath))
             {
@@ -132,6 +132,14 @@ public static class SettingsLoader
             PatchDataCache.PlantsAllStarUp = settings.PlantsAllStarUp;
             PatchDataCache.SuperStarNoCD = settings.SuperStarNoCD;
             PatchDataCache.LockWheat = settings.LockWheatEnabled ? settings.LockWheat : -1;
+            PatchDataCache.PlantSpeedMultiplier =
+                settings.PlantSpeedMultiplierEnabled ? (float)settings.PlantSpeedMultiplier : -1.0f;
+            PatchDataCache.PlantAttackMultiplier = settings.PlantAttackMultiplierEnabled
+                ? (float)settings.PlantAttackMultiplier
+                : -1.0f;
+            PatchDataCache.PlantHealthMultiplier = settings.PlantHealthMultiplierEnabled
+                ? (float)settings.PlantHealthMultiplier
+                : -1.0f;
 
             #endregion
 
@@ -198,8 +206,7 @@ public static class SettingsLoader
 
             // 旗帜波词条需要根据保存的ID列表重建
             if (settings.FlagWaveBuffs is { Count: > 0 })
-            {
-                for (int i = 0; i < Math.Min(settings.FlagWaveBuffs.Count, 10); i++)
+                for (var i = 0; i < Math.Min(settings.FlagWaveBuffs.Count, 10); i++)
                 {
                     var fbSettings = settings.FlagWaveBuffs[i];
                     PatchDataCache.FlagWaveBuffs[i] = new FlagWaveBuff
@@ -212,7 +219,6 @@ public static class SettingsLoader
                         Description = fbSettings.Description
                     };
                 }
-            }
 
             #endregion
 

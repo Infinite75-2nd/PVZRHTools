@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ReactiveUI.SourceGenerators;
 
@@ -23,7 +24,7 @@ public partial class FloatingWindowViewModel : ViewModelBase
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             var lifetime = Application.Current?.ApplicationLifetime as
-                Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime;
+                IClassicDesktopStyleApplicationLifetime;
             lifetime?.MainWindow?.Activate();
         });
     }

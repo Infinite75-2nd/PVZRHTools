@@ -1,10 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
-using ToolData;
 using PVZRHTools.Utils;
 using PVZRHTools.ViewModels;
 using Splat;
+using ToolData;
 
 namespace PVZRHTools.Services;
 
@@ -30,7 +31,7 @@ public class SettingsService : ISettingsService
         Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath)!);
         var json = JsonSerializer.Serialize(settings, JsonSGC.Default.SettingsData);
         File.WriteAllText(_settingsPath, json);
-        System.Diagnostics.Debug.WriteLine($"设置已保存到: {_settingsPath}");
+        Debug.WriteLine($"设置已保存到: {_settingsPath}");
     }
 
     public SettingsData? LoadSettings()
@@ -45,7 +46,7 @@ public class SettingsService : ISettingsService
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"加载设置失败: {ex.Message}");
+            Debug.WriteLine($"加载设置失败: {ex.Message}");
         }
 
         return null;

@@ -11,9 +11,6 @@ public static class TravelRefreshPatch
     [HarmonyPatch(nameof(TravelRefresh.OnMouseUpAsButton))]
     public static void PostAwake(TravelRefresh __instance)
     {
-        if (UnlimitedRefresh)
-        {
-            __instance.refreshTimes = 99999999;
-        }
+        if (UnlimitedRefresh) __instance.refreshTimes = 99999999;
     }
 }

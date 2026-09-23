@@ -19,55 +19,29 @@ public class InitDataService(string gamePath) : IInitDataService
                 JsonSGC.Default.InitData);
             if (newInitData is null)
                 return;
-            foreach (var plant in newInitData.Plants)
-            {
-                InitData.Plants.TryAdd(plant.Key, plant.Value);
-            }
+            foreach (var plant in newInitData.Plants) InitData.Plants.TryAdd(plant.Key, plant.Value);
 
-            foreach (var zombie in newInitData.Zombies)
-            {
-                InitData.Zombies.TryAdd(zombie.Key, zombie.Value);
-            }
+            foreach (var zombie in newInitData.Zombies) InitData.Zombies.TryAdd(zombie.Key, zombie.Value);
 
-            foreach (var bullet in newInitData.Bullets)
-            {
-                InitData.Bullets.TryAdd(bullet.Key, bullet.Value);
-            }
+            foreach (var bullet in newInitData.Bullets) InitData.Bullets.TryAdd(bullet.Key, bullet.Value);
 
             foreach (var firstArmor in newInitData.FirstArmors)
-            {
                 InitData.FirstArmors.TryAdd(firstArmor.Key, firstArmor.Value);
-            }
 
             foreach (var secondArmor in newInitData.SecondArmors)
-            {
                 InitData.SecondArmors.TryAdd(secondArmor.Key, secondArmor.Value);
-            }
 
-            foreach (var advBuff in newInitData.AdvBuffs)
-            {
-                InitData.AdvBuffs.TryAdd(advBuff.Key, advBuff.Value);
-            }
+            foreach (var advBuff in newInitData.AdvBuffs) InitData.AdvBuffs.TryAdd(advBuff.Key, advBuff.Value);
 
-            foreach (var ultiBuff in newInitData.UltiBuffs)
-            {
-                InitData.UltiBuffs.TryAdd(ultiBuff.Key, ultiBuff.Value);
-            }
+            foreach (var ultiBuff in newInitData.UltiBuffs) InitData.UltiBuffs.TryAdd(ultiBuff.Key, ultiBuff.Value);
 
-            foreach (var debuff in newInitData.Debuffs)
-            {
-                InitData.Debuffs.TryAdd(debuff.Key, debuff.Value);
-            }
+            foreach (var debuff in newInitData.Debuffs) InitData.Debuffs.TryAdd(debuff.Key, debuff.Value);
 
             foreach (var investBuff in newInitData.InvestBuffs)
-            {
                 InitData.InvestBuffs.TryAdd(investBuff.Key, investBuff.Value);
-            }
 
             foreach (var plant in newInitData.UnlockablePlants)
-            {
                 InitData.UnlockablePlants.TryAdd(plant.Key, plant.Value);
-            }
         }
         catch
         {

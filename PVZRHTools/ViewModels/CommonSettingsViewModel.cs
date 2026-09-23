@@ -3,576 +3,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
-using ToolData;
 using PVZRHTools.Services;
+using PVZRHTools.Utils;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using PVZRHTools.Utils;
+using ToolData;
 
 namespace PVZRHTools.ViewModels;
 
 public partial class CommonSettingsViewModel : ModifierPageViewModelBase
 {
-    public IInitDataService InitDataService { get; }
-
-    #region 全局属性修改
-
-    [Reactive] public partial bool DevMode { get; set; }
-    [Reactive] public partial bool ColumnPlanting { get; set; }
-    [Reactive] public partial bool SeedRain { get; set; }
-    [Reactive] public partial bool GameSpeedEnabled { get; set; }
-    [Reactive] public partial double GameSpeed { get; set; } = 1.0;
-    [Reactive] public partial bool GloveNoCD { get; set; }
-    [Reactive] public partial bool HammerNoCD { get; set; }
-    [Reactive] public partial double HammerFullCD { get; set; } = 60;
-    [Reactive] public partial bool HammerFullCDEnabled { get; set; }
-    [Reactive] public partial double GloveFullCD { get; set; } = 10;
-    [Reactive] public partial bool GloveFullCDEnabled { get; set; }
-    [Reactive] public partial bool WheelNoCD { get; set; }
-    [Reactive] public partial double WheelFullCD { get; set; } = 30;
-    [Reactive] public partial bool WheelFullCDEnabled { get; set; }
-    [Reactive] public partial bool FreePlanting { get; set; }
-    [Reactive] public partial bool CardFreeCD { get; set; }
-    [Reactive] public partial bool RemoveFusionLimit { get; set; }
-    [Reactive] public partial double NewZombieUpdateCD { get; set; } = 30;
-    [Reactive] public partial bool NewZombieUpdateCDEnabled { get; set; }
-    [Reactive] public partial bool UnlimitedScore { get; set; }
-    [Reactive] public partial bool UnlimitedRefresh { get; set; }
-
-    #endregion
-
-    #region 游戏内属性调整
-
-    [Reactive] public partial int Sun { get; set; }
-    [Reactive] public partial bool LockSun { get; set; }
-    [Reactive] public partial int Money { get; set; }
-    [Reactive] public partial bool LockMoney { get; set; }
-    [Reactive] public partial bool LockLightLevelEnabled { get; set; }
-    [Reactive] public partial int LockLightLevel { get; set; }
-    [Reactive] public partial bool PauseSpawn { get; set; }
-    [Reactive] public partial bool NoFail { get; set; }
-    [Reactive] public partial string LevelName { get; set; } = "";
-    [Reactive] public partial uint JumpWave { get; set; }
-    [Reactive] public partial int RemoveAllZombiesRow { get; set; }
-
-    #endregion
-
-    #region 游戏内生成操作
-
-    [Reactive] public partial int Row { get; set; } = 0;
-    [Reactive] public partial int Column { get; set; } = 0;
-    [Reactive] public partial int RepeatTimes { get; set; } = 1;
-    [Reactive] public partial bool PvPPotRange { get; set; }
-    [Reactive] public partial int CreatePlantID { get; set; }
-    [Reactive] public partial bool CreateRandomPlant { get; set; }
-    [Reactive] public partial int CreateZombieID { get; set; }
-    [Reactive] public partial bool CreateRandomZombie { get; set; }
-    [Reactive] public partial int CreateItemID { get; set; }
-    [Reactive] public partial string Text { get; set; } = "";
-
-    #endregion
-
-    #region 僵尸海设置
-
-    [Reactive] public partial bool ZombieSeaEnabled { get; set; }
-    [Reactive] public partial int ZombieSeaCD { get; set; } = 40;
-    [Reactive] public partial bool ZombieSeaLowEnabled { get; set; }
-    [Reactive] public partial ObservableCollection<KeyValuePair<int, string>> ZombieSeaTypes { get; set; } = [];
-
-    #endregion
-
-    #region Commands
-
-    [ReactiveCommand]
-    private void SetSun() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.Sun,
-            Parameters = [Sun.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void SetMoney() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.Money,
-            Parameters = [Money.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllPlants() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllPlants,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllZombies() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllZombies,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllEnemies() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllEnemies,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllMindCtrlZombies() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllMindCtrlZombies,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllBullets() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllBullets,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void MindCtrlAllZombies() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.MindCtrlAllZombies,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllIceRoads() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllIceRoads,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllHoles() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllHoles,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllGraves() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllGraves,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SetLevelName() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetLevelName,
-            Parameters = [LevelName]
-        });
-
-    [ReactiveCommand]
-    public void SetZombiesIdle() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetZombiesIdle,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void ApplyAllPlantSkins() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.ApplyAllPlantSkins,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void CreatePlant() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreatePlant,
-            Parameters =
-            [
-                CreateRandomPlant ? "-1" : CreatePlantID.ToString(), Row.ToString(), Column.ToString(),
-                RepeatTimes.ToString()
-            ]
-        });
-
-    [ReactiveCommand]
-    public void CreatePlantCard() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreatePlantCard,
-            Parameters = [CreateRandomPlant ? "-1" : CreatePlantID.ToString(), RepeatTimes.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void CreatePlantVase() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreatePlantVase,
-            Parameters =
-            [
-                CreateRandomPlant ? "-1" : CreatePlantID.ToString(), Row.ToString(), Column.ToString(),
-                PvPPotRange.ToString()
-            ]
-        });
-
-    [ReactiveCommand]
-    public void CreateZombie() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateZombie,
-            Parameters =
-            [
-                CreateRandomZombie ? "-1" : CreateZombieID.ToString(), Row.ToString(), Column.ToString(),
-                RepeatTimes.ToString()
-            ]
-        });
-
-    [ReactiveCommand]
-    public void CreateMindControlledZombie() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateMindControlledZombie,
-            Parameters =
-            [
-                CreateRandomZombie ? "-1" : CreateZombieID.ToString(), Row.ToString(), Column.ToString(),
-                RepeatTimes.ToString()
-            ]
-        });
-
-    [ReactiveCommand]
-    public void CreateZombieVase() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateZombieVase,
-            Parameters =
-            [
-                CreateRandomZombie ? "-1" : CreateZombieID.ToString(), Row.ToString(), Column.ToString(),
-                PvPPotRange.ToString()
-            ]
-        });
-
-    [ReactiveCommand]
-    public void CreateItem() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateItem,
-            Parameters = [CreateItemID.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void CreatePassiveMeteorite() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreatePassiveMeteorite,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void CreateActiveMeteorite() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateActiveMeteorite,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void CreateUltimateMeteorite() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateUltimateMeteorite,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void CreateSolarMeteorite() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateSolarMeteorite,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void NextWave() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.NextWave,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SetJumpWave() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetJumpWave,
-            Parameters = [JumpWave.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void RemoveAllZombiesInRow() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.RemoveAllZombiesInRow,
-            Parameters = [RemoveAllZombiesRow.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void SetAward() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetAward,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void DestroyAward() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.DestroyAward,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void ShowText() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.ShowText,
-            Parameters = [Text]
-        });
-
-    [ReactiveCommand]
-    public void StartMower() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.StartMower,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void CreateMower() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CreateMower,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SpawnPetGargantuar() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetGargantuar,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SpawnPetFootball() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetFootball,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SpawnPetSnowBoss() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetSnowBoss,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SpawnPetJackbox() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetJackbox,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SpawnPetDrown() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetDrown,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SpawnPetHorse() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetHorse,
-            Parameters = []
-        }); //todo:名字？？？
-
-    [ReactiveCommand]
-    public void SpawnPetImp() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetImp,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void SpawnPetKirov() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SpawnPetKirov,
-            Parameters = []
-        });
-
-    #endregion
-
-    #region 作弊码
-
-    [ReactiveCommand]
-    public void CheatKey_CheatMode() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_CheatMode,
-            Parameters = ["cheatmode"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_MoreSun() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_MoreSun,
-            Parameters = ["moresun"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_BigCannon() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_BigCannon,
-            Parameters = ["bigcannon"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_IrWinner() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_IrWinner,
-            Parameters = ["irwinner"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_ClearPlant() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_ClearPlant,
-            Parameters = ["clearplant"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_ClearZombie() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_ClearZombie,
-            Parameters = ["clearzombie"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_MysMoney() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_MysMoney,
-            Parameters = ["mysmoney"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_GiveCard() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_GiveCard,
-            Parameters = ["givecard"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_Reload() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_Reload,
-            Parameters = ["reload"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_Debug() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_Debug,
-            Parameters = ["debug"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_UpUp() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_UpUp,
-            Parameters = ["upup"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_Kill() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_Kill,
-            Parameters = ["kill"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_Report() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_Report,
-            Parameters = ["report"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_MissionA() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_MissionA,
-            Parameters = ["missiona"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_MissionB() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_MissionB,
-            Parameters = ["missionb"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_ShootHard() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_ShootHard,
-            Parameters = ["shoothard"]
-        });
-
-    [ReactiveCommand]
-    public void CheatKey_OpenBLive() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.CheatKey_OpenBLive,
-            Parameters = ["openblive"]
-        });
-
-    #endregion
-
     public CommonSettingsViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
         dataSyncService)
     {
@@ -612,12 +52,12 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
                 x => x.ZombieSeaTypes)
             .Subscribe(tuple =>
             {
-                dataSyncService.SendCommand(new SyncData()
+                dataSyncService.SendCommand(new SyncData
                 {
                     Command = Strings.ZombieSea,
                     Parameters =
                     [
-                        JsonSerializer.Serialize(new ZombieSea()
+                        JsonSerializer.Serialize(new ZombieSea
                         {
                             ZombieSeaEnabled = tuple.Item1,
                             ZombieSeaCD = tuple.Item2,
@@ -628,6 +68,8 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
                 });
             });
     }
+
+    public IInitDataService InitDataService { get; }
 
     public override void SaveSettings(SettingsData settings)
     {
@@ -744,4 +186,678 @@ public partial class CommonSettingsViewModel : ModifierPageViewModelBase
             ZombieSeaTypes.Add(new KeyValuePair<int, string>(typeId, name));
         }
     }
+
+    #region 全局属性修改
+
+    [Reactive] public partial bool DevMode { get; set; }
+    [Reactive] public partial bool ColumnPlanting { get; set; }
+    [Reactive] public partial bool SeedRain { get; set; }
+    [Reactive] public partial bool GameSpeedEnabled { get; set; }
+    [Reactive] public partial double GameSpeed { get; set; } = 1.0;
+    [Reactive] public partial bool GloveNoCD { get; set; }
+    [Reactive] public partial bool HammerNoCD { get; set; }
+    [Reactive] public partial double HammerFullCD { get; set; } = 60;
+    [Reactive] public partial bool HammerFullCDEnabled { get; set; }
+    [Reactive] public partial double GloveFullCD { get; set; } = 10;
+    [Reactive] public partial bool GloveFullCDEnabled { get; set; }
+    [Reactive] public partial bool WheelNoCD { get; set; }
+    [Reactive] public partial double WheelFullCD { get; set; } = 30;
+    [Reactive] public partial bool WheelFullCDEnabled { get; set; }
+    [Reactive] public partial bool FreePlanting { get; set; }
+    [Reactive] public partial bool CardFreeCD { get; set; }
+    [Reactive] public partial bool RemoveFusionLimit { get; set; }
+    [Reactive] public partial double NewZombieUpdateCD { get; set; } = 30;
+    [Reactive] public partial bool NewZombieUpdateCDEnabled { get; set; }
+    [Reactive] public partial bool UnlimitedScore { get; set; }
+    [Reactive] public partial bool UnlimitedRefresh { get; set; }
+
+    #endregion
+
+    #region 游戏内属性调整
+
+    [Reactive] public partial int Sun { get; set; }
+    [Reactive] public partial bool LockSun { get; set; }
+    [Reactive] public partial int Money { get; set; }
+    [Reactive] public partial bool LockMoney { get; set; }
+    [Reactive] public partial bool LockLightLevelEnabled { get; set; }
+    [Reactive] public partial int LockLightLevel { get; set; }
+    [Reactive] public partial bool PauseSpawn { get; set; }
+    [Reactive] public partial bool NoFail { get; set; }
+    [Reactive] public partial string LevelName { get; set; } = "";
+    [Reactive] public partial uint JumpWave { get; set; }
+    [Reactive] public partial int RemoveAllZombiesRow { get; set; }
+
+    #endregion
+
+    #region 游戏内生成操作
+
+    [Reactive] public partial int Row { get; set; } = 0;
+    [Reactive] public partial int Column { get; set; } = 0;
+    [Reactive] public partial int RepeatTimes { get; set; } = 1;
+    [Reactive] public partial bool PvPPotRange { get; set; }
+    [Reactive] public partial int CreatePlantID { get; set; }
+    [Reactive] public partial bool CreateRandomPlant { get; set; }
+    [Reactive] public partial int CreateZombieID { get; set; }
+    [Reactive] public partial bool CreateRandomZombie { get; set; }
+    [Reactive] public partial int CreateItemID { get; set; }
+    [Reactive] public partial string Text { get; set; } = "";
+
+    #endregion
+
+    #region 僵尸海设置
+
+    [Reactive] public partial bool ZombieSeaEnabled { get; set; }
+    [Reactive] public partial int ZombieSeaCD { get; set; } = 40;
+    [Reactive] public partial bool ZombieSeaLowEnabled { get; set; }
+    [Reactive] public partial ObservableCollection<KeyValuePair<int, string>> ZombieSeaTypes { get; set; } = [];
+
+    #endregion
+
+    #region Commands
+
+    [ReactiveCommand]
+    private void SetSun()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.Sun,
+            Parameters = [Sun.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetMoney()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.Money,
+            Parameters = [Money.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllPlants()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllPlants,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllZombies()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllZombies,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllEnemies()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllEnemies,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllMindCtrlZombies()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllMindCtrlZombies,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllBullets()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllBullets,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void MindCtrlAllZombies()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.MindCtrlAllZombies,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllIceRoads()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllIceRoads,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllHoles()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllHoles,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllGraves()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllGraves,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetLevelName()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetLevelName,
+            Parameters = [LevelName]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetZombiesIdle()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetZombiesIdle,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void ApplyAllPlantSkins()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ApplyAllPlantSkins,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreatePlant()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreatePlant,
+            Parameters =
+            [
+                CreateRandomPlant ? "-1" : CreatePlantID.ToString(), Row.ToString(), Column.ToString(),
+                RepeatTimes.ToString()
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreatePlantCard()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreatePlantCard,
+            Parameters = [CreateRandomPlant ? "-1" : CreatePlantID.ToString(), RepeatTimes.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreatePlantVase()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreatePlantVase,
+            Parameters =
+            [
+                CreateRandomPlant ? "-1" : CreatePlantID.ToString(), Row.ToString(), Column.ToString(),
+                PvPPotRange.ToString()
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateZombie()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateZombie,
+            Parameters =
+            [
+                CreateRandomZombie ? "-1" : CreateZombieID.ToString(), Row.ToString(), Column.ToString(),
+                RepeatTimes.ToString()
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateMindControlledZombie()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateMindControlledZombie,
+            Parameters =
+            [
+                CreateRandomZombie ? "-1" : CreateZombieID.ToString(), Row.ToString(), Column.ToString(),
+                RepeatTimes.ToString()
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateZombieVase()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateZombieVase,
+            Parameters =
+            [
+                CreateRandomZombie ? "-1" : CreateZombieID.ToString(), Row.ToString(), Column.ToString(),
+                PvPPotRange.ToString()
+            ]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateItem()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateItem,
+            Parameters = [CreateItemID.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreatePassiveMeteorite()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreatePassiveMeteorite,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateActiveMeteorite()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateActiveMeteorite,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateUltimateMeteorite()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateUltimateMeteorite,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateSolarMeteorite()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateSolarMeteorite,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void NextWave()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.NextWave,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetJumpWave()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetJumpWave,
+            Parameters = [JumpWave.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void RemoveAllZombiesInRow()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.RemoveAllZombiesInRow,
+            Parameters = [RemoveAllZombiesRow.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetAward()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetAward,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void DestroyAward()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.DestroyAward,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void ShowText()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ShowText,
+            Parameters = [Text]
+        });
+    }
+
+    [ReactiveCommand]
+    public void StartMower()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.StartMower,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void CreateMower()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CreateMower,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetGargantuar()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetGargantuar,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetFootball()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetFootball,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetSnowBoss()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetSnowBoss,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetJackbox()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetJackbox,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetDrown()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetDrown,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetHorse()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetHorse,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetImp()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetImp,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SpawnPetKirov()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SpawnPetKirov,
+            Parameters = []
+        });
+    }
+
+    #endregion
+
+    #region 作弊码
+
+    [ReactiveCommand]
+    public void CheatKey_CheatMode()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_CheatMode,
+            Parameters = ["cheatmode"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_MoreSun()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_MoreSun,
+            Parameters = ["moresun"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_BigCannon()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_BigCannon,
+            Parameters = ["bigcannon"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_IrWinner()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_IrWinner,
+            Parameters = ["irwinner"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_ClearPlant()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_ClearPlant,
+            Parameters = ["clearplant"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_ClearZombie()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_ClearZombie,
+            Parameters = ["clearzombie"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_MysMoney()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_MysMoney,
+            Parameters = ["mysmoney"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_GiveCard()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_GiveCard,
+            Parameters = ["givecard"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_Reload()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_Reload,
+            Parameters = ["reload"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_Debug()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_Debug,
+            Parameters = ["debug"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_UpUp()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_UpUp,
+            Parameters = ["upup"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_Kill()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_Kill,
+            Parameters = ["kill"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_Report()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_Report,
+            Parameters = ["report"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_MissionA()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_MissionA,
+            Parameters = ["missiona"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_MissionB()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_MissionB,
+            Parameters = ["missionb"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_ShootHard()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_ShootHard,
+            Parameters = ["shoothard"]
+        });
+    }
+
+    [ReactiveCommand]
+    public void CheatKey_OpenBLive()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.CheatKey_OpenBLive,
+            Parameters = ["openblive"]
+        });
+    }
+
+    #endregion
 }

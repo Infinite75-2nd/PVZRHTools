@@ -8,44 +8,79 @@
              x:CompileBindings="True"
              x:DataType="vm:ModifierAuthorsViewModel"
              x:Class="PVZRHTools.Views.ModifierAuthorsView">
+    <UserControl.Styles>
+        <Style Selector="Ellipse">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+    </UserControl.Styles>
     <StackPanel Orientation="Vertical" Spacing="10">
-        <u:Divider Content="修改器作者"/>
+        <u:Divider Content="修改器作者" />
         <StackPanel Orientation="Horizontal">
+            <Ellipse>
+                <Ellipse.Fill>
+                    <ImageBrush Source="avares://PVZRHTools/Assets/inf75.png" Stretch="UniformToFill" />
+                </Ellipse.Fill>
+            </Ellipse>
             <TextBlock Text="Infinite75"
                        VerticalAlignment="Center"
                        Classes="H6"
                        Theme="{StaticResource TitleTextBlock}"
                        Foreground="{DynamicResource SemiColorAIGeneralActive}" />
-            <u:IconButton Icon="{DynamicResource SemiIconHomeStroked}"
+            <u:IconButton Icon="{DynamicResource SemiIconBilibiliLogo}"
+                          Theme="{DynamicResource BorderlessIconButton}"
+                          Classes="Tertiary"
                           Command="{Binding OpenSpaceInf75Command}"
                           IsEnabled="True" />
             <u:IconButton Icon="{DynamicResource SemiIconGithubLogo}"
+                          Theme="{DynamicResource BorderlessIconButton}"
+                          Classes="Tertiary"
                           Command="{Binding OpenGithubInf75Command}"
                           IsEnabled="True" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
+            <Ellipse>
+                <Ellipse.Fill>
+                    <ImageBrush Source="avares://PVZRHTools/Assets/MKHkro1.png" Stretch="UniformToFill" />
+                </Ellipse.Fill>
+            </Ellipse>
             <TextBlock Text="梧萱梦汐X"
                        VerticalAlignment="Center"
                        Classes="H6"
                        Theme="{StaticResource TitleTextBlock}"
                        Foreground="{DynamicResource SemiColorAIGeneralActive}" />
-            <u:IconButton Icon="{DynamicResource SemiIconHomeStroked}"
+            <u:IconButton Icon="{DynamicResource SemiIconBilibiliLogo}"
+                          Theme="{DynamicResource BorderlessIconButton}"
+                          Classes="Tertiary"
                           Command="{Binding OpenSpaceMKHkro1Command}"
                           IsEnabled="True" />
             <u:IconButton Icon="{DynamicResource SemiIconGithubLogo}"
+                          Theme="{DynamicResource BorderlessIconButton}"
+                          Classes="Tertiary"
                           Command="{Binding OpenGithubMKHkro1Command}"
                           IsEnabled="True" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
+            <Ellipse>
+                <Ellipse.Fill>
+                    <ImageBrush Source="avares://PVZRHTools/Assets/carefreesongs712.png" Stretch="UniformToFill" />
+                </Ellipse.Fill>
+            </Ellipse>
             <TextBlock Text="墨染荷韵"
                        VerticalAlignment="Center"
                        Classes="H6"
                        Theme="{StaticResource TitleTextBlock}"
                        Foreground="{DynamicResource SemiColorAIGeneralActive}" />
-            <u:IconButton Icon="{DynamicResource SemiIconHomeStroked}"
+            <u:IconButton Icon="{DynamicResource SemiIconBilibiliLogo}"
+                          Theme="{DynamicResource BorderlessIconButton}"
+                          Classes="Tertiary"
                           Command="{Binding OpenSpaceCarefreeSongs712Command}"
                           IsEnabled="True" />
             <u:IconButton Icon="{DynamicResource SemiIconGithubLogo}"
+                          Theme="{DynamicResource BorderlessIconButton}"
+                          Classes="Tertiary"
                           Command="{Binding OpenGithubCarefreeSongs712Command}"
                           IsEnabled="True" />
         </StackPanel>

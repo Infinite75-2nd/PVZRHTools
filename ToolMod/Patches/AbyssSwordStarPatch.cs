@@ -11,10 +11,7 @@ public static class AbyssSwordStarPatch
     public static void PreAwake(ref GameStatus __state)
     {
         __state = GameAPP.theGameStatus;
-        if (UnlockRedCardPlants)
-        {
-            GameAPP.theGameStatus = (GameStatus)(-1);
-        }
+        if (UnlockRedCardPlants) GameAPP.theGameStatus = (GameStatus)(-1);
     }
 
     [HarmonyPostfix]
@@ -29,10 +26,7 @@ public static class AbyssSwordStarPatch
     public static void PreStart(ref LevelType __state)
     {
         __state = GameAPP.theBoardType;
-        if (UnlockRedCardPlants)
-        {
-            GameAPP.theBoardType = LevelType.AbyssRealm;
-        }
+        if (UnlockRedCardPlants) GameAPP.theBoardType = LevelType.AbyssRealm;
     }
 
     [HarmonyPostfix]

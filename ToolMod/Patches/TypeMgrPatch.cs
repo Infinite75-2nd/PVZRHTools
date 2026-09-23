@@ -7,10 +7,10 @@ namespace ToolMod.Patches;
 public static class TypeMgrPatch
 {
     /// <summary>
-    /// 踩踏免疫补丁 - TypeMgr.UncrashablePlant
-    /// 这是游戏判断植物是否免疫碾压的核心方法
-    /// Boss类领袖等僵尸会调用此方法来判断是否可以碾压植物
-    /// 参考 SuperMachinePot 的 TypeMgrUncrashablePlantPatch 实现
+    ///     踩踏免疫补丁 - TypeMgr.UncrashablePlant
+    ///     这是游戏判断植物是否免疫碾压的核心方法
+    ///     Boss类领袖等僵尸会调用此方法来判断是否可以碾压植物
+    ///     参考 SuperMachinePot 的 TypeMgrUncrashablePlantPatch 实现
     /// </summary>
     [HarmonyPrefix]
     [HarmonyPatch(nameof(TypeMgr.UncrashablePlant))]

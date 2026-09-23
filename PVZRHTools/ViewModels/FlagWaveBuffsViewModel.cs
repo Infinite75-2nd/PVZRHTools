@@ -12,6 +12,19 @@ namespace PVZRHTools.ViewModels;
 
 public partial class FlagWaveBuffsViewModel : ModifierPageViewModelBase
 {
+    public FlagWaveBuffsViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
+        dataSyncService)
+    {
+        InitDataService = initDataService;
+        FlagWaveBuffs = [];
+        for (var i = 1; i <= 10; i++)
+            FlagWaveBuffs.Add(new FlagWaveBuffInfo
+            {
+                Wave = i
+            });
+        this.SimpleOneWaySync(x => x.FlagWaveBuffsEnabled, Strings.FlagWaveBuffsEnabled);
+    }
+
     public IInitDataService InitDataService { get; }
     [Reactive] public partial bool FlagWaveBuffsEnabled { get; set; }
     [Reactive] public partial ObservableCollection<FlagWaveBuffInfo> FlagWaveBuffs { get; set; }
@@ -29,24 +42,11 @@ public partial class FlagWaveBuffsViewModel : ModifierPageViewModelBase
             InvestBuffs = FlagWaveBuffs[wave - 1].InvestBuffs.Select(pair => pair.Key).ToList(),
             Description = FlagWaveBuffs[wave - 1].Description
         };
-        DataSyncService.SendCommand(new SyncData()
+        DataSyncService.SendCommand(new SyncData
         {
             Command = Strings.FlagWaveBuff,
             Parameters = [JsonSerializer.Serialize(flagWaveBuff, JsonSGC.Default.FlagWaveBuff)]
         });
-    }
-
-    public FlagWaveBuffsViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
-        dataSyncService)
-    {
-        InitDataService = initDataService;
-        FlagWaveBuffs = [];
-        for (int i = 1; i <= 10; i++)
-            FlagWaveBuffs.Add(new FlagWaveBuffInfo()
-            {
-                Wave = i
-            });
-        this.SimpleOneWaySync(x => x.FlagWaveBuffsEnabled, Strings.FlagWaveBuffsEnabled);
     }
 
     public override void SaveSettings(SettingsData settings)

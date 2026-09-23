@@ -8,11 +8,11 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Platform.Storage;
 using PVZRHTools.Models;
 using PVZRHTools.Services;
+using PVZRHTools.Utils;
 using PVZRHTools.Views;
 using ReactiveUI.SourceGenerators;
 using Splat;
 using ToolData;
-using PVZRHTools.Utils;
 using Ursa.Controls;
 using Ursa.Controls.Options;
 
@@ -20,14 +20,6 @@ namespace PVZRHTools.ViewModels;
 
 public partial class GameInstancesViewModel : ViewModelBase
 {
-    [Reactive] public partial ObservableCollection<GameInstanceInfo> MenuItems { get; set; }
-
-    //public string Title { get; init; } = $"当前适配版本：{Strings.GameVersion}";
-    private IRunGameService _runGameService { get; set; }
-    private IModifierInfoService _modifierInfoService { get; set; }
-    private IGameBootstrapService _gameBootstrapService { get; set; }
-    private INotificationService _notificationService { get; set; }
-
     public GameInstancesViewModel(IRunGameService runGameService, IModifierInfoService modifierInfoService,
         IGameBootstrapService gameBootstrapService, INotificationService notificationService)
     {
@@ -38,16 +30,30 @@ public partial class GameInstancesViewModel : ViewModelBase
         MenuItems = _modifierInfoService.InitGameInstanceInfos();
     }
 
-    [ReactiveCommand]
-    public void Unload() => _modifierInfoService.Save(MenuItems);
+    [Reactive] public partial ObservableCollection<GameInstanceInfo> MenuItems { get; set; }
+
+    //public string Title { get; init; } = $"当前适配版本：{Strings.GameVersion}";
+    private IRunGameService _runGameService { get; }
+    private IModifierInfoService _modifierInfoService { get; }
+    private IGameBootstrapService _gameBootstrapService { get; }
+    private INotificationService _notificationService { get; }
 
     [ReactiveCommand]
-    public void RunGame(GameInstanceInfo info) => _runGameService.RunGame(info);
+    public void Unload()
+    {
+        _modifierInfoService.Save(MenuItems);
+    }
+
+    [ReactiveCommand]
+    public void RunGame(GameInstanceInfo info)
+    {
+        _runGameService.RunGame(info);
+    }
 
     [ReactiveCommand]
     public async Task ShowModList(GameInstanceInfo info)
     {
-        var options = new DialogOptions()
+        var options = new DialogOptions
         {
             Title = $"模组管理 - {new DirectoryInfo(info.GameRootPath).Name}",
             Mode = DialogMode.None,
@@ -66,7 +72,7 @@ public partial class GameInstancesViewModel : ViewModelBase
     {
         var vm = Locator.Current.GetService<LaunchSettingsViewModel>();
         vm!.Info = info;
-        var options = new DrawerOptions()
+        var options = new DrawerOptions
         {
             Title = "启动设置",
             Buttons = DialogButton.None
@@ -149,7 +155,10 @@ public partial class GameInstancesViewModel : ViewModelBase
     }
 
     [ReactiveCommand]
-    public void OpenGameSaveFolder() => Process.Start("explorer.exe", Paths.GameDataPath);
+    public void OpenGameSaveFolder()
+    {
+        Process.Start("explorer.exe", Paths.GameDataPath);
+    }
 
     [ReactiveCommand]
     public async Task DetectModifierDirectory()
@@ -186,7 +195,6 @@ public partial class GameInstancesViewModel : ViewModelBase
         }
 
         foreach (var process in processes)
-        {
             try
             {
                 var dir = Path.GetDirectoryName(process.MainModule?.FileName);
@@ -208,7 +216,6 @@ public partial class GameInstancesViewModel : ViewModelBase
             {
                 // ignored
             }
-        }
 
         MenuItems = _modifierInfoService.InitGameInstanceInfos();
     }
@@ -251,7 +258,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                 icon: MessageBoxIcon.Question,
                 button: MessageBoxButton.YesNo);
             if (confirm == MessageBoxResult.Yes)
-            {
                 try
                 {
                     _gameBootstrapService.EnableBepInEx(gameRootPath);
@@ -265,7 +271,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                         icon: MessageBoxIcon.Error,
                         button: MessageBoxButton.OK);
                 }
-            }
         }
 
         await CheckOutdatedAndUpdateAsync(gameRootPath);
@@ -281,7 +286,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                 icon: MessageBoxIcon.Question,
                 button: MessageBoxButton.YesNo);
             if (confirm == MessageBoxResult.Yes)
-            {
                 try
                 {
                     _gameBootstrapService.InstallBepInEx(gameRootPath);
@@ -296,7 +300,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                         icon: MessageBoxIcon.Error,
                         button: MessageBoxButton.OK);
                 }
-            }
         }
         else if (!ToolUtils.GetBepInExEnabled(gameRootPath))
         {
@@ -306,7 +309,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                 icon: MessageBoxIcon.Question,
                 button: MessageBoxButton.YesNo);
             if (confirm == MessageBoxResult.Yes)
-            {
                 try
                 {
                     _gameBootstrapService.EnableBepInEx(gameRootPath);
@@ -320,7 +322,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                         icon: MessageBoxIcon.Error,
                         button: MessageBoxButton.OK);
                 }
-            }
         }
 
         if (!_gameBootstrapService.IsModifierInstalled(gameRootPath))
@@ -331,7 +332,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                 icon: MessageBoxIcon.Question,
                 button: MessageBoxButton.YesNo);
             if (confirm == MessageBoxResult.Yes)
-            {
                 try
                 {
                     _gameBootstrapService.InstallModifier(gameRootPath);
@@ -345,7 +345,6 @@ public partial class GameInstancesViewModel : ViewModelBase
                         icon: MessageBoxIcon.Error,
                         button: MessageBoxButton.OK);
                 }
-            }
         }
 
         await CheckOutdatedAndUpdateAsync(gameRootPath);

@@ -20,11 +20,6 @@ namespace PVZRHTools.ViewModels;
 
 public partial class ModListViewModel : ViewModelBase
 {
-    [Reactive] public partial GameInstanceInfo Info { get; set; }
-    [Reactive] public partial string SearchText { get; set; } = "";
-    private IModsManagementService _modsManagementService { get; }
-    private INotificationService _notificationService { get; }
-
     public ModListViewModel(
         IModsManagementService modsManagementService,
         INotificationService notificationService)
@@ -43,6 +38,11 @@ public partial class ModListViewModel : ViewModelBase
                     ApplyFilter();
             });
     }
+
+    [Reactive] public partial GameInstanceInfo Info { get; set; }
+    [Reactive] public partial string SearchText { get; set; } = "";
+    private IModsManagementService _modsManagementService { get; }
+    private INotificationService _notificationService { get; }
 
     [ReactiveCommand]
     private void ToggleMod(ModInfo mod)
@@ -67,7 +67,7 @@ public partial class ModListViewModel : ViewModelBase
     [ReactiveCommand]
     private async void OpenFileDialog(Control source)
     {
-        var filePickerOptions = new FilePickerOpenOptions()
+        var filePickerOptions = new FilePickerOpenOptions
         {
             AllowMultiple = true,
             FileTypeFilter = [new FilePickerFileType("Mod文件") { Patterns = ["*.zip", "*.dll"] }]
@@ -90,7 +90,7 @@ public partial class ModListViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 处理文件拖放事件
+    ///     处理文件拖放事件
     /// </summary>
     [ReactiveCommand]
     private async Task DropAsync(DragEventArgs e)
@@ -109,14 +109,14 @@ public partial class ModListViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 处理拖放的文件列表
+    ///     处理拖放的文件列表
     /// </summary>
     private async Task ProcessDroppedFilesAsync(List<string> filePaths)
     {
         var validPaths = (from path in filePaths
                 where !string.IsNullOrEmpty(path)
-                where path.EndsWith(".zip", System.StringComparison.OrdinalIgnoreCase) ||
-                      path.EndsWith(".dll", System.StringComparison.OrdinalIgnoreCase)
+                where path.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) ||
+                      path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
                 select path)
             .ToList();
 
@@ -142,9 +142,7 @@ public partial class ModListViewModel : ViewModelBase
 
         var searchText = SearchText?.Trim() ?? string.Empty;
         foreach (var mod in Info.Mods)
-        {
             mod.IsVisible = string.IsNullOrEmpty(searchText) ||
                             mod.DisplayName.Contains(searchText, StringComparison.OrdinalIgnoreCase);
-        }
     }
 }

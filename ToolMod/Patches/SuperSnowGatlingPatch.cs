@@ -5,9 +5,9 @@ using static ToolMod.Components.PatchDataCache;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 超级机枪射手无限开大补丁 - SuperSnowGatling.Update
-/// 通过设置 keepShooting = true 使植物持续保持射击状态
-/// 同时重置 timer 确保大招持续触发
+///     超级机枪射手无限开大补丁 - SuperSnowGatling.Update
+///     通过设置 keepShooting = true 使植物持续保持射击状态
+///     同时重置 timer 确保大招持续触发
 /// </summary>
 [HarmonyPatch(typeof(SuperSnowGatling))]
 public static class SuperSnowGatlingPatch
@@ -19,7 +19,7 @@ public static class SuperSnowGatlingPatch
         __state = false;
         if (__instance == null) return;
 
-        int plantId = __instance.GetInstanceID();
+        var plantId = __instance.GetInstanceID();
 
         if (UltimateSuperGatling)
         {
@@ -51,7 +51,6 @@ public static class SuperSnowGatlingPatch
         {
             // 功能关闭：恢复被修改过的植物
             if (ModifiedPlants.Contains(plantId))
-            {
                 try
                 {
                     __instance.keepShooting = false;
@@ -61,7 +60,6 @@ public static class SuperSnowGatlingPatch
                 catch
                 {
                 }
-            }
         }
     }
 
@@ -74,10 +72,7 @@ public static class SuperSnowGatlingPatch
         try
         {
             __instance.timer = 0.1f;
-            if (__state && __instance.anim != null)
-            {
-                __instance.anim.SetTrigger("shoot");
-            }
+            if (__state && __instance.anim != null) __instance.anim.SetTrigger("shoot");
         }
         catch
         {
@@ -85,7 +80,7 @@ public static class SuperSnowGatlingPatch
     }
 
     /// <summary>
-    /// 清理记录（切换关卡时调用）
+    ///     清理记录（切换关卡时调用）
     /// </summary>
     public static void ClearAll()
     {
@@ -95,8 +90,8 @@ public static class SuperSnowGatlingPatch
 
 
     /// <summary>
-    /// 超级机枪射手无限开大补丁 - SuperSnowGatling.Shoot1
-    /// 在每次射击后立即触发 AttributeEvent 重置大招状态
+    ///     超级机枪射手无限开大补丁 - SuperSnowGatling.Shoot1
+    ///     在每次射击后立即触发 AttributeEvent 重置大招状态
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(SuperSnowGatling.Shoot1))]

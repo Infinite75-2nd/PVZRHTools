@@ -11,22 +11,18 @@ public static class TreasureManagerPatch
     public static void PostUpdate(TreasureManager __instance)
     {
         if (TreasureMaxTime > 0)
-        {
             __instance.maxTimer = TreasureMaxTime;
-        }
         else
-        {
             __instance.maxTimer = OriginalTreasureMaxTime;
-        }
     }
-    
+
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TreasureManager.Awake))]
     public static void PostAwake(TreasureManager __instance)
     {
-        OriginalTreasureMaxTime=__instance.maxTimer;
+        OriginalTreasureMaxTime = __instance.maxTimer;
     }
-    
+
     [HarmonyPrefix]
     [HarmonyPatch(nameof(TreasureManager.Evacuate))]
     public static bool PreEvacuate(TreasureManager __instance)
@@ -37,14 +33,12 @@ public static class TreasureManagerPatch
             if (uiManager != null)
             {
                 var menu = GameAPP.UIManager.Push((UIType)51, GameAPP.canvasUp).Cast<TreasureEvacuateMenu>();
-                if (menu != null)
-                {
-                    menu.manager = __instance;
-                }
+                if (menu != null) menu.manager = __instance;
             }
+
             return false;
         }
+
         return true;
     }
-    
 }

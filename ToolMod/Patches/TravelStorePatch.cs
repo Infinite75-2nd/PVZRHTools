@@ -10,9 +10,6 @@ public static class TravelStorePatch
     [HarmonyPatch(nameof(TravelStore.RefreshBuff))]
     public static void PostRefreshBuff(TravelStore __instance)
     {
-        if (UnlimitedRefresh)
-        {
-            __instance.refreshCount = 0;
-        }
+        if (UnlimitedRefresh) __instance.refreshCount = 0;
     }
 }

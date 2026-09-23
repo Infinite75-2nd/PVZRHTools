@@ -29,7 +29,7 @@ public partial class NavigationService : ReactiveObject, INavigationService
 
 public interface INavigationService
 {
+    ViewModelBase CurrentViewModel { get; }
     void NavigateTo<TViewModel>() where TViewModel : ViewModelBase;
     void NavigateTo(Type type);
-    ViewModelBase CurrentViewModel { get; }
 }

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Core;
+using HarmonyLib;
 using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Patches;
@@ -14,11 +15,12 @@ public static class TreasureUpgradeMenuPatch
         {
             if (TreasureData.wareHouseLevel >= 5)
             {
-                Core.InGameText.Instance.ShowText("仓库已升满", 3f);
+                InGameText.Instance.ShowText("仓库已升满", 3f);
                 GameAPP.PlaySound(26); // 错误提示音
                 return false;
             }
-            Core.InGameText.Instance.ShowText("成功升级仓库", 3f);
+
+            InGameText.Instance.ShowText("成功升级仓库", 3f);
             GameAPP.PlaySound(125); // 成功音效
 
             // 仓库等级+1，保存数据，刷新UI
@@ -27,7 +29,7 @@ public static class TreasureUpgradeMenuPatch
             __instance.InitWareHouseUpgrade();
             return false;
         }
+
         return true;
     }
-    
 }

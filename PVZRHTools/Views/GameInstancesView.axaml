@@ -105,7 +105,7 @@
                             <u:IconButton Content="安装修改器"
                                           Icon="{DynamicResource SemiIconWrenchStroked}"
                                           Theme="{DynamicResource SolidIconButton}"
-                                          Classes="Colorful Tertiary"                                          
+                                          Classes="Colorful Tertiary"
                                           Command="{Binding $parent[UserControl].((vm:GameInstancesViewModel)DataContext).InstallModifierCommand}"
                                           CommandParameter="{Binding}"
                                           IsVisible="{Binding NeedsModifierInstall}" />

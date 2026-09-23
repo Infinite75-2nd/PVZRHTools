@@ -1,16 +1,13 @@
 using System;
-using ToolData;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using Splat;
+using ToolData;
 
 namespace PVZRHTools.ViewModels;
 
 public partial class MiscsViewModel : ViewModelBase
 {
-    [Reactive] public partial bool SaveAllSettings { get; set; }
-    [Reactive] public partial bool ShowFloatingWindow { get; set; }
-
     public MiscsViewModel()
     {
         // 监听ShowFloatingWindow属性变化,同步到MainWindowViewModel
@@ -18,12 +15,12 @@ public partial class MiscsViewModel : ViewModelBase
             .Subscribe(value =>
             {
                 var mainVm = Locator.Current.GetService<MainWindowViewModel>();
-                if (mainVm != null)
-                {
-                    mainVm.ShowFloatingWindow = value;
-                }
+                if (mainVm != null) mainVm.ShowFloatingWindow = value;
             });
     }
+
+    [Reactive] public partial bool SaveAllSettings { get; set; }
+    [Reactive] public partial bool ShowFloatingWindow { get; set; }
 
     public override void SaveSettings(SettingsData settings)
     {

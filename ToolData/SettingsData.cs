@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace ToolData;
 
 /// <summary>
-/// 用于保存和加载所有ViewModel的设置数据（ToolMod端使用）
+///     用于保存和加载所有ViewModel的设置数据（ToolMod端使用）
 /// </summary>
 public class SettingsData
 {
@@ -116,6 +116,15 @@ public class SettingsData
     public bool SuperStarNoCD { get; set; }
     public bool LockWheatEnabled { get; set; }
     public int LockWheat { get; set; }
+    public bool PlantSpeedMultiplierEnabled { get; set; }
+    public double PlantSpeedMultiplier { get; set; } = 1.0;
+    public bool PlantAttackMultiplierEnabled { get; set; }
+    public double PlantAttackMultiplier { get; set; } = 1.0;
+    public bool PlantHealthMultiplierEnabled { get; set; }
+    public double PlantHealthMultiplier { get; set; } = 1.0;
+    public double PlantSpeedRatio { get; set; } = 2.0;
+    public double PlantAttackRatio { get; set; } = 2.0;
+    public double PlantHealthRatio { get; set; } = 2.0;
 
     // PropertySettingsViewModel - 僵尸特性
     public bool ZombieDamageLimitEnabled { get; set; } = false;
@@ -271,7 +280,7 @@ public class SettingsData
 }
 
 /// <summary>
-/// 旗帜波词条设置（简化版，只保存ID列表）
+///     旗帜波词条设置（简化版，只保存ID列表）
 /// </summary>
 public class FlagWaveBuffSettings
 {

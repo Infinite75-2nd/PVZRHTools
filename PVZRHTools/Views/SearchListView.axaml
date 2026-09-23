@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PVZRHTools.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:ctrl="using:PVZRHTools.Controls"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
              x:CompileBindings="True"
              x:Class="PVZRHTools.Views.SearchListView"
@@ -33,9 +34,9 @@
             <ItemsControl ItemsSource="{Binding Plants}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -46,9 +47,9 @@
             <ItemsControl ItemsSource="{Binding Zombies}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -59,9 +60,9 @@
             <ItemsControl ItemsSource="{Binding FirstArmors}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -72,9 +73,9 @@
             <ItemsControl ItemsSource="{Binding SecondArmors}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -85,9 +86,9 @@
             <ItemsControl ItemsSource="{Binding Bullets}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -98,9 +99,9 @@
             <ItemsControl ItemsSource="{Binding AdvBuffs}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -111,9 +112,9 @@
             <ItemsControl ItemsSource="{Binding UltiBuffs}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -124,9 +125,9 @@
             <ItemsControl ItemsSource="{Binding Debuffs}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -137,9 +138,9 @@
             <ItemsControl ItemsSource="{Binding InvestBuffs}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -150,9 +151,9 @@
             <ItemsControl ItemsSource="{Binding Items}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   IsVisible="{Binding IsVisible}"
-                                   Margin="5,2" />
+                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                               IsVisible="{Binding IsVisible}"
+                                               Margin="5,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

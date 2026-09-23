@@ -27,12 +27,10 @@ public static class InitBoardPatch
     public static void PreHideSeedBank()
     {
         if (UnlimitedCardSlots)
-        {
             try
             {
                 var toRemove = new List<GameObject>();
                 foreach (var card in CopiedCards)
-                {
                     if (card != null)
                     {
                         var cardUI = card.GetComponent<CardUI>();
@@ -47,22 +45,17 @@ public static class InitBoardPatch
                     {
                         toRemove.Add(card!);
                     }
-                }
 
                 // 从列表中移除已销毁的卡片
-                foreach (var card in toRemove)
-                {
-                    CopiedCards.Remove(card);
-                }
+                foreach (var card in toRemove) CopiedCards.Remove(card);
             }
             catch
             {
             }
-        }
     }
 
     /// <summary>
-    /// 清除未被选中的复制卡片（保留已选择的卡片）
+    ///     清除未被选中的复制卡片（保留已选择的卡片）
     /// </summary>
     public static void ClearUnselectedCopiedCards()
     {
@@ -70,7 +63,6 @@ public static class InitBoardPatch
         {
             var toRemove = new List<GameObject>();
             foreach (var card in CopiedCards)
-            {
                 if (card != null)
                 {
                     var cardUI = card.GetComponent<CardUI>();
@@ -85,13 +77,9 @@ public static class InitBoardPatch
                 {
                     toRemove.Add(card!);
                 }
-            }
 
             // 从列表中移除已销毁的卡片
-            foreach (var card in toRemove)
-            {
-                CopiedCards.Remove(card);
-            }
+            foreach (var card in toRemove) CopiedCards.Remove(card);
         }
         catch
         {
@@ -102,12 +90,13 @@ public static class InitBoardPatch
     {
         yield return null;
         // 使用统一的 TravelMgr 获取方法
-        var travelMgr = ResolveTravelMgr(autoCreate: true);
+        var travelMgr = ResolveTravelMgr(true);
         if (travelMgr == null)
         {
             ModCore.Instance.Log?.LogWarning("[PVZRHTools] PostInitBoard: 无法找到 TravelMgr 组件");
             yield break;
         }
+
         yield return null;
         if (!(GameAPP.theBoardType == (LevelType)3 && Board.Instance.theCurrentSurvivalRound != 1))
         {
@@ -128,7 +117,7 @@ public static class InitBoardPatch
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ModCore.Instance.Log?.LogError(
                     $"[PVZRHTools] PostInitBoard 设置 BoardTag 失败: {ex.Message}\n{ex.StackTrace}");
@@ -163,7 +152,7 @@ public static class InitBoardPatch
                     }
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ModCore.Instance.Log?.LogError($"PostInitBoard 设置 BoardTag 失败: {ex.Message}\n{ex.StackTrace}");
             }
@@ -176,7 +165,6 @@ public static class InitBoardPatch
         if (NewBoard)
         {
             foreach (var adv in InGameAdvBuffs.Keys)
-            {
                 try
                 {
                     InGameAdvBuffs[adv] = Lawnf.TravelAdvanced(adv) ? 1 : 0;
@@ -185,10 +173,8 @@ public static class InitBoardPatch
                 {
                     InGameAdvBuffs[adv] = 0;
                 }
-            }
 
             foreach (var ulti in InGameUltiBuffs.Keys)
-            {
                 try
                 {
                     InGameUltiBuffs[ulti] = Lawnf.TravelUltimate(ulti) ? 1 : 0;
@@ -197,10 +183,8 @@ public static class InitBoardPatch
                 {
                     InGameUltiBuffs[ulti] = 0;
                 }
-            }
 
             foreach (var debuff in InGameDebuffs.Keys)
-            {
                 try
                 {
                     InGameDebuffs[debuff] = Lawnf.TravelDebuff(debuff);
@@ -209,17 +193,15 @@ public static class InitBoardPatch
                 {
                     InGameDebuffs[debuff] = false;
                 }
-            }
 
             foreach (var invest in InGameInvestBuffs.Keys)
                 try
                 {
                     InGameInvestBuffs[invest] = Lawnf.TravelInvest(invest);
-                    
                 }
                 catch
                 {
-                    InGameInvestBuffs[invest] = false;                
+                    InGameInvestBuffs[invest] = false;
                 }
 
             // 解锁植物：默认全部未解锁
@@ -259,10 +241,9 @@ public static class InitBoardPatch
                 ModCore.Instance.Log?.LogError($"ZombieSeaLow 异常: {ex.Message}\n{ex.StackTrace}");
             }
         }
+
         yield return null;
-        if (Board.Instance?.TryGetComponent<ShootingManager>(out var shooting) is true&&GodEvolutionCheatHard)
-        {
+        if (Board.Instance?.TryGetComponent<ShootingManager>(out var shooting) is true && GodEvolutionCheatHard)
             shooting.CheatHard();
-        }
     }
 }

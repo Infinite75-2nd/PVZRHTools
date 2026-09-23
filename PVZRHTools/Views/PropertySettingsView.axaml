@@ -201,6 +201,46 @@
                     <Button Content="图鉴全解锁"
                             Command="{Binding UnlockAllAlmanacCommand}" />
                 </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="植物速度倍率"
+                              IsChecked="{Binding PlantSpeedMultiplierEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericDoubleUpDown InnerRightContent="x"
+                                           Minimum="0.1"
+                                           EmptyInputValue="1"
+                                           Value="{Binding PlantSpeedMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物攻击力倍率"
+                              IsChecked="{Binding PlantAttackMultiplierEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericDoubleUpDown InnerRightContent="x"
+                                           Minimum="0.1"
+                                           EmptyInputValue="1"
+                                           Value="{Binding PlantAttackMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="植物血量倍率"
+                              IsChecked="{Binding PlantHealthMultiplierEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <u:NumericDoubleUpDown InnerRightContent="x"
+                                           Minimum="0.1"
+                                           EmptyInputValue="1"
+                                           Value="{Binding PlantHealthMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="全体植物速度倍率"
+                            Command="{Binding SetPlantSpeedRatioCommand}" />
+                    <u:NumericDoubleUpDown MinWidth="100"
+                                           InnerRightContent="x"
+                                           Minimum="0.1"
+                                           Value="{Binding PlantSpeedRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="全体植物攻击力倍率"
+                            Command="{Binding SetPlantAttackRatioCommand}" />
+                    <u:NumericDoubleUpDown MinWidth="100"
+                                           InnerRightContent="x"
+                                           Minimum="0.1"
+                                           Value="{Binding PlantAttackRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Content="全体植物血量倍率"
+                            Command="{Binding SetPlantHealthRatioCommand}" />
+                    <u:NumericDoubleUpDown MinWidth="100"
+                                           InnerRightContent="x"
+                                           Minimum="0.1"
+                                           Value="{Binding PlantHealthRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
             </StackPanel>
         </Border>
         <Border>
@@ -292,7 +332,7 @@
                     <CheckBox Content="自动音游"
                               IsChecked="{Binding AutoRhythmGame, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <CheckBox Content="点击添加星辉buff"
-                              IsChecked="{Binding StarUpBuff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />                    
+                              IsChecked="{Binding StarUpBuff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Content="点击植物升级"

@@ -10,8 +10,8 @@
     <WrapPanel Orientation="Horizontal">
         <Border>
             <StackPanel>
-                <u:Divider Content="游戏制作组"/>
-                
+                <u:Divider Content="游戏制作组" />
+
             </StackPanel>
         </Border>
     </WrapPanel>

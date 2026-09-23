@@ -12,7 +12,7 @@ public class PathToFolderConverter : IValueConverter
         if (value is not string path || string.IsNullOrWhiteSpace(path)) return "Unnamed";
         var trimmedPath = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         var lastComponent = Path.GetFileName(trimmedPath);
-        return string.Equals(trimmedPath, Path.GetPathRoot(trimmedPath), System.StringComparison.OrdinalIgnoreCase)
+        return string.Equals(trimmedPath, Path.GetPathRoot(trimmedPath), StringComparison.OrdinalIgnoreCase)
             ? trimmedPath
             : // 或根据需求返回 trimmedPath 本身
             lastComponent;

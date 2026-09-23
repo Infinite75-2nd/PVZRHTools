@@ -4,7 +4,7 @@ using ToolMod.Components;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 西瓜加农炮无CD装填补丁 - MelonCannon.AnimShoot
+///     西瓜加农炮无CD装填补丁 - MelonCannon.AnimShoot
 /// </summary>
 [HarmonyPatch(typeof(MelonCannon))]
 public static class MelonCannonPatch

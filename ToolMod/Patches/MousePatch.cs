@@ -7,21 +7,20 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(Mouse))]
 public static class MousePatch
 {
-    private static Plant? aa = null;
+    private static Plant? aa;
 
     [HarmonyPrefix]
     [HarmonyPatch(nameof(Mouse.TryToSetPlantByGlove))]
     public static bool PreTryToSetPlantByGlove(Mouse __instance)
     {
-        if (ColumnGlove&&__instance.thePlantOnGlove.thePlantRow==__instance.theMouseRow)
+        if (ColumnGlove && __instance.thePlantOnGlove.thePlantRow == __instance.theMouseRow)
         {
             aa = __instance.thePlantOnGlove;
-            int vcol = __instance.theMouseColumn - __instance.thePlantOnGlove.thePlantColumn;
-            int newCol = __instance.theMouseColumn;
-            List<Plant> plants = new List<Plant>();
+            var vcol = __instance.theMouseColumn - __instance.thePlantOnGlove.thePlantColumn;
+            var newCol = __instance.theMouseColumn;
+            var plants = new List<Plant>();
             var allPlants = Lawnf.GetAllPlants();
             if (allPlants != null)
-            {
                 foreach (var plant in allPlants)
                 {
                     if (plant == null || plant.gameObject == null) continue;
@@ -37,25 +36,19 @@ public static class MousePatch
                         }
                     }
                 }
-            }
 
             foreach (var plant in plants)
             {
-                Plant gameObject =
+                var gameObject =
                     CreatePlant.Instance.SetPlant(newCol, plant.thePlantRow, plant.thePlantType);
                 if (Board.Instance.boardTag.isColumn)
                 {
-                    for (int i = 0; i < 5; i++)
-                    {
+                    for (var i = 0; i < 5; i++)
                         CreatePlant.Instance.SetPlant(__instance.thePlantOnGlove.thePlantColumn, i, plant.thePlantType);
-                    }
                 }
                 else
                 {
-                    if (gameObject != null)
-                    {
-                        plant.Die(Plant.DieReason.ByMix);
-                    }
+                    if (gameObject != null) plant.Die(Plant.DieReason.ByMix);
                 }
             }
         }
@@ -68,12 +61,8 @@ public static class MousePatch
     public static void PostTryToSetPlantByGlove(Mouse __instance)
     {
         if (ColumnGlove)
-        {
             if (Board.Instance.boardTag.isColumn && aa != null)
-            {
                 CreatePlant.Instance.SetPlant(aa.thePlantColumn, aa.thePlantRow, aa.thePlantType);
-            }
-        }
 
         OriginalGloveFullCD = Lawnf.GetGloveCD();
     }

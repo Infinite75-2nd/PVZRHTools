@@ -1,13 +1,27 @@
-using ToolData;
 using PVZRHTools.Services;
 using PVZRHTools.Utils;
 using ReactiveUI.SourceGenerators;
+using ToolData;
 
 namespace PVZRHTools.ViewModels;
 
 public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
 {
+    public FieldReadWriteViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
+        dataSyncService)
+    {
+        InitDataService = initDataService;
+        DataSyncService.MessageReceived += MessageReceived;
+        this.SimpleOneWaySync(x => x.RandomUpgradeMode, Strings.RandomUpgradeMode);
+    }
+
     public IInitDataService InitDataService { get; }
+
+    #region 斗蛐蛐布阵 - 其他设置
+
+    [Reactive] public partial bool RandomUpgradeMode { get; set; }
+
+    #endregion
 
     public void MessageReceived(object? sender, SyncData data)
     {
@@ -19,158 +33,6 @@ public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
                 break;
             }
         }
-    }
-
-    #region 常规布阵 - 植物布阵
-
-    [Reactive] public partial string PlantFormationCode { get; set; } = string.Empty;
-    [Reactive] public partial bool PlantFormationClearField { get; set; }
-    [Reactive] public partial bool PlantFormationUseAdvancedFormat { get; set; }
-
-    #endregion
-
-    #region 常规布阵 - 僵尸布阵
-
-    [Reactive] public partial string ZombieFormationCode { get; set; } = string.Empty;
-    [Reactive] public partial bool ZombieFormationClearField { get; set; }
-    [Reactive] public partial bool ZombieFormationUseAdvancedFormat { get; set; }
-
-    #endregion
-
-    #region 常规布阵 - 混合布阵
-
-    [Reactive] public partial string MixedFormationCode { get; set; } = string.Empty;
-    [Reactive] public partial bool MixedFormationClearField { get; set; }
-
-    #endregion
-
-    #region 常规布阵 - 罐子布阵
-
-    [Reactive] public partial string PotFormationCode { get; set; } = string.Empty;
-    [Reactive] public partial bool PotFormationClearField { get; set; }
-
-    #endregion
-
-    #region 斗蛐蛐布阵 - 植物礼盒
-
-    [Reactive] public partial int GiftBox1PlantIndex { get; set; } = -1;
-    [Reactive] public partial int GiftBox2PlantIndex { get; set; } = -1;
-    [Reactive] public partial int GiftBox3PlantIndex { get; set; } = -1;
-    [Reactive] public partial int GiftBox4PlantIndex { get; set; } = -1;
-    [Reactive] public partial int GiftBox5PlantIndex { get; set; } = -1;
-
-    #endregion
-
-    #region 斗蛐蛐布阵 - 僵尸槽位
-
-    [Reactive] public partial int ZombieSlot1Index { get; set; } = -1;
-    [Reactive] public partial int ZombieSlot2Index { get; set; } = -1;
-    [Reactive] public partial int ZombieSlot3Index { get; set; } = -1;
-    [Reactive] public partial int ZombieSlot4Index { get; set; } = -1;
-    [Reactive] public partial int ZombieSlot5Index { get; set; } = -1;
-    [Reactive] public partial int ZombieSlot6Index { get; set; } = -1;
-
-    #endregion
-
-    #region 斗蛐蛐布阵 - 其他设置
-
-    [Reactive] public partial bool RandomUpgradeMode { get; set; }
-
-    #endregion
-
-    #region Commands
-
-    // 植物布阵命令
-    [ReactiveCommand]
-    public void GetPlantFormationCode() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.GetPlantFormationCode,
-        Parameters = [PlantFormationUseAdvancedFormat.ToString()]
-    });
-
-    [ReactiveCommand]
-    public void ApplyPlantFormation() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.ApplyPlantFormation,
-        Parameters =
-            [PlantFormationCode, PlantFormationClearField.ToString(), PlantFormationUseAdvancedFormat.ToString()]
-    });
-
-    // 僵尸布阵命令
-    [ReactiveCommand]
-    public void GetZombieFormationCode() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.GetZombieFormationCode,
-        Parameters = [ZombieFormationUseAdvancedFormat.ToString()]
-    });
-
-    [ReactiveCommand]
-    public void ApplyZombieFormation() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.ApplyZombieFormation,
-        Parameters =
-            [ZombieFormationCode, ZombieFormationClearField.ToString(), ZombieFormationUseAdvancedFormat.ToString()]
-    });
-
-    // 混合布阵命令
-    [ReactiveCommand]
-    public void GetMixedFormationCode() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.GetMixedFormationCode,
-        Parameters = []
-    });
-
-    [ReactiveCommand]
-    public void ApplyMixedFormation() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.ApplyMixedFormation,
-        Parameters = [MixedFormationCode, MixedFormationClearField.ToString()]
-    });
-
-    // 罐子布阵命令
-    [ReactiveCommand]
-    public void GetPotFormationCode() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.GetPotFormationCode,
-        Parameters = []
-    });
-
-    [ReactiveCommand]
-    public void ApplyPotFormation() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.ApplyPotFormation,
-        Parameters = [PotFormationCode, PotFormationClearField.ToString()]
-    });
-
-    // 斗蛐蛐布阵命令
-    [ReactiveCommand]
-    public void ApplyBattleFormation() => DataSyncService.SendCommand(new SyncData()
-    {
-        Command = Strings.ApplyBattleFormation,
-        Parameters =
-        [
-            GiftBox1PlantIndex.ToString(),
-            GiftBox2PlantIndex.ToString(),
-            GiftBox3PlantIndex.ToString(),
-            GiftBox4PlantIndex.ToString(),
-            GiftBox5PlantIndex.ToString(),
-            ZombieSlot1Index.ToString(),
-            ZombieSlot2Index.ToString(),
-            ZombieSlot3Index.ToString(),
-            ZombieSlot4Index.ToString(),
-            ZombieSlot5Index.ToString(),
-            ZombieSlot6Index.ToString()
-        ]
-    });
-
-    #endregion
-
-    public FieldReadWriteViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
-        dataSyncService)
-    {
-        InitDataService = initDataService;
-        DataSyncService.MessageReceived += MessageReceived;
-        this.SimpleOneWaySync(x => x.RandomUpgradeMode, Strings.RandomUpgradeMode);
     }
 
     public override void SaveSettings(SettingsData settings)
@@ -230,4 +92,169 @@ public partial class FieldReadWriteViewModel : ModifierPageViewModelBase
         ZombieSlot6Index = settings.ZombieSlot6Index;
         RandomUpgradeMode = settings.RandomUpgradeMode;
     }
+
+    #region 常规布阵 - 植物布阵
+
+    [Reactive] public partial string PlantFormationCode { get; set; } = string.Empty;
+    [Reactive] public partial bool PlantFormationClearField { get; set; }
+    [Reactive] public partial bool PlantFormationUseAdvancedFormat { get; set; }
+
+    #endregion
+
+    #region 常规布阵 - 僵尸布阵
+
+    [Reactive] public partial string ZombieFormationCode { get; set; } = string.Empty;
+    [Reactive] public partial bool ZombieFormationClearField { get; set; }
+    [Reactive] public partial bool ZombieFormationUseAdvancedFormat { get; set; }
+
+    #endregion
+
+    #region 常规布阵 - 混合布阵
+
+    [Reactive] public partial string MixedFormationCode { get; set; } = string.Empty;
+    [Reactive] public partial bool MixedFormationClearField { get; set; }
+
+    #endregion
+
+    #region 常规布阵 - 罐子布阵
+
+    [Reactive] public partial string PotFormationCode { get; set; } = string.Empty;
+    [Reactive] public partial bool PotFormationClearField { get; set; }
+
+    #endregion
+
+    #region 斗蛐蛐布阵 - 植物礼盒
+
+    [Reactive] public partial int GiftBox1PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox2PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox3PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox4PlantIndex { get; set; } = -1;
+    [Reactive] public partial int GiftBox5PlantIndex { get; set; } = -1;
+
+    #endregion
+
+    #region 斗蛐蛐布阵 - 僵尸槽位
+
+    [Reactive] public partial int ZombieSlot1Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot2Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot3Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot4Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot5Index { get; set; } = -1;
+    [Reactive] public partial int ZombieSlot6Index { get; set; } = -1;
+
+    #endregion
+
+    #region Commands
+
+    // 植物布阵命令
+    [ReactiveCommand]
+    public void GetPlantFormationCode()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GetPlantFormationCode,
+            Parameters = [PlantFormationUseAdvancedFormat.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void ApplyPlantFormation()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ApplyPlantFormation,
+            Parameters =
+                [PlantFormationCode, PlantFormationClearField.ToString(), PlantFormationUseAdvancedFormat.ToString()]
+        });
+    }
+
+    // 僵尸布阵命令
+    [ReactiveCommand]
+    public void GetZombieFormationCode()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GetZombieFormationCode,
+            Parameters = [ZombieFormationUseAdvancedFormat.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void ApplyZombieFormation()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ApplyZombieFormation,
+            Parameters =
+                [ZombieFormationCode, ZombieFormationClearField.ToString(), ZombieFormationUseAdvancedFormat.ToString()]
+        });
+    }
+
+    // 混合布阵命令
+    [ReactiveCommand]
+    public void GetMixedFormationCode()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GetMixedFormationCode,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void ApplyMixedFormation()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ApplyMixedFormation,
+            Parameters = [MixedFormationCode, MixedFormationClearField.ToString()]
+        });
+    }
+
+    // 罐子布阵命令
+    [ReactiveCommand]
+    public void GetPotFormationCode()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GetPotFormationCode,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void ApplyPotFormation()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ApplyPotFormation,
+            Parameters = [PotFormationCode, PotFormationClearField.ToString()]
+        });
+    }
+
+    // 斗蛐蛐布阵命令
+    [ReactiveCommand]
+    public void ApplyBattleFormation()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ApplyBattleFormation,
+            Parameters =
+            [
+                GiftBox1PlantIndex.ToString(),
+                GiftBox2PlantIndex.ToString(),
+                GiftBox3PlantIndex.ToString(),
+                GiftBox4PlantIndex.ToString(),
+                GiftBox5PlantIndex.ToString(),
+                ZombieSlot1Index.ToString(),
+                ZombieSlot2Index.ToString(),
+                ZombieSlot3Index.ToString(),
+                ZombieSlot4Index.ToString(),
+                ZombieSlot5Index.ToString(),
+                ZombieSlot6Index.ToString()
+            ]
+        });
+    }
+
+    #endregion
 }

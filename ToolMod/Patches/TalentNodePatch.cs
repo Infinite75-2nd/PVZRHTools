@@ -10,19 +10,13 @@ public static class TalentNodePatch
     [HarmonyPatch(nameof(TalentNode.OnPointerDown))]
     public static void PreOnPointerDown(TalentNode __instance)
     {
-        if (StarAdvFreeBuff)
-        {
-            __instance.data.cost = int.MinValue;
-        }
+        if (StarAdvFreeBuff) __instance.data.cost = int.MinValue;
     }
-    
+
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TalentNode.OnPointerDown))]
     public static void PostOnPointerDown(TalentNode __instance)
     {
-        if (StarAdvFreeBuff)
-        {
-            __instance.data.cost = 0;
-        }
+        if (StarAdvFreeBuff) __instance.data.cost = 0;
     }
 }

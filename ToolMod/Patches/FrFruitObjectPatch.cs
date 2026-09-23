@@ -18,11 +18,8 @@ public static class FrFruitObjectPatch
             __instance.gameObject.TryGetComponent<Rigidbody2D>(out var rb);
             if (rb != null)
             {
-                float screenHeight = Camera.main.orthographicSize;
-                if (__instance.transform.position.y < -screenHeight && rb.velocity.y < 0f)
-                {
-                    __instance.Slice();
-                }
+                var screenHeight = Camera.main.orthographicSize;
+                if (__instance.transform.position.y < -screenHeight && rb.velocity.y < 0f) __instance.Slice();
             }
         }
         catch

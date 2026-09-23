@@ -14,7 +14,7 @@ public static class SuperThreeGatlingPatch
         __state = false;
         if (__instance == null) return;
 
-        int plantId = __instance.GetInstanceID();
+        var plantId = __instance.GetInstanceID();
 
         if (UltimateSuperGatling)
         {
@@ -46,7 +46,6 @@ public static class SuperThreeGatlingPatch
         {
             // 功能关闭：恢复被修改过的植物
             if (ModifiedPlants.Contains(plantId))
-            {
                 try
                 {
                     __instance.keepShooting = false;
@@ -56,7 +55,6 @@ public static class SuperThreeGatlingPatch
                 catch
                 {
                 }
-            }
         }
     }
 
@@ -69,10 +67,7 @@ public static class SuperThreeGatlingPatch
         try
         {
             __instance.timer = 0.1f;
-            if (__state && __instance.anim != null)
-            {
-                __instance.anim.SetTrigger("shoot");
-            }
+            if (__state && __instance.anim != null) __instance.anim.SetTrigger("shoot");
         }
         catch
         {
@@ -80,7 +75,7 @@ public static class SuperThreeGatlingPatch
     }
 
     /// <summary>
-    /// 清理记录（切换关卡时调用）
+    ///     清理记录（切换关卡时调用）
     /// </summary>
     public static void ClearAll()
     {
@@ -90,8 +85,8 @@ public static class SuperThreeGatlingPatch
 
 
     /// <summary>
-    /// 超级机枪射手无限开大补丁 - SuperThreeGatling.Shoot1
-    /// 在每次射击后立即触发 AttributeEvent 重置大招状态
+    ///     超级机枪射手无限开大补丁 - SuperThreeGatling.Shoot1
+    ///     在每次射击后立即触发 AttributeEvent 重置大招状态
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(SuperSnowGatling.Shoot1))]

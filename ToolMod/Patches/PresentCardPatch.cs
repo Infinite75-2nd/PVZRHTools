@@ -5,9 +5,9 @@ using static ToolMod.Components.PatchDataCache;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 卡片无限制补丁 - PresentCard.Start
-/// 当启用时，阻止PresentCard.Start()方法执行，取消礼盒卡片的数量限制
-/// 参考：AllPresentCard插件
+///     卡片无限制补丁 - PresentCard.Start
+///     当启用时，阻止PresentCard.Start()方法执行，取消礼盒卡片的数量限制
+///     参考：AllPresentCard插件
 /// </summary>
 [HarmonyPatch(typeof(PresentCard))]
 public static class PresentCardPatch
@@ -30,8 +30,8 @@ public static class PresentCardPatch
 }
 
 /// <summary>
-/// 卡片无限制补丁 - CardUI.Awake
-/// 当启用时，将maxUsedTimes设置为一个很大的值，取消卡片使用次数限制
+///     卡片无限制补丁 - CardUI.Awake
+///     当启用时，将maxUsedTimes设置为一个很大的值，取消卡片使用次数限制
 /// </summary>
 [HarmonyPatch(typeof(CardUI), "Awake")]
 public static class UnlimitedCardAwakePatch
@@ -40,9 +40,6 @@ public static class UnlimitedCardAwakePatch
     public static void Postfix(CardUI __instance)
     {
         // 卡片无限制：将maxUsedTimes设置为一个很大的值
-        if (UnlimitedCardSlots)
-        {
-            __instance.maxUsedTimes = 9999;
-        }
+        if (UnlimitedCardSlots) __instance.maxUsedTimes = 9999;
     }
 }

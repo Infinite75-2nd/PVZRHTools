@@ -1,196 +1,12 @@
-using ToolData;
 using PVZRHTools.Services;
 using PVZRHTools.Utils;
 using ReactiveUI.SourceGenerators;
+using ToolData;
 
 namespace PVZRHTools.ViewModels;
 
 public partial class PropertySettingsViewModel : ModifierPageViewModelBase
 {
-    public IInitDataService InitDataService { get; }
-
-    #region 礼盒修改
-
-    [Reactive] public partial bool SuperPresent { get; set; }
-    [Reactive] public partial bool UltimateRandomZombie { get; set; }
-    [Reactive] public partial bool PresentFastOpen { get; set; }
-    [Reactive] public partial int LockPresent { get; set; }
-    [Reactive] public partial bool LockPresentEnabled { get; set; }
-
-    #endregion
-
-    #region 数值修改
-
-    [Reactive] public partial int ZombieHPType { get; set; }
-    [Reactive] public partial int ZombieHPValue { get; set; }
-    [Reactive] public partial int FirstArmorHPType { get; set; }
-    [Reactive] public partial int FirstArmorHPValue { get; set; }
-    [Reactive] public partial int SecondArmorHPType { get; set; }
-    [Reactive] public partial int SecondArmorHPValue { get; set; }
-    [Reactive] public partial int BulletDamageType { get; set; }
-    [Reactive] public partial int BulletDamageValue { get; set; }
-    [Reactive] public partial int LockBulletType { get; set; }
-
-    #endregion
-
-    #region 场地特性
-
-    [Reactive] public partial bool NoIceRoad { get; set; }
-    [Reactive] public partial bool NoHole { get; set; }
-    [Reactive] public partial bool ItemExistForever { get; set; }
-    [Reactive] public partial bool JackboxNotExplode { get; set; }
-    [Reactive] public partial bool GarlicDay { get; set; }
-    [Reactive] public partial bool UnlimitedSunlight { get; set; }
-    [Reactive] public partial bool UnlockRedCardPlants { get; set; }
-    [Reactive] public partial bool EnableAllCards { get; set; }
-    [Reactive] public partial bool PotSmashingFix { get; set; }
-
-    #endregion
-
-    #region 植物特性
-
-    [Reactive] public partial bool FastShooting { get; set; }
-    [Reactive] public partial bool HardPlant { get; set; }
-    [Reactive] public partial bool ImmuneForceDeduct { get; set; }
-    [Reactive] public partial bool CurseImmunity { get; set; }
-    [Reactive] public partial bool CrushImmunity { get; set; }
-    [Reactive] public partial bool TrampleImmunity { get; set; }
-    [Reactive] public partial bool PickaxeImmunity { get; set; }
-    [Reactive] public partial bool UndeadBullet { get; set; }
-    [Reactive] public partial bool OldObsidianBullet { get; set; }
-    [Reactive] public partial bool HardBullet { get; set; }
-    [Reactive] public partial bool UltimateSuperGatling { get; set; }
-    [Reactive] public partial bool HyponoEmperorNoCD { get; set; }
-    [Reactive] public partial bool MagnetNutUnlimited { get; set; }
-    [Reactive] public partial bool MineNoCD { get; set; }
-    [Reactive] public partial bool ChomperNoCD { get; set; }
-    [Reactive] public partial bool CobCannonNoCD { get; set; }
-    [Reactive] public partial bool PlantUpgrade { get; set; }
-    [Reactive] public partial bool PlantsAllUpgrade { get; set; }
-    [Reactive] public partial bool PlantsAllStarUp { get; set; }
-    [Reactive] public partial bool SuperStarNoCD { get; set; }
-    [Reactive] public partial bool LockWheatEnabled { get; set; }
-    [Reactive] public partial int LockWheat { get; set; }
-
-    #endregion
-
-    #region 僵尸特性
-
-    [Reactive] public partial bool ZombieDamageLimitEnabled { get; set; } = false;
-    [Reactive] public partial int ZombieDamageLimit { get; set; } = 100;
-    [Reactive] public partial bool ZombieSpeedMultiplierEnabled { get; set; }
-    [Reactive] public partial double ZombieSpeedMultiplier { get; set; } = 1.0;
-    [Reactive] public partial bool ZombieAttackMultiplierEnabled { get; set; }
-    [Reactive] public partial double ZombieAttackMultiplier { get; set; } = 1.0;
-    [Reactive] public partial bool ZombieHealthMultiplierEnabled { get; set; }
-    [Reactive] public partial double ZombieHealthMultiplier { get; set; } = 1.0;
-    [Reactive] public partial double ZombieHealthRatio { get; set; } = 2.0;
-    [Reactive] public partial bool ZombieBulletReflectEnabled { get; set; }
-    [Reactive] public partial int ZombieBulletReflect { get; set; } = 10;
-    [Reactive] public partial bool ZombieStatusCoexist { get; set; }
-    [Reactive] public partial bool HardZombie { get; set; }
-    [Reactive] public partial bool ZombieImmuneAllDebuffs { get; set; }
-    [Reactive] public partial bool ZombieImmuneFreeze { get; set; }
-    [Reactive] public partial bool ZombieImmuneCold { get; set; }
-    [Reactive] public partial bool ZombieImmuneButter { get; set; }
-    [Reactive] public partial bool ZombieImmunePoison { get; set; }
-    [Reactive] public partial bool ZombieImmuneJalaed { get; set; }
-    [Reactive] public partial bool ZombieImmuneEmbered { get; set; }
-    [Reactive] public partial bool ZombieImmuneKnockback { get; set; }
-    [Reactive] public partial bool ZombieImmuneMindControl { get; set; }
-    [Reactive] public partial bool ZombieImmuneDevour { get; set; }
-
-    #endregion
-
-    #region 其他特性
-
-    [Reactive] public partial bool AutoCutFruit { get; set; }
-    [Reactive] public partial bool RandomCard { get; set; }
-    [Reactive] public partial bool ColumnGlove { get; set; }
-    [Reactive] public partial bool UnlimitedCardSlots { get; set; }
-    [Reactive] public partial bool RandomBullet { get; set; }
-    [Reactive] public partial bool AutoRhythmGame { get; set; }
-    [Reactive] public partial bool StarUpBuff { get; set; }
-
-    #endregion
-
-    #region Commands
-
-    [ReactiveCommand]
-    public void SetZombieHP() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetZombieHP,
-            Parameters = [ZombieHPType.ToString(), ZombieHPValue.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void SetFirstArmorHP() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetFirstArmorHP,
-            Parameters = [FirstArmorHPType.ToString(), FirstArmorHPValue.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void SetSecondArmorHP() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetSecondArmorHP,
-            Parameters = [SecondArmorHPType.ToString(), SecondArmorHPValue.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void SetBulletDamage() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetBulletDamage,
-            Parameters = [BulletDamageType.ToString(), BulletDamageValue.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void SetLockBullet() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.LockBullet,
-            Parameters = [LockBulletType.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void SetZombieHealthRatio() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetZombieHealthRatio,
-            Parameters = [ZombieHealthRatio.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void ApplyAllPlantSkins() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.ApplyAllPlantSkins,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void ObtainAllPlantSkins() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.ObtainAllPlantSkins,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void UnlockAllAlmanac() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.UnlockAllAlmanac,
-            Parameters = []
-        });
-
-    #endregion
-
-
     public PropertySettingsViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
         dataSyncService)
     {
@@ -233,6 +49,12 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.PlantsAllStarUp, Strings.PlantsAllStarUp);
         this.SimpleOneWaySync(x => x.SuperStarNoCD, Strings.SuperStarNoCD);
         this.SimpleSyncFlaggedInt(x => x.LockWheat, x => x.LockWheatEnabled, Strings.LockWheat);
+        this.SimpleSyncFlaggedDouble(x => x.PlantSpeedMultiplier, x => x.PlantSpeedMultiplierEnabled,
+            Strings.PlantSpeedMultiplier);
+        this.SimpleSyncFlaggedDouble(x => x.PlantAttackMultiplier, x => x.PlantAttackMultiplierEnabled,
+            Strings.PlantAttackMultiplier);
+        this.SimpleSyncFlaggedDouble(x => x.PlantHealthMultiplier, x => x.PlantHealthMultiplierEnabled,
+            Strings.PlantHealthMultiplier);
 
         // 僵尸特性
         this.SimpleSyncFlaggedInt(x => x.ZombieDamageLimit, x => x.ZombieDamageLimitEnabled, Strings.ZombieDamageLimit);
@@ -266,6 +88,8 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.AutoRhythmGame, Strings.AutoRhythmGame);
         this.SimpleOneWaySync(x => x.StarUpBuff, Strings.StarUpBuff);
     }
+
+    public IInitDataService InitDataService { get; }
 
     public override void SaveSettings(SettingsData settings)
     {
@@ -310,6 +134,15 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         settings.SuperStarNoCD = SuperStarNoCD;
         settings.LockWheat = LockWheat;
         settings.LockWheatEnabled = LockWheatEnabled;
+        settings.PlantSpeedMultiplierEnabled = PlantSpeedMultiplierEnabled;
+        settings.PlantSpeedMultiplier = PlantSpeedMultiplier;
+        settings.PlantAttackMultiplierEnabled = PlantAttackMultiplierEnabled;
+        settings.PlantAttackMultiplier = PlantAttackMultiplier;
+        settings.PlantHealthMultiplierEnabled = PlantHealthMultiplierEnabled;
+        settings.PlantHealthMultiplier = PlantHealthMultiplier;
+        settings.PlantSpeedRatio = PlantSpeedRatio;
+        settings.PlantAttackRatio = PlantAttackRatio;
+        settings.PlantHealthRatio = PlantHealthRatio;
 
         // 僵尸特性
         settings.ZombieDamageLimitEnabled = ZombieDamageLimitEnabled;
@@ -389,6 +222,15 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         SuperStarNoCD = settings.SuperStarNoCD;
         LockWheat = settings.LockWheat;
         LockWheatEnabled = settings.LockWheatEnabled;
+        PlantSpeedMultiplierEnabled = settings.PlantSpeedMultiplierEnabled;
+        PlantSpeedMultiplier = settings.PlantSpeedMultiplier;
+        PlantAttackMultiplierEnabled = settings.PlantAttackMultiplierEnabled;
+        PlantAttackMultiplier = settings.PlantAttackMultiplier;
+        PlantHealthMultiplierEnabled = settings.PlantHealthMultiplierEnabled;
+        PlantHealthMultiplier = settings.PlantHealthMultiplier;
+        PlantSpeedRatio = settings.PlantSpeedRatio;
+        PlantAttackRatio = settings.PlantAttackRatio;
+        PlantHealthRatio = settings.PlantHealthRatio;
 
         // 僵尸特性
         ZombieDamageLimitEnabled = settings.ZombieDamageLimitEnabled;
@@ -424,4 +266,242 @@ public partial class PropertySettingsViewModel : ModifierPageViewModelBase
         AutoRhythmGame = settings.AutoRhythmGame;
         StarUpBuff = settings.StarUpBuff;
     }
+
+    #region 礼盒修改
+
+    [Reactive] public partial bool SuperPresent { get; set; }
+    [Reactive] public partial bool UltimateRandomZombie { get; set; }
+    [Reactive] public partial bool PresentFastOpen { get; set; }
+    [Reactive] public partial int LockPresent { get; set; }
+    [Reactive] public partial bool LockPresentEnabled { get; set; }
+
+    #endregion
+
+    #region 数值修改
+
+    [Reactive] public partial int ZombieHPType { get; set; }
+    [Reactive] public partial int ZombieHPValue { get; set; }
+    [Reactive] public partial int FirstArmorHPType { get; set; }
+    [Reactive] public partial int FirstArmorHPValue { get; set; }
+    [Reactive] public partial int SecondArmorHPType { get; set; }
+    [Reactive] public partial int SecondArmorHPValue { get; set; }
+    [Reactive] public partial int BulletDamageType { get; set; }
+    [Reactive] public partial int BulletDamageValue { get; set; }
+    [Reactive] public partial int LockBulletType { get; set; }
+
+    #endregion
+
+    #region 场地特性
+
+    [Reactive] public partial bool NoIceRoad { get; set; }
+    [Reactive] public partial bool NoHole { get; set; }
+    [Reactive] public partial bool ItemExistForever { get; set; }
+    [Reactive] public partial bool JackboxNotExplode { get; set; }
+    [Reactive] public partial bool GarlicDay { get; set; }
+    [Reactive] public partial bool UnlimitedSunlight { get; set; }
+    [Reactive] public partial bool UnlockRedCardPlants { get; set; }
+    [Reactive] public partial bool EnableAllCards { get; set; }
+    [Reactive] public partial bool PotSmashingFix { get; set; }
+
+    #endregion
+
+    #region 植物特性
+
+    [Reactive] public partial bool FastShooting { get; set; }
+    [Reactive] public partial bool HardPlant { get; set; }
+    [Reactive] public partial bool ImmuneForceDeduct { get; set; }
+    [Reactive] public partial bool CurseImmunity { get; set; }
+    [Reactive] public partial bool CrushImmunity { get; set; }
+    [Reactive] public partial bool TrampleImmunity { get; set; }
+    [Reactive] public partial bool PickaxeImmunity { get; set; }
+    [Reactive] public partial bool UndeadBullet { get; set; }
+    [Reactive] public partial bool OldObsidianBullet { get; set; }
+    [Reactive] public partial bool HardBullet { get; set; }
+    [Reactive] public partial bool UltimateSuperGatling { get; set; }
+    [Reactive] public partial bool HyponoEmperorNoCD { get; set; }
+    [Reactive] public partial bool MagnetNutUnlimited { get; set; }
+    [Reactive] public partial bool MineNoCD { get; set; }
+    [Reactive] public partial bool ChomperNoCD { get; set; }
+    [Reactive] public partial bool CobCannonNoCD { get; set; }
+    [Reactive] public partial bool PlantUpgrade { get; set; }
+    [Reactive] public partial bool PlantsAllUpgrade { get; set; }
+    [Reactive] public partial bool PlantsAllStarUp { get; set; }
+    [Reactive] public partial bool SuperStarNoCD { get; set; }
+    [Reactive] public partial bool LockWheatEnabled { get; set; }
+    [Reactive] public partial int LockWheat { get; set; }
+    [Reactive] public partial bool PlantSpeedMultiplierEnabled { get; set; }
+    [Reactive] public partial double PlantSpeedMultiplier { get; set; } = 1.0;
+    [Reactive] public partial bool PlantAttackMultiplierEnabled { get; set; }
+    [Reactive] public partial double PlantAttackMultiplier { get; set; } = 1.0;
+    [Reactive] public partial bool PlantHealthMultiplierEnabled { get; set; }
+    [Reactive] public partial double PlantHealthMultiplier { get; set; } = 1.0;
+    [Reactive] public partial double PlantSpeedRatio { get; set; } = 2.0;
+    [Reactive] public partial double PlantAttackRatio { get; set; } = 2.0;
+    [Reactive] public partial double PlantHealthRatio { get; set; } = 2.0;
+
+    #endregion
+
+    #region 僵尸特性
+
+    [Reactive] public partial bool ZombieDamageLimitEnabled { get; set; } = false;
+    [Reactive] public partial int ZombieDamageLimit { get; set; } = 100;
+    [Reactive] public partial bool ZombieSpeedMultiplierEnabled { get; set; }
+    [Reactive] public partial double ZombieSpeedMultiplier { get; set; } = 1.0;
+    [Reactive] public partial bool ZombieAttackMultiplierEnabled { get; set; }
+    [Reactive] public partial double ZombieAttackMultiplier { get; set; } = 1.0;
+    [Reactive] public partial bool ZombieHealthMultiplierEnabled { get; set; }
+    [Reactive] public partial double ZombieHealthMultiplier { get; set; } = 1.0;
+    [Reactive] public partial double ZombieHealthRatio { get; set; } = 2.0;
+    [Reactive] public partial bool ZombieBulletReflectEnabled { get; set; }
+    [Reactive] public partial int ZombieBulletReflect { get; set; } = 10;
+    [Reactive] public partial bool ZombieStatusCoexist { get; set; }
+    [Reactive] public partial bool HardZombie { get; set; }
+    [Reactive] public partial bool ZombieImmuneAllDebuffs { get; set; }
+    [Reactive] public partial bool ZombieImmuneFreeze { get; set; }
+    [Reactive] public partial bool ZombieImmuneCold { get; set; }
+    [Reactive] public partial bool ZombieImmuneButter { get; set; }
+    [Reactive] public partial bool ZombieImmunePoison { get; set; }
+    [Reactive] public partial bool ZombieImmuneJalaed { get; set; }
+    [Reactive] public partial bool ZombieImmuneEmbered { get; set; }
+    [Reactive] public partial bool ZombieImmuneKnockback { get; set; }
+    [Reactive] public partial bool ZombieImmuneMindControl { get; set; }
+    [Reactive] public partial bool ZombieImmuneDevour { get; set; }
+
+    #endregion
+
+    #region 其他特性
+
+    [Reactive] public partial bool AutoCutFruit { get; set; }
+    [Reactive] public partial bool RandomCard { get; set; }
+    [Reactive] public partial bool ColumnGlove { get; set; }
+    [Reactive] public partial bool UnlimitedCardSlots { get; set; }
+    [Reactive] public partial bool RandomBullet { get; set; }
+    [Reactive] public partial bool AutoRhythmGame { get; set; }
+    [Reactive] public partial bool StarUpBuff { get; set; }
+
+    #endregion
+
+    #region Commands
+
+    [ReactiveCommand]
+    public void SetZombieHP()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetZombieHP,
+            Parameters = [ZombieHPType.ToString(), ZombieHPValue.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetFirstArmorHP()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetFirstArmorHP,
+            Parameters = [FirstArmorHPType.ToString(), FirstArmorHPValue.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetSecondArmorHP()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetSecondArmorHP,
+            Parameters = [SecondArmorHPType.ToString(), SecondArmorHPValue.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetBulletDamage()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetBulletDamage,
+            Parameters = [BulletDamageType.ToString(), BulletDamageValue.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetLockBullet()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.LockBullet,
+            Parameters = [LockBulletType.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetZombieHealthRatio()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetZombieHealthRatio,
+            Parameters = [ZombieHealthRatio.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetPlantSpeedRatio()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetPlantSpeedRatio,
+            Parameters = [PlantSpeedRatio.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetPlantAttackRatio()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetPlantAttackRatio,
+            Parameters = [PlantAttackRatio.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetPlantHealthRatio()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetPlantHealthRatio,
+            Parameters = [PlantHealthRatio.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void ApplyAllPlantSkins()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ApplyAllPlantSkins,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void ObtainAllPlantSkins()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.ObtainAllPlantSkins,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void UnlockAllAlmanac()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.UnlockAllAlmanac,
+            Parameters = []
+        });
+    }
+
+    #endregion
 }

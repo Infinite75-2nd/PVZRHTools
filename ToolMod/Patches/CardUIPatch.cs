@@ -22,10 +22,7 @@ public static class CardUIPatch
         obj.transform.localPosition = new Vector3(39f, 0, 0);
 
         // 卡片无限制：将maxUsedTimes设置为一个很大的值
-        if (UnlimitedCardSlots)
-        {
-            __instance.maxUsedTimes = 9999;
-        }
+        if (UnlimitedCardSlots) __instance.maxUsedTimes = 9999;
     }
 
     [HarmonyPostfix]
@@ -37,14 +34,8 @@ public static class CardUIPatch
             if (__instance is null) return;
 
             // 卡片无限制：动态检查并设置maxUsedTimes
-            if (UnlimitedCardSlots && __instance.maxUsedTimes < 9999)
-            {
-                __instance.maxUsedTimes = 9999;
-            }
-            if(CardFreeCD)
-            {
-                __instance.CD = __instance.fullCD;
-            }
+            if (UnlimitedCardSlots && __instance.maxUsedTimes < 9999) __instance.maxUsedTimes = 9999;
+            if (CardFreeCD) __instance.CD = __instance.fullCD;
 
             var child = __instance.transform.FindChild("ModifierCardCD");
             if (child == null) return;
@@ -64,27 +55,24 @@ public static class CardUIPatch
     }
 
     /// <summary>
-    /// 卡片无限制补丁 - CardUI.LevelLim
-    /// 当启用时，阻止LevelLim方法执行，取消卡片选取数量限制
-    /// LevelLim方法是在CardUI.Start中被调用来设置卡片的选取限制
+    ///     卡片无限制补丁 - CardUI.LevelLim
+    ///     当启用时，阻止LevelLim方法执行，取消卡片选取数量限制
+    ///     LevelLim方法是在CardUI.Start中被调用来设置卡片的选取限制
     /// </summary>
     [HarmonyPrefix]
     [HarmonyPatch(nameof(CardUI.LevelLim))]
     public static bool PreLevelLim()
     {
         // 当启用卡片无限制时，阻止LevelLim方法执行
-        if (UnlimitedCardSlots)
-        {
-            return false;
-        }
+        if (UnlimitedCardSlots) return false;
 
         return true;
     }
 
 
     /// <summary>
-    /// 卡片无限制补丁 - CardUI.OnMouseDown
-    /// 当点击选取卡片时，复制一张新卡片
+    ///     卡片无限制补丁 - CardUI.OnMouseDown
+    ///     当点击选取卡片时，复制一张新卡片
     /// </summary>
 
     // 记录复制出来的卡片，用于退出选卡时清除
@@ -103,7 +91,7 @@ public static class CardUIPatch
             if (__instance.transform.parent == null) return;
 
             // 复制卡片对象
-            GameObject go = Object.Instantiate(__instance.gameObject, __instance.transform.parent);
+            var go = Object.Instantiate(__instance.gameObject, __instance.transform.parent);
             go.transform.position = __instance.transform.position;
 
             // 设置新卡片的CD
@@ -123,34 +111,27 @@ public static class CardUIPatch
     }
 
     /// <summary>
-    /// 卡片无限制补丁 - CardUI.Awake
-    /// 当启用时，将maxUsedTimes设置为一个很大的值，取消卡片使用次数限制
+    ///     卡片无限制补丁 - CardUI.Awake
+    ///     当启用时，将maxUsedTimes设置为一个很大的值，取消卡片使用次数限制
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(CardUI.Awake))]
     public static void PostAwake(CardUI __instance)
     {
         // 卡片无限制：将maxUsedTimes设置为一个很大的值
-        if (UnlimitedCardSlots)
-        {
-            __instance.maxUsedTimes = 9999;
-        }
+        if (UnlimitedCardSlots) __instance.maxUsedTimes = 9999;
     }
 
     /// <summary>
-    /// 清除所有复制的卡片（关闭功能时调用）
+    ///     清除所有复制的卡片（关闭功能时调用）
     /// </summary>
     public static void ClearAllCopiedCards()
     {
         try
         {
             foreach (var card in CopiedCards)
-            {
                 if (card != null)
-                {
                     Object.Destroy(card);
-                }
-            }
 
             CopiedCards.Clear();
         }

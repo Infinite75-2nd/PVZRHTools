@@ -1,6 +1,4 @@
-﻿using HarmonyLib;
-
-namespace ToolMod.Patches;
+﻿namespace ToolMod.Patches;
 
 //[HarmonyPatch(typeof(GameAPP))]
 public class GameAPPPatch
@@ -9,9 +7,6 @@ public class GameAPPPatch
     //[HarmonyPatch(nameof(GameAPP.Start))]
     public static void PostStart()
     {
-        if (!ModCore.Instance.Inited)
-        {
-            ModCore.Instance.LateInit();
-        }
+        if (!ModCore.Instance.Inited) ModCore.Instance.LateInit();
     }
 }

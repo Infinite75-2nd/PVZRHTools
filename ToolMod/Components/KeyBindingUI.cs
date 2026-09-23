@@ -1,37 +1,68 @@
 using System;
-using Il2CppInterop.Runtime;
+using System.Linq.Expressions;
 using Il2CppInterop.Runtime.Injection;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
 using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Components;
 
 /// <summary>
-/// 按键绑定 UI 构造器。
-/// 挂载在 KeyBindingUI 预制体上，Start 时动态构建所有按键绑定行。
-///
-/// 所有 KeyBindingButton 的 Bind() 调用都在 Start() 中执行，
-/// 此时组件实例是 UIManager 最终展示的活跃实例，不会因预制体克隆丢失配置。
+///     按键绑定 UI 构造器。
+///     挂载在 KeyBindingUI 预制体上，Start 时动态构建所有按键绑定行。
+///     所有 KeyBindingButton 的 Bind() 调用都在 Start() 中执行，
+///     此时组件实例是 UIManager 最终展示的活跃实例，不会因预制体克隆丢失配置。
 /// </summary>
 public class KeyBindingUI : MonoBehaviour
 {
     /// <summary>每条按键绑定行的配置</summary>
-    private readonly (string Label, Func<System.Linq.Expressions.Expression<Func<KeyCode>>> BindingExpr)[] _bindings =
+    private readonly (string Label, Func<Expression<Func<KeyCode>>> BindingExpr)[] _bindings =
     {
-        ("高级时停",               () => () => KeySpeedStop),
-        ("显示游戏信息",           () => () => KeyShowGameInfo),
-        ("置顶卡槽",               () => () => KeyTopMostCardBank),
-        ("随机卡牌",               () => () => KeyRandomCard),
-        ("图鉴种植植物",           () => () => KeyAlmanacCreatePlant),
-        ("图鉴种植植物(花瓶)",     () => () => KeyAlmanacCreatePlantVase),
-        ("图鉴种植僵尸",           () => () => KeyAlmanacCreateZombie),
-        ("图鉴种植僵尸(花瓶)",     () => () => KeyAlmanacCreateZombieVase),
-        ("图鉴僵尸魅惑控制",       () => () => KeyAlmanacZombieMindCtrl),
-        ("诸神进化立即选词条",     ()=>()=>KeyGodEvolutionChooseBuff)
+        ("高级时停", () => () => KeySpeedStop),
+        ("显示游戏信息", () => () => KeyShowGameInfo),
+        ("置顶卡槽", () => () => KeyTopMostCardBank),
+        ("随机卡牌", () => () => KeyRandomCard),
+        ("图鉴种植植物", () => () => KeyAlmanacCreatePlant),
+        ("图鉴种植植物(花瓶)", () => () => KeyAlmanacCreatePlantVase),
+        ("图鉴种植僵尸", () => () => KeyAlmanacCreateZombie),
+        ("图鉴种植僵尸(花瓶)", () => () => KeyAlmanacCreateZombieVase),
+        ("图鉴僵尸魅惑控制", () => () => KeyAlmanacZombieMindCtrl),
+        ("诸神进化立即选词条", () => () => KeyGodEvolutionChooseBuff)
     };
+
+    #region 模板构建
+
+    /// <summary>
+    ///     从布局的第一个子项构建按键绑定行模板：
+    ///     隐藏 Input 字段，放入带 KeyBindingButton 的按钮预制体实例。
+    /// </summary>
+    private static GameObject BuildTemplate(Transform layout)
+    {
+        var template = Instantiate(layout.GetChild(0).gameObject);
+
+        // 隐藏默认的 Input 子对象
+        var input = template.transform.FindChild("Input");
+        if (input != null)
+            input.gameObject.SetActive(false);
+
+        // 实例化按钮预制体
+        var buttonPrefab = Resources.Load<GameObject>("ui\\prefabs\\sample\\Button");
+        var button = Instantiate(buttonPrefab);
+        button.transform.SetParent(template.transform);
+
+        // 添加按键绑定组件
+        button.AddComponent<KeyBindingButton>();
+
+        // 调整按钮布局
+        var buttonRect = button.GetComponent<RectTransform>();
+        buttonRect.sizeDelta = new Vector2(-40, 60);
+        buttonRect.anchoredPosition = new Vector2(0, -30);
+        button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSizeMax = 32;
+
+        return template;
+    }
+
+    #endregion
 
     #region 构造函数（Il2CppInterop 注入必需）
 
@@ -64,12 +95,12 @@ public class KeyBindingUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 隐藏布局默认字段后，为每条绑定逐行创建按键绑定 UI。
-    /// 修改器按键与游戏原版按键共用此构建逻辑，saveAction 决定保存到哪个存档文件。
+    ///     隐藏布局默认字段后，为每条绑定逐行创建按键绑定 UI。
+    ///     修改器按键与游戏原版按键共用此构建逻辑，saveAction 决定保存到哪个存档文件。
     /// </summary>
     public static void BuildRows(
         Transform layout,
-        (string Label, Func<System.Linq.Expressions.Expression<Func<KeyCode>>> BindingExpr)[] bindings,
+        (string Label, Func<Expression<Func<KeyCode>>> BindingExpr)[] bindings,
         Action saveAction)
     {
         // 隐藏布局中的其他默认字段
@@ -92,40 +123,6 @@ public class KeyBindingUI : MonoBehaviour
 
         // 清理模板
         Destroy(template);
-    }
-
-    #endregion
-
-    #region 模板构建
-
-    /// <summary>
-    /// 从布局的第一个子项构建按键绑定行模板：
-    /// 隐藏 Input 字段，放入带 KeyBindingButton 的按钮预制体实例。
-    /// </summary>
-    private static GameObject BuildTemplate(Transform layout)
-    {
-        var template = Instantiate(layout.GetChild(0).gameObject);
-
-        // 隐藏默认的 Input 子对象
-        var input = template.transform.FindChild("Input");
-        if (input != null)
-            input.gameObject.SetActive(false);
-
-        // 实例化按钮预制体
-        var buttonPrefab = Resources.Load<GameObject>("ui\\prefabs\\sample\\Button");
-        var button = Instantiate(buttonPrefab);
-        button.transform.SetParent(template.transform);
-
-        // 添加按键绑定组件
-        button.AddComponent<KeyBindingButton>();
-
-        // 调整按钮布局
-        var buttonRect = button.GetComponent<RectTransform>();
-        buttonRect.sizeDelta = new Vector2(-40, 60);
-        buttonRect.anchoredPosition = new Vector2(0, -30);
-        button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().fontSizeMax = 32;
-
-        return template;
     }
 
     #endregion

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Core;
 using GameLevel.RogueShooting;
 using HarmonyLib;
 using UnityEngine;
@@ -18,15 +19,14 @@ public static class MultipleChoiceMenuPatch
     [HarmonyPatch(nameof(MultipleChoiceMenu.Start))]
     public static void PostfixStart(MultipleChoiceMenu __instance)
     {
-        if (GodEvolutionDebuffClosable&&Board.Instance != null && Board.Instance.GetComponent<ShootingManager>() != null )
-        {
-            __instance.SetCancelable(true);
-        }
+        if (GodEvolutionDebuffClosable && Board.Instance != null &&
+            Board.Instance.GetComponent<ShootingManager>() != null) __instance.SetCancelable(true);
     }
-    
+
     [HarmonyPrefix]
     [HarmonyPatch(nameof(MultipleChoiceMenu.SetRefreshable))]
-    public static void PrefixSetRefreshable(MultipleChoiceMenu __instance, ref int refreshCount, ref bool interactable,ref bool refreshable)
+    public static void PrefixSetRefreshable(MultipleChoiceMenu __instance, ref int refreshCount, ref bool interactable,
+        ref bool refreshable)
     {
         if (ShouldFixGodEvolutionRefreshButton)
         {
@@ -99,8 +99,15 @@ public static class MultipleChoiceMenuPatch
     /// <summary>判断当前是否在游戏内 Buff 选择环境（而非难度选择）</summary>
     private static bool IsInGameBuffContext()
     {
-        try { return GodEvolutionMultiSelectBuff&&Board.Instance!=null&&Board.Instance.boardTag.rogueShooting && ShootingManager.Instance != null; }
-        catch { return false; }
+        try
+        {
+            return GodEvolutionMultiSelectBuff && Board.Instance != null && Board.Instance.boardTag.rogueShooting &&
+                   ShootingManager.Instance != null;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static void ClearMultiSelectState()
@@ -133,6 +140,7 @@ public static class MultipleChoiceMenuPatch
                 ModCore.Instance.Log?.LogWarning("[MultiSelect] UIButton.Confirm method not found");
                 return;
             }
+
             _confirmMethod.Invoke(window, null);
         }
         catch (Exception ex)
@@ -142,8 +150,8 @@ public static class MultipleChoiceMenuPatch
     }
 
     /// <summary>
-    /// 设置窗口高亮选中态（使用 selectedLight GameObject）
-    /// 注意：必须用直接 Il2CppInterop 字段访问（btn.selectedLight），反射 GetValue + as 在 Il2Cpp 运行时失效
+    ///     设置窗口高亮选中态（使用 selectedLight GameObject）
+    ///     注意：必须用直接 Il2CppInterop 字段访问（btn.selectedLight），反射 GetValue + as 在 Il2Cpp 运行时失效
     /// </summary>
     private static void SetSelectedLight(BaseWindow window, bool active)
     {
@@ -164,8 +172,7 @@ public static class MultipleChoiceMenuPatch
             // 方案2：通过 Transform 层级查找（fallback）
             var t = window.transform;
             if (t != null)
-            {
-                for (int i = 0; i < t.childCount; i++)
+                for (var i = 0; i < t.childCount; i++)
                 {
                     var child = t.GetChild(i);
                     if (child != null && child.gameObject != null && child.gameObject)
@@ -178,7 +185,6 @@ public static class MultipleChoiceMenuPatch
                         }
                     }
                 }
-            }
 
             // 方案3：反射后备（可能失效）
             var field = typeof(UIButton).GetField("selectedLight",
@@ -193,10 +199,10 @@ public static class MultipleChoiceMenuPatch
     }
 
     /// <summary>
-    /// 多选模式：替换 Update 键盘处理
-    /// 1. 键盘 1-5 → SelectWindow + 切换选中
-    /// 2. 鼠标点击窗口 → OnClicked 拦截 → 切换选中
-    /// 3. 空格/确认按钮 → 应用所有选中词条并关闭菜单
+    ///     多选模式：替换 Update 键盘处理
+    ///     1. 键盘 1-5 → SelectWindow + 切换选中
+    ///     2. 鼠标点击窗口 → OnClicked 拦截 → 切换选中
+    ///     3. 空格/确认按钮 → 应用所有选中词条并关闭菜单
     /// </summary>
     [HarmonyPrefix]
     [HarmonyPatch(nameof(MultipleChoiceMenu.Update))]
@@ -206,7 +212,7 @@ public static class MultipleChoiceMenuPatch
         try
         {
             // 数字键 1-5：选中并切换选中状态
-            int pressedIndex = -1;
+            var pressedIndex = -1;
             if (Input.GetKeyDown(KeyCode.Alpha1)) pressedIndex = 0;
             else if (Input.GetKeyDown(KeyCode.Alpha2)) pressedIndex = 1;
             else if (Input.GetKeyDown(KeyCode.Alpha3)) pressedIndex = 2;
@@ -225,16 +231,13 @@ public static class MultipleChoiceMenuPatch
             {
                 var windows = __instance.windows;
                 if (windows != null)
-                {
-                    for (int i = 0; i < windows.Count; i++)
-                    {
+                    for (var i = 0; i < windows.Count; i++)
                         if (windows[i] != null && windows[i].Pointer == _clickedWindow.Pointer)
                         {
                             ToggleSelection(__instance, i);
                             break;
                         }
-                    }
-                }
+
                 _clickedWindow = null;
             }
 
@@ -243,8 +246,8 @@ public static class MultipleChoiceMenuPatch
             {
                 if (_selectedIndices.Count == 0)
                 {
-                    GameAPP.PlaySound(26, 0.5f, 1.0f);
-                    Core.InGameText.Instance.ShowText("你还没有选择选项", 3.0f, false);
+                    GameAPP.PlaySound(26);
+                    InGameText.Instance.ShowText("你还没有选择选项", 3.0f);
                 }
                 else
                 {
@@ -256,6 +259,7 @@ public static class MultipleChoiceMenuPatch
         {
             ModCore.Instance.Log?.LogError("[MultiSelect] Update error: " + ex);
         }
+
         return false;
     }
 
@@ -269,8 +273,8 @@ public static class MultipleChoiceMenuPatch
     }
 
     /// <summary>
-    /// 拦截 UIButton.OnMouseUpAsButton，记录鼠标点击窗口
-    /// 注意：游戏鼠标点击走的是 OnMouseUpAsButton（MonoBehaviour 物理消息），而非 OnClicked！
+    ///     拦截 UIButton.OnMouseUpAsButton，记录鼠标点击窗口
+    ///     注意：游戏鼠标点击走的是 OnMouseUpAsButton（MonoBehaviour 物理消息），而非 OnClicked！
     /// </summary>
     [HarmonyPrefix]
     [HarmonyPatch(typeof(UIButton), nameof(UIButton.OnMouseUpAsButton))]
@@ -292,15 +296,17 @@ public static class MultipleChoiceMenuPatch
             {
                 // 未选择任何词条：播放错误音效 + 显示提示字幕，不执行原始 Confirm
                 GameAPP.PlaySound(26);
-                Core.InGameText.Instance.ShowText("你还没有选择选项", 3.0f, false);
+                InGameText.Instance.ShowText("你还没有选择选项", 3.0f);
                 return false;
             }
+
             ApplyMultiSelectAndClose(__instance);
         }
         catch (Exception ex)
         {
             ModCore.Instance.Log?.LogError("[MultiSelect] Confirm error: " + ex);
         }
+
         return false;
     }
 
@@ -309,15 +315,13 @@ public static class MultipleChoiceMenuPatch
     {
         _isApplyingMultiSelect = true;
         foreach (var index in new List<int>(_selectedIndices))
-        {
             if (_multiSelectWindows.TryGetValue(index, out var win) && win != null)
                 InvokeWindowClickEvent(win);
-        }
         _isApplyingMultiSelect = false;
 
         // 关闭菜单（与原始 OnSelect 逻辑一致）
         Time.timeScale = GameAPP.config.gameSpeed;
-        GameAPP.theGameStatus = (GameStatus)0;
+        GameAPP.theGameStatus = 0;
         var actionOnExit = __instance.actionOnExit;
         __instance.PopMenu();
         actionOnExit?.Invoke();
@@ -338,15 +342,14 @@ public static class MultipleChoiceMenuPatch
             var windows = __instance.windows;
             if (windows == null) return;
 
-            int index = -1;
-            for (int i = 0; i < windows.Count; i++)
-            {
+            var index = -1;
+            for (var i = 0; i < windows.Count; i++)
                 if (windows[i] == window)
                 {
                     index = i;
                     break;
                 }
-            }
+
             if (index < 0) return;
 
             // 新菜单首次打开时清除旧状态
@@ -390,14 +393,13 @@ public static class MultipleChoiceMenuPatch
         if (!IsInGameBuffContext()) return true;
         // 检查当前窗口是否在多选选中集合中
         foreach (var kvp in _multiSelectWindows)
-        {
             if (kvp.Value != null && kvp.Value.Pointer == __instance.Pointer)
             {
                 if (_selectedIndices.Contains(kvp.Key))
                     return false; // 跳过 OnDisSelect，保持高亮
                 break;
             }
-        }
+
         return true;
     }
 

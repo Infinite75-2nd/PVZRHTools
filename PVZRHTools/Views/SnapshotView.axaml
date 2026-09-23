@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
              x:Class="PVZRHTools.Views.SnapshotView"
              x:DataType="vm:SnapshotViewModel">
-    
+
     <UserControl.Styles>
         <Style Selector="Label">
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -56,7 +56,8 @@
 
                     <!-- 波次信息 -->
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                        <Label Classes="Ghost LightBlue" Content="波次" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <Label Classes="Ghost LightBlue" Content="波次" HorizontalAlignment="Stretch"
+                               HorizontalContentAlignment="Center" />
                         <TextBlock Text="{Binding WaveDisplayText}" VerticalAlignment="Center" />
                         <Label Classes="Ghost LightBlue" Content="旗帜波" />
                         <TextBlock Text="{Binding IsHugeWaveText}" VerticalAlignment="Center" />

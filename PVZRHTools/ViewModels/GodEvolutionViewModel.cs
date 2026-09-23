@@ -7,97 +7,6 @@ namespace PVZRHTools.ViewModels;
 
 public partial class GodEvolutionViewModel : ModifierPageViewModelBase
 {
-    [Reactive] public partial bool GodEvolutionUnlimitedRefresh { get; set; }
-    [Reactive] public partial bool GodEvolutionFreeUpgradeQuality { get; set; }
-    [Reactive] public partial bool GodEvolutionLuckyEnabled { get; set; }
-    [Reactive] public partial double GodEvolutionLucky { get; set; } = 0;
-    [Reactive] public partial bool GodEvolutionDifficultyEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionDifficulty { get; set; }
-    [Reactive] public partial bool GodEvolutionRefreshCountEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionRefreshCount { get; set; } = 99999999;
-    [Reactive] public partial bool GodEvolutionMaxPlantCountEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionMaxPlantCount { get; set; } = 5;
-    [Reactive] public partial bool GodEvolutionNonDiamondCountEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionNonDiamondCount { get; set; }
-    [Reactive] public partial bool GodEvolutionSuperUpgrade { get; set; }
-    [Reactive] public partial bool GodEvolutionForceSuperQuality { get; set; }
-    [Reactive] public partial bool GodEvolutionUncrashable { get; set; }
-    [Reactive] public partial bool GodEvolutionQualityWeightEnabled { get; set; }
-    [Reactive] public partial double GodEvolutionQualityDefault { get; set; } = 65;
-    [Reactive] public partial double GodEvolutionQualitySilver { get; set; } = 23;
-    [Reactive] public partial double GodEvolutionQualityGold { get; set; } = 10;
-    [Reactive] public partial double GodEvolutionQualityDiamond { get; set; } = 2;
-    [Reactive] public partial bool GodEvolutionDamageMultiplierEnabled { get; set; }
-    [Reactive] public partial double GodEvolutionDamageMultiplier { get; set; } = 1.0;
-    [Reactive] public partial bool GodEvolutionDifficultyPointEnabled { get; set; }
-    [Reactive] public partial int GodEvolutionDifficultyPoint { get; set; } = 0;
-    [Reactive] public partial bool GodEvolutionMultiSelectBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionCheatHard { get; set; }
-    [Reactive] public partial bool GodEvolutionForceExpertBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionForceStarUpBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionForceMutationBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionForceMissionBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionForceIridescentBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionForceRandomBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionForceTacticalBuff { get; set; }
-    [Reactive] public partial bool GodEvolutionDebuffRefreshable { get; set; }
-    [Reactive] public partial bool GodEvolutionDebuffClosable { get; set; }
-    [Reactive] public partial int GodCoin { get; set; }
-
-    [ReactiveCommand]
-    public void GodEvolutionResetQuality()
-    {
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.GodEvolutionResetQuality,
-            Parameters = []
-        });
-    }
-
-    [ReactiveCommand]
-    public void SetGodCoin() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.SetGodCoin,
-            Parameters = [GodCoin.ToString()]
-        });
-
-    [ReactiveCommand]
-    public void GodEvolutionBuyAll() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.GodEvolutionBuyAll,
-            Parameters = []
-        });
-
-    [ReactiveCommand]
-    public void GodEvolutionUnlockAll()
-    {
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.GodEvolutionUnlockAll,
-            Parameters = []
-        });
-    }
-
-    [ReactiveCommand]
-    public void GodEvolutionChooseBuff()
-    {
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.GodEvolutionChooseBuff,
-            Parameters = []
-        });
-    }
-
-    [ReactiveCommand]
-    public void GodEvolutionRemoveStarsStarUp() =>
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.GodEvolutionRemoveStarsStarUp,
-            Parameters = []
-        });
-
     public GodEvolutionViewModel(IDataSyncService dataSyncService) : base(dataSyncService)
     {
         // 刷新与升级
@@ -139,6 +48,103 @@ public partial class GodEvolutionViewModel : ModifierPageViewModelBase
         this.SimpleOneWaySync(x => x.GodEvolutionQualitySilver, Strings.GodEvolutionQualitySilver);
         this.SimpleOneWaySync(x => x.GodEvolutionQualityGold, Strings.GodEvolutionQualityGold);
         this.SimpleOneWaySync(x => x.GodEvolutionQualityDiamond, Strings.GodEvolutionQualityDiamond);
+    }
+
+    [Reactive] public partial bool GodEvolutionUnlimitedRefresh { get; set; }
+    [Reactive] public partial bool GodEvolutionFreeUpgradeQuality { get; set; }
+    [Reactive] public partial bool GodEvolutionLuckyEnabled { get; set; }
+    [Reactive] public partial double GodEvolutionLucky { get; set; } = 0;
+    [Reactive] public partial bool GodEvolutionDifficultyEnabled { get; set; }
+    [Reactive] public partial int GodEvolutionDifficulty { get; set; }
+    [Reactive] public partial bool GodEvolutionRefreshCountEnabled { get; set; }
+    [Reactive] public partial int GodEvolutionRefreshCount { get; set; } = 99999999;
+    [Reactive] public partial bool GodEvolutionMaxPlantCountEnabled { get; set; }
+    [Reactive] public partial int GodEvolutionMaxPlantCount { get; set; } = 5;
+    [Reactive] public partial bool GodEvolutionNonDiamondCountEnabled { get; set; }
+    [Reactive] public partial int GodEvolutionNonDiamondCount { get; set; }
+    [Reactive] public partial bool GodEvolutionSuperUpgrade { get; set; }
+    [Reactive] public partial bool GodEvolutionForceSuperQuality { get; set; }
+    [Reactive] public partial bool GodEvolutionUncrashable { get; set; }
+    [Reactive] public partial bool GodEvolutionQualityWeightEnabled { get; set; }
+    [Reactive] public partial double GodEvolutionQualityDefault { get; set; } = 65;
+    [Reactive] public partial double GodEvolutionQualitySilver { get; set; } = 23;
+    [Reactive] public partial double GodEvolutionQualityGold { get; set; } = 10;
+    [Reactive] public partial double GodEvolutionQualityDiamond { get; set; } = 2;
+    [Reactive] public partial bool GodEvolutionDamageMultiplierEnabled { get; set; }
+    [Reactive] public partial double GodEvolutionDamageMultiplier { get; set; } = 1.0;
+    [Reactive] public partial bool GodEvolutionDifficultyPointEnabled { get; set; }
+    [Reactive] public partial int GodEvolutionDifficultyPoint { get; set; } = 0;
+    [Reactive] public partial bool GodEvolutionMultiSelectBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionCheatHard { get; set; }
+    [Reactive] public partial bool GodEvolutionForceExpertBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionForceStarUpBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionForceMutationBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionForceMissionBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionForceIridescentBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionForceRandomBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionForceTacticalBuff { get; set; }
+    [Reactive] public partial bool GodEvolutionDebuffRefreshable { get; set; }
+    [Reactive] public partial bool GodEvolutionDebuffClosable { get; set; }
+    [Reactive] public partial int GodCoin { get; set; }
+
+    [ReactiveCommand]
+    public void GodEvolutionResetQuality()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GodEvolutionResetQuality,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void SetGodCoin()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.SetGodCoin,
+            Parameters = [GodCoin.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void GodEvolutionBuyAll()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GodEvolutionBuyAll,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void GodEvolutionUnlockAll()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GodEvolutionUnlockAll,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void GodEvolutionChooseBuff()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GodEvolutionChooseBuff,
+            Parameters = []
+        });
+    }
+
+    [ReactiveCommand]
+    public void GodEvolutionRemoveStarsStarUp()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.GodEvolutionRemoveStarsStarUp,
+            Parameters = []
+        });
     }
 
     public override void SaveSettings(SettingsData settings)

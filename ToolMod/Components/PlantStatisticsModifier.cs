@@ -6,12 +6,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 namespace ToolMod.Components;
 
 public class PlantStatisticsModifier : MonoBehaviour
 {
+    // ═══════════════════════════════════════════════════════════════════
+    //  Binding 记录
+    // ═══════════════════════════════════════════════════════════════════
+
+    private readonly List<PropBinding> _bindings = new();
+
     public PlantStatisticsModifier() : base(ClassInjector.DerivedConstructorPointer<PlantStatisticsModifier>())
     {
         ClassInjector.DerivedConstructorBody(this);
@@ -24,7 +29,8 @@ public class PlantStatisticsModifier : MonoBehaviour
     public Plant TargetPlant => GetComponent<PlantDataMenu>().plant;
 
     public static GameObject InputFieldPrefab { get; set; } =
-        Resources.Load<GameObject>("ui\\prefabs\\UIConfigMenu").transform.GetChild(2).GetChild(0).GetChild(0).gameObject;
+        Resources.Load<GameObject>("ui\\prefabs\\UIConfigMenu").transform.GetChild(2).GetChild(0).GetChild(0)
+            .gameObject;
 
     public static GameObject TogglePrefab { get; set; } =
         Resources.Load<GameObject>("ui\\prefabs\\sample\\Toggle");
@@ -88,12 +94,43 @@ public class PlantStatisticsModifier : MonoBehaviour
         BuildUi(content.transform);
 
         // ── 手动设置 content 高度 (仿 prefab, 不用 ContentSizeFitter) ─
-        int rows = _bindings.Count;
+        var rows = _bindings.Count;
         if (rows > 0)
         {
             float h = rows * 40 + (rows - 1) * 10;
             contentRt.sizeDelta = new Vector2(0, h);
         }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    //  值同步
+    // ═══════════════════════════════════════════════════════════════════
+
+    public void Update()
+    {
+        var plant = TargetPlant;
+        if (plant == null) return;
+
+        foreach (var b in _bindings)
+            try
+            {
+                var cur = b.prop.GetValue(plant);
+                if (Equals(cur, b.lastValue)) continue;
+                b.lastValue = cur;
+
+                if (b.toggle != null)
+                {
+                    if (b.toggle.isOn != (bool)cur) b.toggle.isOn = (bool)cur;
+                }
+                else if (b.inputField != null)
+                {
+                    var str = cur?.ToString() ?? "";
+                    if (b.inputField.text != str) b.inputField.text = str;
+                }
+            }
+            catch
+            {
+            }
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -120,17 +157,20 @@ public class PlantStatisticsModifier : MonoBehaviour
         }
     }
 
-    private static bool IsUnityBaseProperty(PropertyInfo prop) => prop.Name switch
+    private static bool IsUnityBaseProperty(PropertyInfo prop)
     {
-        "name" or "hideFlags" or "enabled" or "isActiveAndEnabled" or
-        "gameObject" or "transform" or "tag" or "rigidbody" or
-        "rigidbody2D" or "camera" or "light" or "animation" or
-        "renderer" or "audio" or "particleSystem" or "particleEmitter" or
-        "collider" or "collider2D" or "hingeJoint" or "runInEditMode" or
-        "hasTransform" or "canvas" or "allowPrefabMode" or "isPartOfPrefabInstance" or
-        "Component" or "TheArchitect" or "WasMoved" => true,
-        _ => false,
-    };
+        return prop.Name switch
+        {
+            "name" or "hideFlags" or "enabled" or "isActiveAndEnabled" or
+                "gameObject" or "transform" or "tag" or "rigidbody" or
+                "rigidbody2D" or "camera" or "light" or "animation" or
+                "renderer" or "audio" or "particleSystem" or "particleEmitter" or
+                "collider" or "collider2D" or "hingeJoint" or "runInEditMode" or
+                "hasTransform" or "canvas" or "allowPrefabMode" or "isPartOfPrefabInstance" or
+                "Component" or "TheArchitect" or "WasMoved" => true,
+            _ => false
+        };
+    }
 
     private void AddPropertyRow(Transform parent, PropertyInfo prop)
     {
@@ -138,10 +178,10 @@ public class PlantStatisticsModifier : MonoBehaviour
         row.transform.SetParent(parent);
 
         var hlg = row.AddComponent<HorizontalLayoutGroup>();
-        hlg.childAlignment         = TextAnchor.MiddleLeft;
-        hlg.childControlWidth      = true;
-        hlg.childControlHeight     = true;
-        hlg.childForceExpandWidth  = true;
+        hlg.childAlignment = TextAnchor.MiddleLeft;
+        hlg.childControlWidth = true;
+        hlg.childControlHeight = true;
+        hlg.childForceExpandWidth = true;
         hlg.childForceExpandHeight = true;
         hlg.spacing = 20;
         hlg.padding = new RectOffset { left = 0, top = 0, right = 0, bottom = 0 };
@@ -151,39 +191,50 @@ public class PlantStatisticsModifier : MonoBehaviour
         labelObj.transform.SetParent(row.transform);
 
         var labelText = labelObj.AddComponent<TextMeshProUGUI>();
-        labelText.text              = prop.Name;
-        labelText.fontSize          = 20;
-        labelText.color             = Color.white;
-        labelText.alignment         = TextAlignmentOptions.Left;
+        labelText.text = prop.Name;
+        labelText.fontSize = 20;
+        labelText.color = Color.white;
+        labelText.alignment = TextAlignmentOptions.Left;
 
         var labelLe = labelObj.AddComponent<LayoutElement>();
-        labelLe.minWidth       = 40;
+        labelLe.minWidth = 40;
         labelLe.preferredWidth = 50;
-        labelLe.flexibleWidth  = 0;
+        labelLe.flexibleWidth = 0;
 
         // Value
         if (prop.PropertyType == typeof(bool))
         {
-            var tObj = Object.Instantiate(TogglePrefab, row.transform);
+            var tObj = Instantiate(TogglePrefab, row.transform);
             if (tObj == null) return;
             tObj.name = $"Value_{prop.Name}";
             var toggle = tObj.GetComponent<Toggle>();
             if (toggle == null) return;
 
-            try { toggle.isOn = (bool)prop.GetValue(TargetPlant); }
-            catch { toggle.isOn = false; }
+            try
+            {
+                toggle.isOn = (bool)prop.GetValue(TargetPlant);
+            }
+            catch
+            {
+                toggle.isOn = false;
+            }
 
             toggle.onValueChanged.AddListener((UnityAction<bool>)(v =>
             {
-                try { if (TargetPlant != null) prop.SetValue(TargetPlant, v); }
-                catch { }
+                try
+                {
+                    if (TargetPlant != null) prop.SetValue(TargetPlant, v);
+                }
+                catch
+                {
+                }
             }));
 
             _bindings.Add(new PropBinding(prop, toggle: toggle));
         }
         else
         {
-            var iObj = Object.Instantiate(InputFieldPrefab, row.transform);
+            var iObj = Instantiate(InputFieldPrefab, row.transform);
             if (iObj == null) return;
             iObj.name = $"Value_{prop.Name}";
             var inputField = iObj.GetComponent<TMP_InputField>();
@@ -194,7 +245,10 @@ public class PlantStatisticsModifier : MonoBehaviour
                 var val = prop.GetValue(TargetPlant);
                 inputField.text = val?.ToString() ?? "0";
             }
-            catch { inputField.text = "0"; }
+            catch
+            {
+                inputField.text = "0";
+            }
 
             inputField.contentType = prop.PropertyType == typeof(int)
                 ? TMP_InputField.ContentType.IntegerNumber
@@ -206,70 +260,39 @@ public class PlantStatisticsModifier : MonoBehaviour
                 try
                 {
                     if (prop.PropertyType == typeof(int))
-                        { if (int.TryParse(s, out var v))  prop.SetValue(TargetPlant, v); }
+                    {
+                        if (int.TryParse(s, out var v)) prop.SetValue(TargetPlant, v);
+                    }
                     else if (prop.PropertyType == typeof(float))
-                        { if (float.TryParse(s, out var v)) prop.SetValue(TargetPlant, v); }
+                    {
+                        if (float.TryParse(s, out var v)) prop.SetValue(TargetPlant, v);
+                    }
                 }
-                catch { }
+                catch
+                {
+                }
             }));
 
             var inputLe = iObj.AddComponent<LayoutElement>();
-            inputLe.minWidth      = 40;
+            inputLe.minWidth = 40;
             inputLe.flexibleWidth = 1;
 
-            _bindings.Add(new PropBinding(prop, inputField: inputField));
+            _bindings.Add(new PropBinding(prop, inputField));
         }
     }
-
-    // ═══════════════════════════════════════════════════════════════════
-    //  值同步
-    // ═══════════════════════════════════════════════════════════════════
-
-    public void Update()
-    {
-        var plant = TargetPlant;
-        if (plant == null) return;
-
-        foreach (var b in _bindings)
-        {
-            try
-            {
-                var cur = b.prop.GetValue(plant);
-                if (Equals(cur, b.lastValue)) continue;
-                b.lastValue = cur;
-
-                if (b.toggle != null)
-                {
-                    if (b.toggle.isOn != (bool)cur) b.toggle.isOn = (bool)cur;
-                }
-                else if (b.inputField != null)
-                {
-                    var str = cur?.ToString() ?? "";
-                    if (b.inputField.text != str) b.inputField.text = str;
-                }
-            }
-            catch { }
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    //  Binding 记录
-    // ═══════════════════════════════════════════════════════════════════
-
-    private readonly List<PropBinding> _bindings = new();
 
     private sealed class PropBinding
     {
-        public readonly PropertyInfo prop;
         public readonly TMP_InputField? inputField;
+        public readonly PropertyInfo prop;
         public readonly Toggle? toggle;
         public object? lastValue;
 
         public PropBinding(PropertyInfo prop, TMP_InputField? inputField = null, Toggle? toggle = null)
         {
-            this.prop       = prop;
+            this.prop = prop;
             this.inputField = inputField;
-            this.toggle     = toggle;
+            this.toggle = toggle;
         }
     }
 }

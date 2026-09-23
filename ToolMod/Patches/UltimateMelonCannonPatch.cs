@@ -4,8 +4,8 @@ using ToolMod.Components;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 究极冷寂榴弹炮无CD装填补丁 - UltimateMelonCannon.StartShoot
-/// UltimateMelonCannon继承自MelonCannon，但有自己的StartShoot方法
+///     究极冷寂榴弹炮无CD装填补丁 - UltimateMelonCannon.StartShoot
+///     UltimateMelonCannon继承自MelonCannon，但有自己的StartShoot方法
 /// </summary>
 [HarmonyPatch(typeof(UltimateMelonCannon))]
 public static class UltimateMelonCannonPatch

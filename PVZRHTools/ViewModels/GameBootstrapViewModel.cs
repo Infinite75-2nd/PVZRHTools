@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -12,15 +11,12 @@ namespace PVZRHTools.ViewModels;
 
 public partial class GameBootstrapViewModel : ViewModelBase
 {
-    [Reactive] public partial List<MenuItemViewModel> MenuItems { get; set; }
-
-    private INavigationService _navigationService;
-    private IModifierInfoService _modifierInfoService;
-    private IGameBootstrapService _gameBootstrapService;
-    private INotificationService _notificationService;
-
-    public ViewModelBase CurrentPage => _currentPage.Value;
     private readonly ObservableAsPropertyHelper<ViewModelBase> _currentPage;
+    private readonly IGameBootstrapService _gameBootstrapService;
+    private readonly IModifierInfoService _modifierInfoService;
+
+    private readonly INavigationService _navigationService;
+    private INotificationService _notificationService;
 
     public GameBootstrapViewModel(INavigationService navigationService, IModifierInfoService modifierInfoService,
         IGameBootstrapService gameBootstrapService, INotificationService notificationService)
@@ -29,16 +25,16 @@ public partial class GameBootstrapViewModel : ViewModelBase
         _modifierInfoService = modifierInfoService;
         _gameBootstrapService = gameBootstrapService;
         _notificationService = notificationService;
-        ModifierAuthors = new();
+        ModifierAuthors = new ModifierAuthorsViewModel();
 
         this.WhenAnyValue(x => x._navigationService.CurrentViewModel)
             .ToProperty(this, nameof(CurrentPage), out _currentPage);
 
-        MenuItems = new()
+        MenuItems = new List<MenuItemViewModel>
         {
-            new(_navigationService) { MenuHeader = "游戏管理", PageType = typeof(GameInstancesViewModel) },
+            new(_navigationService) { MenuHeader = "游戏管理", MenuIcon = "SemiIconDesktop", PageType = typeof(GameInstancesViewModel) },
             //new(_navigationService) { MenuHeader = "链接跳转", PageType = typeof(LinksViewModel) },
-            //new(_navigationService) { MenuHeader = "关于修改器", PageType = typeof(AboutViewModel) }
+            new(_navigationService) { MenuHeader = "关于修改器", MenuIcon = "SemiIconInfoCircle", PageType = typeof(AboutViewModel) }
         };
         navigationService.NavigateTo<GameInstancesViewModel>();
 
@@ -49,6 +45,12 @@ public partial class GameBootstrapViewModel : ViewModelBase
 
         _ = CheckModifierUpdatesAsync();
     }
+
+    [Reactive] public partial List<MenuItemViewModel> MenuItems { get; set; }
+
+    public ViewModelBase CurrentPage => _currentPage.Value;
+
+    [Reactive] public partial ModifierAuthorsViewModel ModifierAuthors { get; set; }
 
     private async Task CheckModifierUpdatesAsync()
     {
@@ -73,8 +75,9 @@ public partial class GameBootstrapViewModel : ViewModelBase
         _modifierInfoService.Save(Locator.Current.GetService<GameInstancesViewModel>()!.MenuItems);
     }
 
-    [Reactive] public partial ModifierAuthorsViewModel ModifierAuthors { get; set; }
-
     [ReactiveCommand]
-    public void OpenGithub() => Process.Start("explorer.exe", "https://github.com/Infinite75-2nd/PVZRHTools");
+    public void OpenGithub()
+    {
+        Process.Start("explorer.exe", "https://github.com/Infinite75-2nd/PVZRHTools");
+    }
 }

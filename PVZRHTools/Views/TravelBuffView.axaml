@@ -5,6 +5,7 @@
              xmlns:vm="using:PVZRHTools.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:converters="using:PVZRHTools.Converters"
+             xmlns:ctrl="using:PVZRHTools.Controls"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="1050"
              x:CompileBindings="True"
              x:Class="PVZRHTools.Views.TravelBuffView"
@@ -47,10 +48,10 @@
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}"
-                                                       TextAlignment="Left"
-                                                       HorizontalAlignment="Left"
-                                                       VerticalAlignment="Center" />
+                                            <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                                   TextAlignment="Left"
+                                                                   HorizontalAlignment="Left"
+                                                                   VerticalAlignment="Center" />
                                         </StackPanel>
                                     </CheckBox>
                                 </DataTemplate>
@@ -77,10 +78,10 @@
                                         IsCheckedChanged="OnCheckBoxChanged">
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}"
-                                                       TextAlignment="Left"
-                                                       HorizontalAlignment="Left"
-                                                       VerticalAlignment="Center" />
+                                            <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                                   TextAlignment="Left"
+                                                                   HorizontalAlignment="Left"
+                                                                   VerticalAlignment="Center" />
                                         </StackPanel>
                                     </CheckBox>
                                 </DataTemplate>
@@ -118,12 +119,11 @@
                                                 Maximum="2"
                                                 InnerLeftContent="等级"
                                                 ValueChanged="OnNumericValueChanged"
-                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
-                                            </u:NumericIntUpDown>
-                                            <TextBlock Text="{Binding Name}"
-                                                       TextAlignment="Left"
-                                                       HorizontalAlignment="Left"
-                                                       VerticalAlignment="Center" />
+                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}" />
+                                            <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                                   TextAlignment="Left"
+                                                                   HorizontalAlignment="Left"
+                                                                   VerticalAlignment="Center" />
                                         </StackPanel>
                                     </CheckBox>
                                 </DataTemplate>
@@ -156,12 +156,11 @@
                                                 Maximum="2"
                                                 InnerLeftContent="等级"
                                                 ValueChanged="OnNumericValueChanged"
-                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}">
-                                            </u:NumericIntUpDown>
-                                            <TextBlock Text="{Binding Name}"
-                                                       TextAlignment="Left"
-                                                       HorizontalAlignment="Left"
-                                                       VerticalAlignment="Center" />
+                                                IsVisible="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}" />
+                                            <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                                   TextAlignment="Left"
+                                                                   HorizontalAlignment="Left"
+                                                                   VerticalAlignment="Center" />
                                         </StackPanel>
                                     </CheckBox>
                                 </DataTemplate>
@@ -191,10 +190,10 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
-                                        <TextBlock Text="{Binding Name}"
-                                                   TextAlignment="Left"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                               TextAlignment="Left"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Center" />
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -208,7 +207,8 @@
                                     Command="{Binding InGameUnlockedPlantChooseAllCommand}" />
                             <Button Content="全不选"
                                     Command="{Binding InGameUnlockedPlantDeselectAllCommand}" />
-                            <TextBox PlaceholderText="搜索..." Width="200" TextChanged="OnInGameUnlockedPlantSearchChanged" />
+                            <TextBox PlaceholderText="搜索..." Width="200"
+                                     TextChanged="OnInGameUnlockedPlantSearchChanged" />
                         </StackPanel>
                         <ItemsControl ItemsSource="{Binding InGameUnlockedPlants}">
                             <ItemsControl.ItemTemplate>
@@ -218,10 +218,10 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
-                                        <TextBlock Text="{Binding Name}"
-                                                   TextAlignment="Left"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                               TextAlignment="Left"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Center" />
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -250,10 +250,10 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
-                                        <TextBlock Text="{Binding Name}"
-                                                   TextAlignment="Left"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                               TextAlignment="Left"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Center" />
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -277,10 +277,10 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
-                                        <TextBlock Text="{Binding Name}"
-                                                   TextAlignment="Left"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                               TextAlignment="Left"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Center" />
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -309,10 +309,10 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
-                                        <TextBlock Text="{Binding Name}"
-                                                   TextAlignment="Left"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                               TextAlignment="Left"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Center" />
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -336,10 +336,10 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsVisible}"
                                         IsCheckedChanged="OnCheckBoxChanged">
-                                        <TextBlock Text="{Binding Name}"
-                                                   TextAlignment="Left"
-                                                   HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center" />
+                                        <ctrl:TmpRichTextBlock Markup="{Binding Name}"
+                                                               TextAlignment="Left"
+                                                               HorizontalAlignment="Left"
+                                                               VerticalAlignment="Center" />
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

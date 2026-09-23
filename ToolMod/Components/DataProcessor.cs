@@ -8,7 +8,6 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppSystem.Collections.Specialized;
 using ToolData;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -16,6 +15,7 @@ using ZenGarden;
 using static ToolMod.Utils;
 using static ToolMod.Components.PatchDataCache;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace ToolMod.Components;
 
@@ -30,31 +30,8 @@ public class DataProcessor : MonoBehaviour
     {
     }
 
-    public void Awake()
-    {
-        Instance = this;
-    }
-
-    public void OnApplicationQuit()
-    {
-        ModCore.Instance.Unload();
-    }
-
     [HideFromIl2Cpp] public Queue<SyncData> Buffer { get; set; } = [];
     public static DataProcessor? Instance { get; private set; }
-
-    public void Update()
-    {
-        if (Buffer.Count is 0) return;
-        lock (Buffer)
-        {
-            var command = Buffer.Dequeue();
-            if (OverallCommands.ContainsKey(command.Command))
-                OverallCommands[command.Command](command.Parameters);
-            else if (InGame && InGameCommands.ContainsKey(command.Command))
-                InGameCommands[command.Command](command.Parameters);
-        }
-    }
 
     [HideFromIl2Cpp]
     private static Dictionary<string, Action<List<string>>> OverallCommands => new()
@@ -139,6 +116,9 @@ public class DataProcessor : MonoBehaviour
         { Strings.PlantsAllStarUp, SimpleSyncBool(() => PlantsAllStarUp) },
         { Strings.SuperStarNoCD, SimpleSyncBool(() => SuperStarNoCD) },
         { Strings.LockWheat, SimpleSyncInt(() => LockWheat) },
+        { Strings.PlantSpeedMultiplier, SimpleSyncFloat(() => PlantSpeedMultiplier) },
+        { Strings.PlantAttackMultiplier, SimpleSyncFloat(() => PlantAttackMultiplier) },
+        { Strings.PlantHealthMultiplier, SimpleSyncFloat(() => PlantHealthMultiplier) },
         { Strings.ApplyAllPlantSkins, ApplyAllPlantSkins },
         { Strings.ObtainAllPlantSkins, ObtainAllPlantSkins },
         { Strings.UnlockAllAlmanac, UnlockAllAlmanac },
@@ -169,21 +149,21 @@ public class DataProcessor : MonoBehaviour
         { Strings.UnlimitedCardSlots, SimpleSyncBool(() => UnlimitedCardSlots) },
         { Strings.RandomBullet, SimpleSyncBool(() => RandomBullet) },
         { Strings.AutoRhythmGame, SimpleSyncBool(() => AutoRhythmGame) },
-        { Strings.StarUpBuff, SimpleSyncBool(() =>PatchDataCache.StarUpBuff) },
+        { Strings.StarUpBuff, SimpleSyncBool(() => PatchDataCache.StarUpBuff) },
 
         // 神秘模式
         { Strings.TreasureFreeUpgrade, SimpleSyncBool(() => TreasureFreeUpgrade) },
         { Strings.TreasureFreeWithdraw, SimpleSyncBool(() => TreasureFreeWithdraw) },
         { Strings.TreasureMaxTime, SimpleSyncInt(() => TreasureMaxTime) },
         { Strings.TreasureAllRedCard, SimpleSyncBool(() => TreasureAllRedCard) },
-        { Strings.TreasureSetMoney, SimpleSyncInt(()=>TreasureData.treasureMoney) },
+        { Strings.TreasureSetMoney, SimpleSyncInt(() => TreasureData.treasureMoney) },
         { Strings.TreasureFillCard, TreasureFillCard },
         { Strings.TreasureSellAllCards, TreasureSellAllCards },
         { Strings.TreasureFillWare, TreasureFillWare },
 
         // 花园修改
-        { Strings.ZenGardenSetMoney, SimpleSyncLong(()=>GameAPP.theMoneyCount) },
-        { Strings.ZenGardenSetCoin, SimpleSyncInt(()=>GardenUI.Data.coinCount) },
+        { Strings.ZenGardenSetMoney, SimpleSyncLong(() => GameAPP.theMoneyCount) },
+        { Strings.ZenGardenSetCoin, SimpleSyncInt(() => GardenUI.Data.coinCount) },
         { Strings.ZenGardenGetPlant, ZenGardenGetPlant },
         { Strings.ZenGardenRemoveAllPlants, ZenGardenRemoveAllPlants },
         { Strings.ZenGardenGetAllPlants, ZenGardenGetAllPlants },
@@ -279,9 +259,7 @@ public class DataProcessor : MonoBehaviour
             SimpleSyncBool(() => GodEvolutionSuperUpgrade, () =>
             {
                 if (InGame && Board.Instance.GetComponent<ShootingManager>() != null)
-                {
                     Board.Instance.GetComponent<ShootingManager>().superUpgrade = GodEvolutionSuperUpgrade;
-                }
             })
         },
         {
@@ -293,9 +271,7 @@ public class DataProcessor : MonoBehaviour
             SimpleSyncBool(() => GodEvolutionUncrashable, () =>
             {
                 if (InGame && Board.Instance.GetComponent<ShootingManager>() != null)
-                {
                     Board.Instance.GetComponent<ShootingManager>().uncrashable = GodEvolutionUncrashable;
-                }
             })
         },
         {
@@ -328,13 +304,14 @@ public class DataProcessor : MonoBehaviour
         { Strings.SetGodCoin, SetGodCoin },
         { Strings.GodEvolutionMultiSelectBuff, SimpleSyncBool(() => GodEvolutionMultiSelectBuff) },
         { Strings.GodEvolutionChooseBuff, GodEvolutionChooseBuff },
-        { Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard, () =>
         {
-            if (InGame && Board.Instance.GetComponent<ShootingManager>() != null&&Board.Instance.GetComponent<ShootingManager>().cheatHard!=GodEvolutionCheatHard)
+            Strings.GodEvolutionCheatHard, SimpleSyncBool(() => GodEvolutionCheatHard, () =>
             {
-                Board.Instance.GetComponent<ShootingManager>().CheatHard();
-            }
-        }) },
+                if (InGame && Board.Instance.GetComponent<ShootingManager>() != null &&
+                    Board.Instance.GetComponent<ShootingManager>().cheatHard != GodEvolutionCheatHard)
+                    Board.Instance.GetComponent<ShootingManager>().CheatHard();
+            })
+        },
         { Strings.GodEvolutionForceExpertBuff, SimpleSyncBool(() => GodEvolutionForceExpertBuff) },
         { Strings.GodEvolutionForceStarUpBuff, SimpleSyncBool(() => GodEvolutionForceStarUpBuff) },
         { Strings.GodEvolutionForceMutationBuff, SimpleSyncBool(() => GodEvolutionForceMutationBuff) },
@@ -344,6 +321,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.GodEvolutionForceTacticalBuff, SimpleSyncBool(() => GodEvolutionForceTacticalBuff) },
         { Strings.GodEvolutionDebuffRefreshable, SimpleSyncBool(() => GodEvolutionDebuffRefreshable) },
         { Strings.GodEvolutionDebuffClosable, SimpleSyncBool(() => GodEvolutionDebuffClosable) },
+
         #endregion
 
         // 作弊码
@@ -365,7 +343,7 @@ public class DataProcessor : MonoBehaviour
         { Strings.CheatKey_ShootHard, ExecuteCheatKey },
         { Strings.CheatKey_OpenBLive, ExecuteCheatKey },
 
-        { Strings.PlaySound, PlaySound },
+        { Strings.PlaySound, PlaySound }
     };
 
     private static Dictionary<string, Action<List<string>>> InGameCommands => new()
@@ -420,8 +398,693 @@ public class DataProcessor : MonoBehaviour
         { Strings.SpawnPetImp, SpawnPetImp },
         { Strings.SpawnPetKirov, SpawnPetKirov },
         { Strings.SetZombieHealthRatio, SetZombieHealthRatio },
-
+        { Strings.SetPlantSpeedRatio, SetPlantSpeedRatio },
+        { Strings.SetPlantAttackRatio, SetPlantAttackRatio },
+        { Strings.SetPlantHealthRatio, SetPlantHealthRatio }
     };
+
+    public void Awake()
+    {
+        Instance = this;
+    }
+
+    public void Update()
+    {
+        if (Buffer.Count is 0) return;
+        lock (Buffer)
+        {
+            var command = Buffer.Dequeue();
+            if (OverallCommands.ContainsKey(command.Command))
+                OverallCommands[command.Command](command.Parameters);
+            else if (InGame && InGameCommands.ContainsKey(command.Command))
+                InGameCommands[command.Command](command.Parameters);
+        }
+    }
+
+    public void OnApplicationQuit()
+    {
+        ModCore.Instance.Unload();
+    }
+
+    private static void Exit(List<string> _)
+    {
+        Application.Quit();
+    }
+
+    private static void PlaySound(List<string> args)
+    {
+        try
+        {
+            var soundId = int.Parse(args[0]);
+            GameAPP.PlaySound(soundId);
+        }
+        catch (Exception e)
+        {
+            ModCore.Instance.Log.LogError($"播放音效失败: {e.Message}");
+        }
+    }
+
+    public static void PlayParticle(List<string> args)
+    {
+        try
+        {
+            var particleId = int.Parse(args[0]);
+            // 在屏幕中央位置播放特效，使用第3行（中间行）
+            var position = new Vector3(0, 0, 0);
+            if (Board.Instance != null)
+            {
+                // 计算屏幕中央位置
+                var centerRow = Board.Instance.rowNum / 2;
+                var centerCol = Board.Instance.columnNum / 2;
+                position = new Vector3(-5f + centerCol * 1.37f, centerRow * 0.8f, 0);
+            }
+
+            CreateParticle.SetParticle(particleId, position, Board.Instance?.rowNum / 2 ?? 2);
+        }
+        catch (Exception ex)
+        {
+            ModCore.Instance.Log.LogError($"播放特效失败: {ex.Message}");
+        }
+    }
+
+    public static void GetSnapshot(List<string> args)
+    {
+        if (IsBoardReadyForSnapshot())
+        {
+            TryCaptureSnapshot();
+        }
+        else
+        {
+            // 延后到关卡初始化完成后再保存（最多约3秒）
+            PendingManualSnapshotFrames = Math.Max(PendingManualSnapshotFrames, 180);
+            try
+            {
+                InGameText.Instance?.ShowText("正在初始化，稍后保存快照…", 1.5f);
+            }
+            catch
+            {
+            }
+        }
+    }
+
+    public static void RestoreSnapshot(List<string> args)
+    {
+        Snapshot target = new();
+        if (Snapshots.Count > 0)
+        {
+            target = Snapshots[^1];
+        }
+        else
+        {
+            // 兼容跨重启场景：内存环形缓冲为空时，回退读取磁盘最近快照。
+            target = TryLoadLatestSnapshotFromDisk();
+            if (target != null)
+                Snapshots.Add(target);
+        }
+
+        if (target != null)
+            Utils.RestoreSnapshot(target);
+        else
+            try
+            {
+                InGameText.Instance?.ShowText("未找到可恢复快照", 2.0f);
+            }
+            catch
+            {
+            }
+    }
+
+    /// <summary>
+    ///     手动实现 RogueShootingData.Record 逻辑（Il2CppInterop 未暴露该泛型方法）
+    ///     在列表中查找匹配 element 的记录并 count+1，找不到则新建记录(count=1)并添加
+    ///     DataRecord 字段偏移: element=0x10, count=0x14
+    /// </summary>
+    private static unsafe void RecordData(Il2CppSystem.Collections.Generic.List<DataRecord<int>> list, int element)
+    {
+        if (list == null) return;
+        foreach (var record in list)
+        {
+            if (record == null) continue;
+            var ptr = (int*)record.Pointer;
+            if (ptr[4] == element) // offset 0x10 = 4 ints
+            {
+                ptr[5]++; // offset 0x14 = 5 ints
+                return;
+            }
+        }
+
+        var newRecord = new DataRecord<int>();
+        var newPtr = (int*)newRecord.Pointer;
+        newPtr[4] = element;
+        newPtr[5] = 1;
+        list.Add(newRecord);
+    }
+
+    private static void SetGodCoin(List<string> args)
+    {
+        var coin = int.Parse(args[0]);
+        ShootingManager.Data.godCoins = coin;
+    }
+
+    private static void GodEvolutionBuyAll(List<string> _)
+    {
+        var data = ShootingManager.Data;
+        if (data == null) return;
+
+        var catalog = ShootingAlmanacCatalog.Build();
+        if (catalog == null) return;
+
+        if (data.unlockedPlants == null)
+            data.unlockedPlants = new Il2CppSystem.Collections.Generic.List<PlantType>();
+        if (data.unlockedRoutes == null)
+            data.unlockedRoutes = new Il2CppSystem.Collections.Generic.List<string>();
+        if (data.unlockedTacticMaxEntries == null)
+            data.unlockedTacticMaxEntries = new Il2CppSystem.Collections.Generic.List<string>();
+
+        // ShootingAlmanacUnlocks.TryBuyPlant：根植物写入 unlockedPlants，并顺带写入首条路线
+        // ShootingAlmanacUnlocks.TryBuyRoute：RouteId(path) = string.Join("-", path) 写入 unlockedRoutes
+        var roots = catalog.Roots;
+        var rootCount = roots?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<PlantType>>()?.Count ?? 0;
+        for (var i = 0; i < rootCount; i++)
+        {
+            var plant = roots[i];
+            if (!data.unlockedPlants.Contains(plant))
+                data.unlockedPlants.Add(plant);
+
+            var routes = catalog.GetRoutes(plant);
+            var routeCount = routes
+                ?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<
+                    Il2CppSystem.Collections.Generic.List<PlantType>>>()
+                ?.Count ?? 0;
+            for (var j = 0; j < routeCount; j++)
+            {
+                var path = routes[j];
+                if (path == null || path.Count <= 0) continue;
+                var id = ShootingAlmanacUnlocks.RouteId(
+                    path.Cast<Il2CppSystem.Collections.Generic.IEnumerable<PlantType>>());
+                if (!string.IsNullOrEmpty(id) && !data.unlockedRoutes.Contains(id))
+                    data.unlockedRoutes.Add(id);
+            }
+        }
+
+        // ShootingAlmanacUnlocks.TryBuyTacticMax：Tactics 图鉴条目 Id 写入 unlockedTacticMaxEntries
+        var tactics = catalog.GetEntries(ShootingAlmanacCategory.Tactics);
+        var tacticCount = tactics?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<ShootingAlmanacEntry>>()
+            ?.Count ?? 0;
+        for (var i = 0; i < tacticCount; i++)
+        {
+            var entry = tactics[i];
+            if (entry == null || string.IsNullOrEmpty(entry.Id)) continue;
+            if (!data.unlockedTacticMaxEntries.Contains(entry.Id))
+                data.unlockedTacticMaxEntries.Add(entry.Id);
+        }
+
+        data.hasPurchasedAlmanacUnlock = true;
+        if (data.unlockVersion < 2)
+            data.unlockVersion = 2;
+
+        SaveInfo.Instance?.SavePlayerData();
+        InGameText.Instance?.ShowText("已解锁全部植物、路线与战术词条", 5);
+    }
+
+    private static void GodEvolutionUnlockAll(List<string> _)
+    {
+        var data = ShootingManager.Data;
+        if (data == null) return;
+
+        // 设置总胜利次数≥20，解锁canTab和屋顶模式
+        data.victoryTimes = 20;
+
+        // 解锁全部难度（难度2/3/4各需前一级难度至少1次胜利）
+        RecordData(data.difficultyWin, 1);
+        RecordData(data.difficultyWin, 2);
+        RecordData(data.difficultyWin, 3);
+
+        // 解锁全部模式（模式1/2/3各需前一级至少1次胜利，模式4需模式3至少10次胜利）
+        RecordData(data.stageWins, 0);
+        RecordData(data.stageWins, 1);
+        RecordData(data.stageWins, 2);
+        // 模式4需要 stageWins[3] ≥ 10
+        for (var i = 0; i < 10; i++)
+            RecordData(data.stageWins, 3);
+
+        InGameText.Instance?.ShowText("已解锁全部难度与模式", 5);
+    }
+
+    private static void GodEvolutionChooseBuff(List<string> _)
+    {
+        if (InGame && ShootingManager.Instance != null &&
+            GameAPP.canvasUp.GetComponentsInChildren<MultipleChoiceMenu>().Count is 0)
+            ShootingManager.Instance.ShowBuff();
+    }
+
+    private static void SpawnPetGargantuar(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetGargantuar);
+        }
+    }
+
+    private static void SpawnPetFootball(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetFootball);
+        }
+    }
+
+    private static void SpawnPetSnowBoss(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetSnowBoss);
+        }
+    }
+
+    private static void SpawnPetJackbox(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetJackbox);
+        }
+    }
+
+    private static void SpawnPetDrown(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetDrown);
+        }
+    }
+
+    private static void SpawnPetHorse(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetHorse);
+        }
+    }
+
+    private static void SpawnPetImp(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetImp);
+        }
+    }
+
+    private static void SpawnPetKirov(List<string> _)
+    {
+        if (Mouse.Instance != null)
+        {
+            var mousePos = Mouse.Instance.transform.position;
+            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetKirov);
+        }
+    }
+
+    /// <summary>
+    ///     一键应用全部植物皮肤：遍历所有植物类型，将每种植物设置为最后一个可用皮肤（最高阶皮肤）
+    ///     使用游戏原生 SetSkin 方法避免直接操作 Il2Cpp 字典导致的运行时类型转换失败
+    /// </summary>
+    private static void ApplyAllPlantSkins(List<string> _)
+    {
+        //if (!InGame) return;
+        try
+        {
+            var rm = GameAPP.resourcesManager;
+            if (rm?.allPlants == null) return;
+
+            var appliedCount = 0;
+            foreach (var plantType in rm.allPlants)
+                try
+                {
+                    // 检查该植物是否有多个皮肤（_plantPrefabs 中对应的 List 长度 > 1）
+                    if (rm._plantPrefabs.TryGetValue(plantType,
+                            out Il2CppSystem.Collections.Generic.List<GameObject> skinList) && skinList != null)
+                    {
+                        var count = skinList.Count;
+                        if (count > 1)
+                        {
+                            var lastSkinIndex = count - 1;
+                            // 使用游戏原生 SetSkin 方法，避免直接操作 Il2Cpp 词典的索引器
+                            rm.SetSkin(plantType, lastSkinIndex);
+                            appliedCount++;
+                        }
+                    }
+                }
+                catch
+                {
+                    // 跳过没有皮肤的植物类型
+                }
+
+            InGameText.Instance?.ShowText(appliedCount > 0 ? "已应用全部植物皮肤" : "没有找到可应用的植物皮肤", 2);
+        }
+        catch (Exception ex)
+        {
+            ModCore.Instance.Log.LogError($"ApplyAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
+
+    private static void ObtainAllPlantSkins(List<string> _)
+    {
+        try
+        {
+            GameAPP.skinLevelCompleted.Clear();
+            for (var i = 1; i <= 10; i++) GameAPP.skinLevelCompleted.Add(i);
+            InGameText.Instance?.ShowText("已获得所有植物皮肤", 2);
+        }
+        catch (Exception ex)
+        {
+            ModCore.Instance.Log.LogError($"ObtainAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
+
+    private static void UnlockAllAlmanac(List<string> _)
+    {
+        GameAPP.config.meetPlants.Clear();
+        GameAPP.config.meetPlant_runTime.Clear();
+        foreach (var plant in GameAPP.resourcesManager.allPlants)
+        {
+            GameAPP.config.meetPlants.Add(plant);
+            GameAPP.config.meetPlant_runTime.Add(plant);
+        }
+    }
+
+    private static void TreasureFillCard(List<string> _)
+    {
+        foreach (var card in TreasureData.treasureCards) card.durability = 40;
+    }
+
+    private static void TreasureSellAllCards(List<string> _)
+    {
+        var menu = TreasureWarehouseMenu.Instance;
+        if (menu != null)
+        {
+            foreach (var card in menu.cards) card.Sell();
+        }
+        else
+        {
+            foreach (var card in TreasureData.treasureCards)
+            {
+                var plantData = PlantDataManager.GetPlantData(card.thePlantType);
+                if (plantData == null)
+                    continue;
+
+                // Base cost (clamped to 1000), then scaled by card level
+                var cost = plantData.cost;
+                if (cost > 1000)
+                    cost = 1000;
+
+                var level = TreasureData.GetCardLevel(card.thePlantType);
+                switch ((int)level)
+                {
+                    case 0: break; // ×1
+                    case 1: cost *= 2; break;
+                    case 2: cost *= 4; break;
+                    case 3: cost *= 8; break;
+                    case 4: cost *= 32; break;
+                    case 5: cost <<= 7; break; // ×128
+                    default: return; // unknown level
+                }
+
+                int refund;
+                if (card.maxDurability <= 1)
+                    refund = 0;
+                else
+                    refund = Mathf.RoundToInt(card.durability * cost / (float)card.maxDurability);
+
+                // Refund 80 % of the proportional cost
+                TreasureData.treasureMoney += Mathf.RoundToInt(refund * 0.8f);
+            }
+
+            TreasureData.treasureCards.Clear();
+        }
+    }
+
+
+    private static void ZenGardenGetPlant(List<string> args)
+    {
+        var plantType = (PlantType)int.Parse(args[0]);
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+
+        // Replicate TryAddPlantData's position-finding logic:
+        // scan all 64 pages, 8 columns × 4 rows, find first page with an empty slot
+        int targetPage;
+        var available = new List<Vector2Int>();
+        for (targetPage = 0; targetPage < 64; targetPage++)
+        {
+            for (var col = 0; col < 8; col++)
+            for (var row = 0; row < 4; row++)
+            {
+                var occupied = false;
+                for (var i = 0; i < data.allPlants.Count; i++)
+                {
+                    var p = data.allPlants[i];
+                    if (p.page == targetPage && p.thePlantColumn == col && p.thePlantRow == row)
+                    {
+                        occupied = true;
+                        break;
+                    }
+                }
+
+                if (!occupied)
+                    available.Add(new Vector2Int(col, row));
+            }
+
+            if (available.Count > 0)
+                break;
+        }
+
+        if (available.Count == 0) return;
+
+        var index = Random.Range(0, available.Count);
+        var pos = available[index];
+
+        if (GardenUI.Instance != null)
+            data.CreatePlantObject(plantType, pos.x, pos.y, targetPage, GardenUI.Instance);
+        else
+            data.CreatePlantData(plantType, pos.x, pos.y, targetPage);
+        GardenUI.Data.Save();
+    }
+
+    private static void TreasureFillWare(List<string> _)
+    {
+        TreasureData.treasureCards.Clear();
+        foreach (var type in GameAPP.resourcesManager.allPlants)
+            TreasureData.treasureCards.Add(new TreasureCardData(type, 40, 40));
+    }
+
+    private static void ZenGardenRemoveAllPlants(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        data.allPlants.Clear();
+    }
+
+    private static void ZenGardenGetAllPlants(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        data.allPlants.Clear();
+
+        var allPlants = GameAPP.resourcesManager?.allPlants;
+        if (allPlants == null || allPlants.Count == 0) return;
+
+        // 花园布局：每页 4 行 × 8 列 = 32 格，按顺序依次填入页码与行列号
+        const int rowsPerPage = 4;
+        const int colsPerPage = 8;
+        const int plantsPerPage = rowsPerPage * colsPerPage;
+        const int maxPages = 64;
+
+        var gardenUI = GardenUI.Instance;
+        var index = 0;
+        foreach (var plantType in allPlants)
+        {
+            var page = index / plantsPerPage;
+            if (page >= maxPages) break;
+
+            var row = index / colsPerPage % rowsPerPage;
+            var col = index % colsPerPage;
+
+
+            var p = data.CreatePlantData(plantType, col, row, page);
+            p.growStage = 2;
+            p.love = 100;
+            p.waterLevel = 100;
+            index++;
+        }
+
+        GardenUI.Data.Save();
+    }
+
+    private static void ZenGardenWaterAllPlants(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        foreach (var p in data.allPlants)
+            if (p != null)
+                p.waterLevel = 100;
+    }
+
+    private static void ZenGardenAllPlantsFullyGrown(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        foreach (var p in data.allPlants)
+            if (p != null)
+                p.growStage = 2;
+    }
+
+    private static void ZenGardenAllPlantsFullLove(List<string> _)
+    {
+        var data = GardenUI.Data;
+        if (data?.allPlants == null) return;
+        foreach (var p in data.allPlants)
+            if (p != null)
+            {
+                p.growStage = 2;
+                p.waterLevel = 100;
+                p.love = 100;
+                p.needTool = GardenToolType.Default;
+            }
+    }
+
+    private static void SetZombieHealthRatio(List<string> args)
+    {
+        var ratio = Convert.ToSingle(double.Parse(args[0]));
+        foreach (var z in Board.Instance.zombieArray)
+            if (z != null)
+            {
+                z.theHealth = (int)(z.theHealth * ratio);
+                z.theFirstArmorHealth = (int)(z.theFirstArmorHealth * ratio);
+                z.theSecondArmorHealth = (int)(z.theSecondArmorHealth * ratio);
+                z.theMaxHealth = (int)(z.theMaxHealth * ratio);
+                z.theFirstArmorMaxHealth = (int)(z.theFirstArmorMaxHealth * ratio);
+                z.theSecondArmorMaxHealth = (int)(z.theSecondArmorMaxHealth * ratio);
+                z.UpdateHealthText();
+            }
+    }
+
+    private static void SetPlantSpeedRatio(List<string> args)
+    {
+        float ratio= Convert.ToSingle(args[0]);
+        if (ratio <= 0f) return;
+        foreach (var p in Board.Instance.boardEntity.plantArray)
+        {
+            if (p != null && !p.IsDestroyed())
+            {
+                p.thePlantSpeed *= ratio;
+                p.attributeSpeed *= ratio;
+                p.attackSpeedAdder *= ratio;
+            }
+        }
+    }
+
+    private static void SetPlantAttackRatio(List<string> args)
+    {
+        float ratio= Convert.ToSingle(args[0]);
+        if (ratio <= 0f) return;
+        foreach (var p in Board.Instance.boardEntity.plantArray)
+        {
+            if (p != null && !p.IsDestroyed())
+            {
+                p.attackDamage= (int)(p.attackDamage * ratio);
+            }
+        }
+    }
+
+    private static void SetPlantHealthRatio(List<string> args)
+    {
+        float ratio= Convert.ToSingle(args[0]);
+        if (ratio <= 0f) return;
+        foreach (var p in Board.Instance.boardEntity.plantArray)
+        {
+            if (p != null && !p.IsDestroyed())
+            {
+                p.thePlantHealth= (int)(p.thePlantHealth * ratio);
+                p.thePlantMaxHealth= (int)(p.thePlantMaxHealth * ratio);
+            }
+        }
+    }
+
+    private static void AbyssJumpLevel(List<string> args)
+    {
+        /*
+        var level=int.Parse(args[0]);
+        if (AbyssManager.Instance != null)
+        {
+            //AbyssManager.Instance.abyssData.arrivedLevel=level;
+            //AbyssManager.Instance.abyssData.maxArrivedLevel=level;
+            //AbyssManager.Instance.abyssData.tempAbyssData.arrivedLevel=level;
+        }*/
+    }
+
+    private static void AbyssMoney(List<string> args)
+    {
+        var money = int.Parse(args[0]);
+        if (AbyssManager.Instance != null)
+        {
+            //AbyssManager.Instance.abyssData.money=money;
+        }
+    }
+
+    private static void SetAbyssWoodenTicket(List<string> args)
+    {
+        var t = int.Parse(args[0]);
+        if (AbyssManager.Data != null) AbyssManager.Data.woodenTicket = t;
+    }
+
+    private static void SetAbyssSilverTicket(List<string> args)
+    {
+        var t = int.Parse(args[0]);
+        if (AbyssManager.Data != null) AbyssManager.Data.silverTicket = t;
+    }
+
+    private static void SetAbyssGoldTicket(List<string> args)
+    {
+        var t = int.Parse(args[0]);
+        if (AbyssManager.Data != null) AbyssManager.Data.goldTicket = t;
+    }
+
+    private static void SetAbyssDiamondTicket(List<string> args)
+    {
+        var t = int.Parse(args[0]);
+        if (AbyssManager.Data != null) AbyssManager.Data.diamondTicket = t;
+    }
+
+    private static void SetStarAdvStar(List<string> args)
+    {
+        if (AdvantureConfig.data != null) AdvantureConfig.data.enpowerStarCount = int.Parse(args[0]);
+    }
+
+    private static void SetStarAdvStarHard(List<string> args)
+    {
+        if (AdvantureConfig.data != null) AdvantureConfig.data.enpowerStarCount_hard = int.Parse(args[0]);
+    }
+
+    #region 作弊码
+
+    private static void ExecuteCheatKey(List<string> args)
+    {
+        if (args.Count == 0) return;
+        var key = args[0];
+        var gameApp = GameAPP.Instance;
+        if (gameApp == null) return;
+        var cheatKey = gameApp.GetComponent<CheatKey>();
+        if (cheatKey == null) return;
+        cheatKey.key = key;
+    }
+
+    #endregion
 
     #region OverallCommands
 
@@ -460,20 +1123,14 @@ public class DataProcessor : MonoBehaviour
 
     #endregion
 
-    private static void Exit(List<string> _)
-    {
-        Application.Quit();
-    }
-
     #region InGameCommands
 
     private static void RemoveAllPlants(List<string> _)
     {
         var allPlants = Lawnf.GetAllPlants();
         if (allPlants != null)
-        {
-            for (var i = allPlants.Count - 1; i >= 0; i--) allPlants[i]?.Die();
-        }
+            for (var i = allPlants.Count - 1; i >= 0; i--)
+                allPlants[i]?.Die();
     }
 
     private static void RemoveAllZombies(List<string> _)
@@ -482,9 +1139,10 @@ public class DataProcessor : MonoBehaviour
             try
             {
                 var zombie = Board.Instance.zombieArray[j];
-                if (zombie == null || !zombie||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                if (zombie == null || !zombie ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled /*&&zombie.isIdle*/))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -494,15 +1152,16 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
+
         Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
         for (var i = zombies.Count - 1; i >= 0; i--)
-        {
             try
             {
                 var zombie = (Zombie)zombies[i];
-                if (zombie == null || !zombie||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
+                if (zombie == null || !zombie ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -512,19 +1171,19 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
-        }
     }
 
     private static void RemoveAllZombiesInRow(List<string> args)
     {
-        var row= int.Parse(args[0])-1;
+        var row = int.Parse(args[0]) - 1;
         for (var j = Board.Instance.zombieArray.Count - 1; j >= 0; j--)
             try
             {
                 var zombie = Board.Instance.zombieArray[j];
-                if (zombie == null || !zombie||zombie.theZombieRow!=row||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                if (zombie == null || !zombie || zombie.theZombieRow != row ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled /*&&zombie.isIdle*/))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -534,15 +1193,16 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
+
         Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
         for (var i = zombies.Count - 1; i >= 0; i--)
-        {
             try
             {
                 var zombie = (Zombie)zombies[i];
-                if (zombie == null || !zombie||zombie.theZombieRow!=row||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
+                if (zombie == null || !zombie || zombie.theZombieRow != row ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -552,7 +1212,6 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
-        }
     }
 
     private static void RemoveAllEnemies(List<string> _)
@@ -561,9 +1220,10 @@ public class DataProcessor : MonoBehaviour
             try
             {
                 var zombie = Board.Instance.zombieArray[j];
-                if (zombie == null || !zombie||zombie.isMindControlled||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                if (zombie == null || !zombie || zombie.isMindControlled ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled /*&&zombie.isIdle*/))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -573,15 +1233,16 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
+
         Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
         for (var i = zombies.Count - 1; i >= 0; i--)
-        {
             try
             {
                 var zombie = (Zombie)zombies[i];
-                if (zombie == null || !zombie||zombie.isMindControlled||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
+                if (zombie == null || !zombie || zombie.isMindControlled ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -591,7 +1252,6 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
-        }
     }
 
     private static void RemoveAllMindCtrlZombies(List<string> _)
@@ -600,9 +1260,10 @@ public class DataProcessor : MonoBehaviour
             try
             {
                 var zombie = Board.Instance.zombieArray[j];
-                if (zombie == null || !zombie||!zombie.isMindControlled||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled/*&&zombie.isIdle*/))
+                if (zombie == null || !zombie || !zombie.isMindControlled ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled /*&&zombie.isIdle*/))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -612,15 +1273,16 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
+
         Il2CppReferenceArray<Object> zombies = FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
         for (var i = zombies.Count - 1; i >= 0; i--)
-        {
             try
             {
                 var zombie = (Zombie)zombies[i];
-                if (zombie == null || !zombie||!zombie.isMindControlled||
-                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled)||
-                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) && !polygonCollider2D.enabled))
+                if (zombie == null || !zombie || !zombie.isMindControlled ||
+                    (zombie.TryGetComponent<BoxCollider2D>(out var boxCollider2D) && !boxCollider2D.enabled) ||
+                    (zombie.TryGetComponent<PolygonCollider2D>(out var polygonCollider2D) &&
+                     !polygonCollider2D.enabled))
                     continue;
                 zombie.theHealth = 0;
                 zombie.theFirstArmorHealth = 0;
@@ -630,7 +1292,6 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
-        }
     }
 
     private static void RemoveAllBullets(List<string> _)
@@ -677,7 +1338,6 @@ public class DataProcessor : MonoBehaviour
             // 直接设置冰道位置，无视觉效果无伤害
             // IceRoad 字段: offset 0x30 = theX (当前位置), offset 0x34 = originalX (原始位置)
             for (var i = 0; i < Board.Instance.iceRoads.Count; i++)
-            {
                 try
                 {
                     var iceRoad = Board.Instance.iceRoads[i];
@@ -688,8 +1348,8 @@ public class DataProcessor : MonoBehaviour
                         var ptr = iceRoad.Pointer;
                         unsafe
                         {
-                            float* theXPtr = (float*)(ptr + 0x30);
-                            float* originalXPtr = (float*)(ptr + 0x34);
+                            var theXPtr = (float*)(ptr + 0x30);
+                            var originalXPtr = (float*)(ptr + 0x34);
                             *theXPtr = *originalXPtr;
                         }
                     }
@@ -697,7 +1357,6 @@ public class DataProcessor : MonoBehaviour
                 catch
                 {
                 }
-            }
         }
         catch
         {
@@ -707,28 +1366,27 @@ public class DataProcessor : MonoBehaviour
     private static void RemoveAllHoles(List<string> _)
     {
         for (var i = Board.Instance.griditemArray.Count - 1; i >= 0; i--)
-        {
             if (Board.Instance.griditemArray[i].theItemType is GridItemType.CraterDay or GridItemType.CraterNight)
             {
                 Destroy(Board.Instance.griditemArray[i].gameObject);
                 Board.Instance.griditemArray.RemoveAt(i);
             }
-        }
     }
 
     private static void RemoveAllGraves(List<string> _)
     {
         for (var i = Board.Instance.griditemArray.Count - 1; i >= 0; i--)
-        {
             if (Board.Instance.griditemArray[i].theItemType is GridItemType.Grave)
             {
                 Destroy(Board.Instance.griditemArray[i].gameObject);
                 Board.Instance.griditemArray.RemoveAt(i);
             }
-        }
     }
 
-    private static void SetLevelName(List<string> args) => InGameUI.Instance?.SetLevelName(args[0]);
+    private static void SetLevelName(List<string> args)
+    {
+        InGameUI.Instance?.SetLevelName(args[0]);
+    }
 
     private static void SetZombiesIdle(List<string> args)
     {
@@ -753,7 +1411,8 @@ public class DataProcessor : MonoBehaviour
                 {
                     for (var i = 0; i < Board.Instance!.rowNum; i++)
                     for (var j = 0; j < Board.Instance.columnNum; j++)
-                        global::CreatePlant.Instance.SetPlant(j, i, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
+                        global::CreatePlant.Instance.SetPlant(j, i,
+                            id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id);
 
                     continue;
                 }
@@ -761,7 +1420,8 @@ public class DataProcessor : MonoBehaviour
                 if (r == 0 && c != 0)
                 {
                     for (var j = 0; j < Board.Instance!.columnNum; j++)
-                        global::CreatePlant.Instance.SetPlant(c - 1, j, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
+                        global::CreatePlant.Instance.SetPlant(c - 1, j,
+                            id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id);
 
                     continue;
                 }
@@ -769,13 +1429,15 @@ public class DataProcessor : MonoBehaviour
                 if (c == 0 && r != 0)
                 {
                     for (var j = 0; j < Board.Instance!.columnNum; j++)
-                        global::CreatePlant.Instance.SetPlant(j, r - 1, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
+                        global::CreatePlant.Instance.SetPlant(j, r - 1,
+                            id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id);
 
                     continue;
                 }
 
                 if (c > 0 && r > 0 && c <= Board.Instance!.columnNum && r <= Board.Instance.rowNum)
-                    global::CreatePlant.Instance.SetPlant(c - 1, r - 1, id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id);
+                    global::CreatePlant.Instance.SetPlant(c - 1, r - 1,
+                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id);
             }
         }
         catch
@@ -792,9 +1454,10 @@ public class DataProcessor : MonoBehaviour
         var plantType = (PlantType)int.Parse(args[0]);
         var repeatTimes = int.Parse(args[1]);
         if (InGameUI.Instance == null) return;
-        for (int i = 0; i < repeatTimes; i++)
+        for (var i = 0; i < repeatTimes; i++)
         {
-            var droppedCard = Lawnf.SetDroppedCard(new Vector2(0f, 0f), plantType is PlantType.Nothing ? GameAPP.resourcesManager.allPlants.GetRandom():plantType);
+            var droppedCard = Lawnf.SetDroppedCard(new Vector2(0f, 0f),
+                plantType is PlantType.Nothing ? GameAPP.resourcesManager.allPlants.GetRandom() : plantType);
             if (droppedCard != null)
                 droppedCard.GameObject().transform.SetParent(InGameUI.Instance.transform);
         }
@@ -811,7 +1474,7 @@ public class DataProcessor : MonoBehaviour
             for (var i = 0; i < Board.Instance!.rowNum; i++)
             for (var j = 3; j < Board.Instance.columnNum; j++)
                 GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                    id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
+                    id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id;
         }
         else
         {
@@ -819,21 +1482,21 @@ public class DataProcessor : MonoBehaviour
                 for (var i = 0; i < Board.Instance!.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
                     GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
+                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id;
 
             if (r == 0 && c != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(c - 1, j, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
+                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id;
 
             if (c == 0 && r != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(j, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
+                        id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id;
 
             if (c > 0 && r > 0 && c <= Board.Instance!.columnNum && r <= Board.Instance.rowNum)
                 GridItem.SetGridItem(c - 1, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().thePlantType =
-                    id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom():(PlantType)id;
+                    id is -1 ? GameAPP.resourcesManager.allPlants.GetRandom() : (PlantType)id;
         }
     }
 
@@ -850,28 +1513,34 @@ public class DataProcessor : MonoBehaviour
             {
                 for (var i = 0; i < Board.Instance.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombie(i, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id , -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombie(i,
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                        -5f + j * 1.37f);
                 continue;
             }
 
             if (r == 0 && c != 0)
             {
                 for (var j = 0; j < Board.Instance.rowNum; j++)
-                    global::CreateZombie.Instance.SetZombie(j, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
+                    global::CreateZombie.Instance.SetZombie(j,
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                        -5f + (c - 1) * 1.37f);
                 continue;
             }
 
             if (c == 0 && r != 0)
             {
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombie(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombie(r - 1,
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                        -5f + j * 1.37f);
                 continue;
             }
 
             if (c > 0 && r > 0 && c <= Board.Instance.columnNum + 1 && r <= Board.Instance.rowNum)
-            {
-                global::CreateZombie.Instance.SetZombie(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
-            }
+                global::CreateZombie.Instance.SetZombie(r - 1,
+                    id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                    -5f + (c - 1) * 1.37f);
         }
     }
 
@@ -888,28 +1557,34 @@ public class DataProcessor : MonoBehaviour
             {
                 for (var i = 0; i < Board.Instance.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombieWithMindControl(i, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombieWithMindControl(i,
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                        -5f + j * 1.37f);
                 continue;
             }
 
             if (r == 0 && c != 0)
             {
                 for (var j = 0; j < Board.Instance.rowNum; j++)
-                    global::CreateZombie.Instance.SetZombieWithMindControl(j, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
+                    global::CreateZombie.Instance.SetZombieWithMindControl(j,
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                        -5f + (c - 1) * 1.37f);
                 continue;
             }
 
             if (c == 0 && r != 0)
             {
                 for (var j = 0; j < Board.Instance.columnNum; j++)
-                    global::CreateZombie.Instance.SetZombieWithMindControl(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + j * 1.37f);
+                    global::CreateZombie.Instance.SetZombieWithMindControl(r - 1,
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                        -5f + j * 1.37f);
                 continue;
             }
 
             if (c > 0 && r > 0 && c <= Board.Instance.columnNum + 1 && r <= Board.Instance.rowNum)
-            {
-                global::CreateZombie.Instance.SetZombieWithMindControl(r - 1, id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id, -5f + (c - 1) * 1.37f);
-            }
+                global::CreateZombie.Instance.SetZombieWithMindControl(r - 1,
+                    id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id,
+                    -5f + (c - 1) * 1.37f);
         }
     }
 
@@ -924,7 +1599,7 @@ public class DataProcessor : MonoBehaviour
             for (var i = 0; i < Board.Instance!.rowNum; i++)
             for (var j = 3; j < Board.Instance.columnNum; j++)
                 GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                    id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
+                    id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id;
         }
         else
         {
@@ -932,21 +1607,21 @@ public class DataProcessor : MonoBehaviour
                 for (var i = 0; i < Board.Instance!.rowNum; i++)
                 for (var j = 0; j < Board.Instance.columnNum; j++)
                     GridItem.SetGridItem(j, i, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                        id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id;
 
             if (r == 0 && c != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(c - 1, j, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                        id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id;
 
             if (c == 0 && r != 0)
                 for (var j = 0; j < Board.Instance!.columnNum; j++)
                     GridItem.SetGridItem(j, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                        id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
+                        id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id;
 
             if (c > 0 && r > 0 && c <= Board.Instance!.columnNum && r <= Board.Instance.rowNum)
                 GridItem.SetGridItem(c - 1, r - 1, GridItemType.ScaryPot).Cast<ScaryPot>().theZombieType =
-                    id is -1? GameAPP.resourcesManager.allZombieTypes.GetRandom():(ZombieType)id;
+                    id is -1 ? GameAPP.resourcesManager.allZombieTypes.GetRandom() : (ZombieType)id;
         }
     }
 
@@ -965,17 +1640,27 @@ public class DataProcessor : MonoBehaviour
         }
     }
 
-    private static void CreatePassiveMeteorite(List<string> _) => Board.Instance.CreatePassiveMateorite();
+    private static void CreatePassiveMeteorite(List<string> _)
+    {
+        Board.Instance.CreatePassiveMateorite();
+    }
 
-    private static void CreateActiveMeteorite(List<string> _) => Board.Instance.CreateActiveMateorite();
+    private static void CreateActiveMeteorite(List<string> _)
+    {
+        Board.Instance.CreateActiveMateorite();
+    }
 
-    private static void CreateUltimateMeteorite(List<string> _) => Board.Instance.CreateUltimateMateorite();
+    private static void CreateUltimateMeteorite(List<string> _)
+    {
+        Board.Instance.CreateUltimateMateorite();
+    }
 
-    private static void CreateSolarMeteorite(List<string> _) {
+    private static void CreateSolarMeteorite(List<string> _)
+    {
         var original = GameAPP.itemPrefab[47];
-        if(original == null||GameAPP.board == null)return;
+        if (original == null || GameAPP.board == null) return;
         var obj = Instantiate(original);
-        if(obj == null)return;
+        if (obj == null) return;
         var transform = obj.transform;
         var boardTransform = GameAPP.board.transform;
         transform.SetParent(boardTransform);
@@ -992,6 +1677,7 @@ public class DataProcessor : MonoBehaviour
                 InGameUI.Instance.LevelName3.gameObject.SetActive(true);
                 InGameUI.Instance.LevProgress.SetActive(true);
             }
+
             // 触发下一波：必须设置成负数，确保进入 `timeUntilNextWave < 0` 分支
             Board.Instance.timeUntilNextWave = -0.01f;
             Board.Instance.NewZombieUpdate();
@@ -1008,17 +1694,20 @@ public class DataProcessor : MonoBehaviour
                 InGameUI.Instance.LevelName3.gameObject.SetActive(true);
                 InGameUI.Instance.LevProgress.SetActive(true);
             }
+
             Board.Instance.theWave = Math.Min(wave, Board.Instance.theMaxWave);
         }
     }
 
-    private static void SetAward(List<string> _) => Lawnf.SetAward(Board.Instance, Vector2.zero);
+    private static void SetAward(List<string> _)
+    {
+        Lawnf.SetAward(Board.Instance, Vector2.zero);
+    }
 
     private static void DestroyAward(List<string> _)
     {
         var prizes = FindObjectsOfType<PrizeMgr>();
         foreach (var prize in prizes)
-        {
             try
             {
                 Destroy(prize.gameObject);
@@ -1026,15 +1715,16 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
-        }
     }
 
-    private static void ShowText(List<string> args) => InGameText.Instance.ShowText(args[0], 5);
+    private static void ShowText(List<string> args)
+    {
+        InGameText.Instance.ShowText(args[0], 5);
+    }
 
     private static void StartMower(List<string> _)
     {
         foreach (var mower in Board.Instance.mowerArray)
-        {
             try
             {
                 if (mower != null) mower.StartMove();
@@ -1042,7 +1732,6 @@ public class DataProcessor : MonoBehaviour
             catch
             {
             }
-        }
     }
 
     private static void CreateMower(List<string> _)
@@ -1051,19 +1740,14 @@ public class DataProcessor : MonoBehaviour
         if (Board.Instance != null && Board.Instance.mowerArray != null)
         {
             for (var i = Board.Instance.mowerArray.Count - 1; i >= 0; i--)
-            {
                 try
                 {
                     var mower = Board.Instance.mowerArray[i];
-                    if (mower != null)
-                    {
-                        Destroy(mower.gameObject);
-                    }
+                    if (mower != null) Destroy(mower.gameObject);
                 }
                 catch
                 {
                 }
-            }
 
             Board.Instance.mowerArray.Clear();
         }
@@ -1076,7 +1760,6 @@ public class DataProcessor : MonoBehaviour
     private static void GetZombiesList(List<string> _)
     {
         if (InGame)
-        {
             try
             {
                 var zombieListData = GetZombieListData();
@@ -1112,9 +1795,7 @@ public class DataProcessor : MonoBehaviour
             {
                 ModCore.Instance.Log.LogError($"获取出怪列表异常: {ex.Message}\n{ex.StackTrace}");
             }
-        }
         else
-        {
             ModCore.Instance.SendCommand(new SyncData
             {
                 Command = Strings.GetZombiesList,
@@ -1124,15 +1805,11 @@ public class DataProcessor : MonoBehaviour
                         { CurrentWave = -1, ZombiesList = [] }))
                 ]
             });
-        }
     }
 
     private static void ChangeZombiesList(List<string> args)
     {
-        if (args.Count is 3)
-        {
-            SetZombieList(int.Parse(args[1]), int.Parse(args[0]), (ZombieType)int.Parse(args[2]));
-        }
+        if (args.Count is 3) SetZombieList(int.Parse(args[1]), int.Parse(args[0]), (ZombieType)int.Parse(args[2]));
     }
 
     #endregion
@@ -1148,7 +1825,6 @@ public class DataProcessor : MonoBehaviour
             List<string> lineupData = [];
             var allPlants = Lawnf.GetAllPlants();
             if (allPlants != null)
-            {
                 foreach (var plant in allPlants)
                 {
                     // 格式为 "行,列,类型"
@@ -1156,10 +1832,9 @@ public class DataProcessor : MonoBehaviour
                     var plantData = $"{plant.thePlantColumn},{plant.thePlantRow},{(int)plant.thePlantType}";
                     lineupData.Add(plantData);
                 }
-            }
 
             var lineupCode = CompressString(string.Join(";", lineupData));
-            ModCore.Instance.SendCommand(new SyncData()
+            ModCore.Instance.SendCommand(new SyncData
             {
                 Command = Strings.GetPlantFormationCode,
                 Parameters = [lineupCode]
@@ -1171,7 +1846,6 @@ public class DataProcessor : MonoBehaviour
             List<PlantInfo> plants = [];
             var allPlants = Lawnf.GetAllPlants();
             if (allPlants != null)
-            {
                 foreach (var plant in allPlants)
                 {
                     if (plant is null) continue;
@@ -1195,10 +1869,9 @@ public class DataProcessor : MonoBehaviour
                         LilyType = (int)plant.theLilyType
                     });
                 }
-            }
 
             bases.AddRange(plants);
-            ModCore.Instance.SendCommand(new SyncData()
+            ModCore.Instance.SendCommand(new SyncData
             {
                 Command = Strings.GetPlantFormationCode,
                 Parameters = [JsonSerializer.Serialize(bases)]
@@ -1216,10 +1889,8 @@ public class DataProcessor : MonoBehaviour
         {
             var allPlants = Lawnf.GetAllPlants();
             if (allPlants != null)
-            {
                 for (var i = allPlants.Count - 1; i >= 0; i--)
                     allPlants[i]?.Die();
-            }
         }
 
         if (GaoShuMode)
@@ -1238,11 +1909,11 @@ public class DataProcessor : MonoBehaviour
             }
         }
         else
+        {
             try
             {
                 var plants = JsonSerializer.Deserialize<List<PlantInfo>>(formationCode);
                 if (plants != null)
-                {
                     foreach (var plant in plants)
                     {
                         var pl = global::CreatePlant.Instance.SetPlant(plant.Column, plant.Row,
@@ -1251,7 +1922,6 @@ public class DataProcessor : MonoBehaviour
                         if (pl.GetComponent<Plant>().isLily)
                             pl.GetComponent<Plant>().theLilyType = (PlantType)plant.LilyType;
                     }
-                }
             }
             catch (JsonException)
             {
@@ -1259,6 +1929,7 @@ public class DataProcessor : MonoBehaviour
             catch (NotSupportedException)
             {
             }
+        }
     }
 
     private static void GetZombieFormationCode(List<string> args)
@@ -1281,7 +1952,7 @@ public class DataProcessor : MonoBehaviour
             var zombieCode = string.Join(";", zombieDataList);
             var compressedCode = CompressString(zombieCode); // GZIP压缩 + Base64编码
 
-            ModCore.Instance.SendCommand(new SyncData()
+            ModCore.Instance.SendCommand(new SyncData
             {
                 Command = Strings.GetZombieFormationCode,
                 Parameters = [compressedCode]
@@ -1299,7 +1970,7 @@ public class DataProcessor : MonoBehaviour
                         X = zombie.gameObject.transform.position.x,
                         Row = zombie.theZombieRow
                     });
-            ModCore.Instance.SendCommand(new SyncData()
+            ModCore.Instance.SendCommand(new SyncData
             {
                 Command = Strings.GetZombieFormationCode,
                 Parameters = [JsonSerializer.Serialize(zombies)]
@@ -1346,14 +2017,13 @@ public class DataProcessor : MonoBehaviour
             }
         }
         else
+        {
             try
             {
                 var fieldZombies = JsonSerializer.Deserialize<List<ZombieInfo>>(formationCode);
                 if (fieldZombies != null)
-                {
                     foreach (var z in fieldZombies)
                         global::CreateZombie.Instance.SetZombie(z.Row, (ZombieType)z.ID, z.X);
-                }
             }
             catch (JsonException)
             {
@@ -1361,6 +2031,7 @@ public class DataProcessor : MonoBehaviour
             catch (NotSupportedException)
             {
             }
+        }
     }
 
     private static void GetMixedFormationCode(List<string> args)
@@ -1383,7 +2054,6 @@ public class DataProcessor : MonoBehaviour
         List<string> lineupData = [];
         var allPlants = Lawnf.GetAllPlants();
         if (allPlants != null)
-        {
             foreach (var plant in allPlants)
             {
                 // 格式为 "行,列,类型"
@@ -1391,14 +2061,13 @@ public class DataProcessor : MonoBehaviour
                 var plantData = $"{plant.thePlantColumn},{plant.thePlantRow},{(int)plant.thePlantType}";
                 lineupData.Add(plantData);
             }
-        }
 
         var plantCode = string.Join(";", lineupData);
         var PlantString = CompressString(plantCode); // GZIP压缩 + Base64编码
 
         var result = PlantString + "|" + zombieString;
 
-        ModCore.Instance.SendCommand(new SyncData()
+        ModCore.Instance.SendCommand(new SyncData
         {
             Command = Strings.GetMixedFormationCode,
             Parameters = [result]
@@ -1414,7 +2083,6 @@ public class DataProcessor : MonoBehaviour
         {
             var allPlants = Lawnf.GetAllPlants();
             if (allPlants != null)
-            {
                 for (var i = allPlants.Count - 1; i >= 0; i--)
                     try
                     {
@@ -1423,7 +2091,6 @@ public class DataProcessor : MonoBehaviour
                     catch
                     {
                     }
-            }
 
             Il2CppReferenceArray<Object> zombies =
                 FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
@@ -1578,7 +2245,7 @@ public class DataProcessor : MonoBehaviour
             if (comp != null) PveBlindBoxSlotByInstance[comp.GetInstanceID()] = 1; // 槽1：钻石盲盒
         }
 
-        for (int i = 0; i < 4; i++)
+        for (var i = 0; i < 4; i++)
         {
             var zp = global::CreateZombie.Instance.SetZombie(2, ZombieType.RandomPlusZombie, 8);
             if (zp != null)
@@ -1672,88 +2339,57 @@ public class DataProcessor : MonoBehaviour
     {
         var buffs = JsonSerializer.Deserialize<SyncTravelBuffs>(args[0]);
         if (buffs.AdvBuffs.Count > 0)
-        {
             foreach (var advBuff in buffs.AdvBuffs)
-            {
                 AdvBuffs[(AdvBuff)advBuff.Key] = advBuff.Value;
-            }
-        }
 
         if (buffs.UltiBuffs.Count > 0)
-        {
             foreach (var ultiBuff in buffs.UltiBuffs)
-            {
                 UltiBuffs[(UltiBuff)ultiBuff.Key] = ultiBuff.Value;
-            }
-        }
 
         if (buffs.Debuffs.Count > 0)
-        {
             foreach (var debuff in buffs.Debuffs)
-            {
                 Debuffs[(TravelDebuff)debuff.Key] = debuff.Value;
-            }
-        }
 
         if (buffs.InvestBuffs.Count > 0)
-        {
             foreach (var investBuff in buffs.InvestBuffs)
-            {
                 InvestBuffs[(InvestBuff)investBuff.Key] = investBuff.Value;
-            }
-        }
+
         if (buffs.UnlockedPlants.Count > 0)
-        {
             foreach (var unlock in buffs.UnlockedPlants)
-            {
-                UnlockedPlants[(TravelUnlocks)unlock.Key] = unlock.Value; 
-            }
-        }
+                UnlockedPlants[(TravelUnlocks)unlock.Key] = unlock.Value;
+
         if (!InGame) return;
 
         var needRefresh = false;
         if (buffs.InGameAdvBuffs.Count > 0)
         {
-            foreach (var advBuff in buffs.InGameAdvBuffs)
-            {
-                InGameAdvBuffs[(AdvBuff)advBuff.Key] = advBuff.Value;
-            }
+            foreach (var advBuff in buffs.InGameAdvBuffs) InGameAdvBuffs[(AdvBuff)advBuff.Key] = advBuff.Value;
             needRefresh = true;
         }
 
         if (buffs.InGameUltiBuffs.Count > 0)
         {
-            foreach (var ultiBuff in buffs.InGameUltiBuffs)
-            {
-                InGameUltiBuffs[(UltiBuff)ultiBuff.Key] = ultiBuff.Value;
-            }
+            foreach (var ultiBuff in buffs.InGameUltiBuffs) InGameUltiBuffs[(UltiBuff)ultiBuff.Key] = ultiBuff.Value;
             needRefresh = true;
         }
 
         if (buffs.InGameDebuffs.Count > 0)
         {
-            foreach (var debuff in buffs.InGameDebuffs)
-            {
-                InGameDebuffs[(TravelDebuff)debuff.Key] = debuff.Value;
-            }
+            foreach (var debuff in buffs.InGameDebuffs) InGameDebuffs[(TravelDebuff)debuff.Key] = debuff.Value;
             needRefresh = true;
         }
 
         if (buffs.InGameInvestBuffs.Count > 0)
         {
             foreach (var investBuff in buffs.InGameInvestBuffs)
-            {
                 InGameInvestBuffs[(InvestBuff)investBuff.Key] = investBuff.Value;
-            }
             needRefresh = true;
         }
-        
+
         if (buffs.InGameUnlockedPlants.Count > 0)
         {
             foreach (var unlock in buffs.InGameUnlockedPlants)
-            {
                 InGameUnlockedPlants[(TravelUnlocks)unlock.Key] = unlock.Value;
-            }
             needRefresh = true;
         }
 
@@ -1764,670 +2400,6 @@ public class DataProcessor : MonoBehaviour
     {
         var buffs = JsonSerializer.Deserialize<FlagWaveBuff>(args[0]);
         FlagWaveBuffs[buffs.Wave - 1] = buffs;
-    }
-
-    #endregion
-
-    private static void PlaySound(List<string> args)
-    {
-        try
-        {
-            var soundId = int.Parse(args[0]);
-            GameAPP.PlaySound(soundId);
-        }
-        catch (Exception e)
-        {
-            ModCore.Instance.Log.LogError($"播放音效失败: {e.Message}");
-        }
-    }
-
-    public static void PlayParticle(List<string> args)
-    {
-        try
-        {
-            int particleId = int.Parse(args[0]);
-            // 在屏幕中央位置播放特效，使用第3行（中间行）
-            Vector3 position = new Vector3(0, 0, 0);
-            if (Board.Instance != null)
-            {
-                // 计算屏幕中央位置
-                int centerRow = Board.Instance.rowNum / 2;
-                int centerCol = Board.Instance.columnNum / 2;
-                position = new Vector3(-5f + centerCol * 1.37f, centerRow * 0.8f, 0);
-            }
-
-            CreateParticle.SetParticle(particleId, position, Board.Instance?.rowNum / 2 ?? 2, true);
-        }
-        catch (Exception ex)
-        {
-            ModCore.Instance.Log.LogError($"播放特效失败: {ex.Message}");
-        }
-    }
-
-    public static void GetSnapshot(List<string> args)
-    {
-        if (IsBoardReadyForSnapshot())
-        {
-            TryCaptureSnapshot();
-        }
-        else
-        {
-            // 延后到关卡初始化完成后再保存（最多约3秒）
-            PendingManualSnapshotFrames = Math.Max(PendingManualSnapshotFrames, 180);
-            try
-            {
-                InGameText.Instance?.ShowText("正在初始化，稍后保存快照…", 1.5f);
-            }
-            catch
-            {
-            }
-        }
-    }
-
-    public static void RestoreSnapshot(List<string> args)
-    {
-        Snapshot target = new();
-        if (Snapshots.Count > 0)
-        {
-            target = Snapshots[^1];
-        }
-        else
-        {
-            // 兼容跨重启场景：内存环形缓冲为空时，回退读取磁盘最近快照。
-            target = TryLoadLatestSnapshotFromDisk();
-            if (target != null)
-                Snapshots.Add(target);
-        }
-
-        if (target != null)
-        {
-            Utils.RestoreSnapshot(target);
-        }
-        else
-        {
-            try
-            {
-                InGameText.Instance?.ShowText("未找到可恢复快照", 2.0f);
-            }
-            catch
-            {
-            }
-        }
-    }
-
-    /// <summary>
-    /// 手动实现 RogueShootingData.Record 逻辑（Il2CppInterop 未暴露该泛型方法）
-    /// 在列表中查找匹配 element 的记录并 count+1，找不到则新建记录(count=1)并添加
-    /// DataRecord 字段偏移: element=0x10, count=0x14
-    /// </summary>
-    private static unsafe void RecordData(Il2CppSystem.Collections.Generic.List<DataRecord<int>> list, int element)
-    {
-        if (list == null) return;
-        foreach (var record in list)
-        {
-            if (record == null) continue;
-            var ptr = (int*)record.Pointer;
-            if (ptr[4] == element) // offset 0x10 = 4 ints
-            {
-                ptr[5]++; // offset 0x14 = 5 ints
-                return;
-            }
-        }
-        var newRecord = new DataRecord<int>();
-        int* newPtr = (int*)newRecord.Pointer;
-        newPtr[4] = element;
-        newPtr[5] = 1;
-        list.Add(newRecord);
-    }
-
-    private static void SetGodCoin(List<string> args)
-    {
-        int coin= int.Parse(args[0]);
-        ShootingManager.Data.godCoins = coin;
-    }
-
-    private static void GodEvolutionBuyAll(List<string> _)
-    {
-        var data = ShootingManager.Data;
-        if (data == null) return;
-
-        var catalog = ShootingAlmanacCatalog.Build();
-        if (catalog == null) return;
-
-        if (data.unlockedPlants == null)
-            data.unlockedPlants = new Il2CppSystem.Collections.Generic.List<PlantType>();
-        if (data.unlockedRoutes == null)
-            data.unlockedRoutes = new Il2CppSystem.Collections.Generic.List<string>();
-        if (data.unlockedTacticMaxEntries == null)
-            data.unlockedTacticMaxEntries = new Il2CppSystem.Collections.Generic.List<string>();
-
-        // ShootingAlmanacUnlocks.TryBuyPlant：根植物写入 unlockedPlants，并顺带写入首条路线
-        // ShootingAlmanacUnlocks.TryBuyRoute：RouteId(path) = string.Join("-", path) 写入 unlockedRoutes
-        var roots = catalog.Roots;
-        var rootCount = roots?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<PlantType>>()?.Count ?? 0;
-        for (var i = 0; i < rootCount; i++)
-        {
-            var plant = roots[i];
-            if (!data.unlockedPlants.Contains(plant))
-                data.unlockedPlants.Add(plant);
-
-            var routes = catalog.GetRoutes(plant);
-            var routeCount = routes
-                ?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<
-                    Il2CppSystem.Collections.Generic.List<PlantType>>>()
-                ?.Count ?? 0;
-            for (var j = 0; j < routeCount; j++)
-            {
-                var path = routes[j];
-                if (path == null || path.Count <= 0) continue;
-                var id = ShootingAlmanacUnlocks.RouteId(
-                    path.Cast<Il2CppSystem.Collections.Generic.IEnumerable<PlantType>>());
-                if (!string.IsNullOrEmpty(id) && !data.unlockedRoutes.Contains(id))
-                    data.unlockedRoutes.Add(id);
-            }
-        }
-
-        // ShootingAlmanacUnlocks.TryBuyTacticMax：Tactics 图鉴条目 Id 写入 unlockedTacticMaxEntries
-        var tactics = catalog.GetEntries(ShootingAlmanacCategory.Tactics);
-        var tacticCount = tactics?.TryCast<Il2CppSystem.Collections.Generic.IReadOnlyCollection<ShootingAlmanacEntry>>()
-            ?.Count ?? 0;
-        for (var i = 0; i < tacticCount; i++)
-        {
-            var entry = tactics[i];
-            if (entry == null || string.IsNullOrEmpty(entry.Id)) continue;
-            if (!data.unlockedTacticMaxEntries.Contains(entry.Id))
-                data.unlockedTacticMaxEntries.Add(entry.Id);
-        }
-
-        data.hasPurchasedAlmanacUnlock = true;
-        if (data.unlockVersion < 2)
-            data.unlockVersion = 2;
-
-        SaveInfo.Instance?.SavePlayerData();
-        InGameText.Instance?.ShowText("已解锁全部植物、路线与战术词条", 5);
-    }
-
-    private static void GodEvolutionUnlockAll(List<string> _)
-    {
-        var data = ShootingManager.Data;
-        if (data == null) return;
-
-        // 设置总胜利次数≥20，解锁canTab和屋顶模式
-        data.victoryTimes = 20;
-
-        // 解锁全部难度（难度2/3/4各需前一级难度至少1次胜利）
-        RecordData(data.difficultyWin, 1);
-        RecordData(data.difficultyWin, 2);
-        RecordData(data.difficultyWin, 3);
-
-        // 解锁全部模式（模式1/2/3各需前一级至少1次胜利，模式4需模式3至少10次胜利）
-        RecordData(data.stageWins, 0);
-        RecordData(data.stageWins, 1);
-        RecordData(data.stageWins, 2);
-        // 模式4需要 stageWins[3] ≥ 10
-        for (var i = 0; i < 10; i++)
-            RecordData(data.stageWins, 3);
-
-        InGameText.Instance?.ShowText("已解锁全部难度与模式", 5);
-    }
-
-    private static void GodEvolutionChooseBuff(List<string> _)
-    {
-        if (InGame && ShootingManager.Instance !=null&&GameAPP.canvasUp.GetComponentsInChildren<MultipleChoiceMenu>().Count is 0)
-        {
-            ShootingManager.Instance.ShowBuff();
-        }
-    }
-
-    private static void SpawnPetGargantuar(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetGargantuar);
-        }
-    }
-
-    private static void SpawnPetFootball(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetFootball);
-        }
-    }
-
-    private static void SpawnPetSnowBoss(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetSnowBoss);
-        }
-    }
-
-    private static void SpawnPetJackbox(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetJackbox);
-        }
-    }
-
-    private static void SpawnPetDrown(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetDrown);
-        }
-    }
-
-    private static void SpawnPetHorse(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetHorse);
-        }
-    }
-
-    private static void SpawnPetImp(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetImp);
-        }
-    }
-
-    private static void SpawnPetKirov(List<string> _)
-    {
-        if (Mouse.Instance != null)
-        {
-            var mousePos = Mouse.Instance.transform.position;
-            MiniPet.SetPet(Board.Instance, new Vector2(mousePos.x, mousePos.y), PetType.PetKirov);
-        }
-    }
-
-    /// <summary>
-    /// 一键应用全部植物皮肤：遍历所有植物类型，将每种植物设置为最后一个可用皮肤（最高阶皮肤）
-    /// 使用游戏原生 SetSkin 方法避免直接操作 Il2Cpp 字典导致的运行时类型转换失败
-    /// </summary>
-    private static void ApplyAllPlantSkins(List<string> _)
-    {
-        //if (!InGame) return;
-        try
-        {
-            var rm = GameAPP.resourcesManager;
-            if (rm?.allPlants == null) return;
-
-            var appliedCount = 0;
-            foreach (var plantType in rm.allPlants)
-            {
-                try
-                {
-                    // 检查该植物是否有多个皮肤（_plantPrefabs 中对应的 List 长度 > 1）
-                    if (rm._plantPrefabs.TryGetValue(plantType, out Il2CppSystem.Collections.Generic.List<GameObject> skinList) && skinList != null)
-                    {
-                        var count = skinList.Count;
-                        if (count > 1)
-                        {
-                            var lastSkinIndex = count - 1;
-                            // 使用游戏原生 SetSkin 方法，避免直接操作 Il2Cpp 词典的索引器
-                            rm.SetSkin(plantType, lastSkinIndex);
-                            appliedCount++;
-                        }
-                    }
-                }
-                catch
-                {
-                    // 跳过没有皮肤的植物类型
-                }
-            }
-
-            InGameText.Instance?.ShowText(appliedCount > 0 ? "已应用全部植物皮肤" : "没有找到可应用的植物皮肤", 2);
-        }
-        catch (Exception ex)
-        {
-            ModCore.Instance.Log.LogError($"ApplyAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
-        }
-    }
-    
-    private static void ObtainAllPlantSkins(List<string> _)
-    {
-        try
-        {
-            GameAPP.skinLevelCompleted.Clear();
-            for (var i = 1; i <= 10; i++)
-            {
-                GameAPP.skinLevelCompleted.Add(i);
-            }
-            InGameText.Instance?.ShowText("已获得所有植物皮肤", 2);
-        }
-        catch (Exception ex)
-        {
-            ModCore.Instance.Log.LogError($"ObtainAllPlantSkins 异常: {ex.Message}\n{ex.StackTrace}");
-        }
-    }
-
-    private static void UnlockAllAlmanac(List<string> _)
-    {
-        GameAPP.config.meetPlants.Clear();
-        GameAPP.config.meetPlant_runTime.Clear();
-        foreach (var plant in GameAPP.resourcesManager.allPlants)
-        {
-            GameAPP.config.meetPlants.Add(plant);
-            GameAPP.config.meetPlant_runTime.Add(plant);
-        }
-    }
-
-    private static void TreasureFillCard(List<string> _)
-    {
-        foreach (var card in TreasureData.treasureCards)
-        {
-            card.durability = 40;
-        }
-    }
-
-    private static void TreasureSellAllCards(List<string> _)
-    {
-        var menu = TreasureWarehouseMenu.Instance;
-        if (menu!=null)
-        {
-            foreach (var card in menu.cards)
-            {
-                card.Sell();
-            }
-        }
-        else
-        {
-            foreach (var card in TreasureData.treasureCards)
-            {
-                var plantData = PlantDataManager.GetPlantData(card.thePlantType);
-                if (plantData == null)
-                    continue;
-
-                // Base cost (clamped to 1000), then scaled by card level
-                var cost = plantData.cost;
-                if (cost > 1000)
-                    cost = 1000;
-
-                CardLevel level = TreasureData.GetCardLevel(card.thePlantType);
-                switch ((int)level)
-                {
-                    case 0:                     break; // ×1
-                    case 1:  cost *= 2;         break;
-                    case 2:  cost *= 4;         break;
-                    case 3:  cost *= 8;         break;
-                    case 4:  cost *= 32;        break;
-                    case 5:  cost <<= 7;        break; // ×128
-                    default: return;                   // unknown level
-                }
-                
-                int refund;
-                if (card.maxDurability <= 1)
-                {
-                    refund = 0;
-                }
-                else
-                {
-                    refund = Mathf.RoundToInt(card.durability * cost / (float)card.maxDurability);
-                }
-
-                // Refund 80 % of the proportional cost
-                TreasureData.treasureMoney += Mathf.RoundToInt(refund * 0.8f);
-            }
-            TreasureData.treasureCards.Clear();
-        }
-    }
-    
-
-    private static void ZenGardenGetPlant(List<string> args)
-    {
-        var plantType = (PlantType)int.Parse(args[0]);
-        var data = GardenUI.Data;
-        if (data?.allPlants == null) return;
-
-        // Replicate TryAddPlantData's position-finding logic:
-        // scan all 64 pages, 8 columns × 4 rows, find first page with an empty slot
-        int targetPage;
-        var available = new List<Vector2Int>();
-        for (targetPage = 0; targetPage < 64; targetPage++)
-        {
-            for (int col = 0; col < 8; col++)
-            {
-                for (int row = 0; row < 4; row++)
-                {
-                    var occupied = false;
-                    for (int i = 0; i < data.allPlants.Count; i++)
-                    {
-                        var p = data.allPlants[i];
-                        if (p.page == targetPage && p.thePlantColumn == col && p.thePlantRow == row)
-                        {
-                            occupied = true;
-                            break;
-                        }
-                    }
-
-                    if (!occupied)
-                        available.Add(new Vector2Int(col, row));
-                }
-            }
-
-            if (available.Count > 0)
-                break;
-        }
-
-        if (available.Count == 0) return;
-
-        var index =UnityEngine. Random.Range(0, available.Count);
-        var pos = available[index];
-
-        if (GardenUI.Instance != null)
-            data.CreatePlantObject(plantType, pos.x, pos.y, targetPage, GardenUI.Instance);
-        else
-            data.CreatePlantData(plantType, pos.x, pos.y, targetPage);
-        GardenUI.Data.Save();
-    }
-
-    private static void TreasureFillWare(List<string> _)
-    {
-        TreasureData.treasureCards.Clear();
-        foreach (var type in GameAPP.resourcesManager.allPlants)
-        {
-            TreasureData.treasureCards.Add(new TreasureCardData(type,40,40));
-        }
-    }
-
-    private static void ZenGardenRemoveAllPlants(List<string> _)
-    {
-        var data = GardenUI.Data;
-        if (data?.allPlants == null) return;
-        data.allPlants.Clear();
-    }
-
-    private static void ZenGardenGetAllPlants(List<string> _)
-    {
-        var data = GardenUI.Data;
-        if (data?.allPlants == null) return;
-        data.allPlants.Clear();
-
-        var allPlants = GameAPP.resourcesManager?.allPlants;
-        if (allPlants == null || allPlants.Count == 0) return;
-
-        // 花园布局：每页 4 行 × 8 列 = 32 格，按顺序依次填入页码与行列号
-        const int rowsPerPage = 4;
-        const int colsPerPage = 8;
-        const int plantsPerPage = rowsPerPage * colsPerPage;
-        const int maxPages = 64;
-
-        var gardenUI = GardenUI.Instance;
-        var index = 0;
-        foreach (var plantType in allPlants)
-        {
-            var page = index / plantsPerPage;
-            if (page >= maxPages) break;
-
-            var row = (index / colsPerPage) % rowsPerPage;
-            var col = index % colsPerPage;
-
-
-            var p=    data.CreatePlantData(plantType, col, row, page);
-            p.growStage = 2;
-            p.love = 100;
-            p.waterLevel = 100;
-            index++;
-        }
-
-        GardenUI.Data.Save();
-    }
-
-    private static void ZenGardenWaterAllPlants(List<string> _)
-    {
-        var data = GardenUI.Data;
-        if (data?.allPlants == null) return;
-        foreach (var p in data.allPlants)
-        {
-            if (p != null)
-            {
-                p.waterLevel = 100;
-            }
-        }
-    }
-
-    private static void ZenGardenAllPlantsFullyGrown(List<string> _)
-    {
-        var data = GardenUI.Data;
-        if (data?.allPlants == null) return;
-        foreach (var p in data.allPlants)
-        {
-            if (p != null)
-            {
-                p.growStage = 2;
-            }
-        }
-    }
-
-    private static void ZenGardenAllPlantsFullLove(List<string> _)
-    {
-        var data = GardenUI.Data;
-        if (data?.allPlants == null) return;
-        foreach (var p in data.allPlants)
-        {
-            if (p != null)
-            {
-                p.growStage = 2;
-                p.waterLevel = 100;
-                p.love = 100;
-                p.needTool = GardenToolType.Default;
-            }
-        }
-    }
-
-    private static void SetZombieHealthRatio(List<string> args)
-    {
-        float ratio=Convert.ToSingle(double.Parse(args[0]));
-        foreach (var z in Board.Instance.zombieArray)
-        {
-            if (z != null)
-            {
-                z.theHealth = (int)(z.theHealth * ratio);
-                z.theFirstArmorHealth = (int)(z.theFirstArmorHealth * ratio);
-                z.theSecondArmorHealth = (int)(z.theSecondArmorHealth * ratio);
-                z.theMaxHealth = (int)(z.theMaxHealth * ratio);
-                z.theFirstArmorMaxHealth = (int)(z.theFirstArmorMaxHealth * ratio);
-                z.theSecondArmorMaxHealth = (int)(z.theSecondArmorMaxHealth * ratio);
-                z.UpdateHealthText();
-            }
-        }
-    }
-
-    private static void AbyssJumpLevel(List<string> args)
-    {
-        /*
-        var level=int.Parse(args[0]);
-        if (AbyssManager.Instance != null)
-        {
-            //AbyssManager.Instance.abyssData.arrivedLevel=level;
-            //AbyssManager.Instance.abyssData.maxArrivedLevel=level;
-            //AbyssManager.Instance.abyssData.tempAbyssData.arrivedLevel=level;
-        }*/
-    }
-
-    private static void AbyssMoney(List<string> args)
-    {
-        var money=int.Parse(args[0]);
-        if (AbyssManager.Instance != null)
-        {
-            //AbyssManager.Instance.abyssData.money=money;
-        }
-    }
-
-    private static void SetAbyssWoodenTicket(List<string> args)
-    {
-        int t=int.Parse(args[0]);
-        if(AbyssManager.Data != null)
-        {
-            AbyssManager.Data.woodenTicket = t;
-        }
-    }
-
-    private static void SetAbyssSilverTicket(List<string> args)
-    {
-        int t=int.Parse(args[0]);
-        if(AbyssManager.Data != null)
-        {
-            AbyssManager.Data.silverTicket = t;
-        }
-    }
-
-    private static void SetAbyssGoldTicket(List<string> args)
-    {
-        int t=int.Parse(args[0]);
-        if(AbyssManager.Data != null)
-        {
-            AbyssManager.Data.goldTicket = t;
-        }
-    }
-
-    private static void SetAbyssDiamondTicket(List<string> args)
-    {
-        int t=int.Parse(args[0]);
-        if(AbyssManager.Data != null)
-        {
-            AbyssManager.Data.diamondTicket = t;
-        }
-    }
-
-    private static void SetStarAdvStar(List<string> args)
-    {
-        if (AdvantureConfig.data != null)
-        {
-            AdvantureConfig.data.enpowerStarCount=int.Parse(args[0]);
-        }
-    }
-
-    private static void SetStarAdvStarHard(List<string> args)
-    {
-        if (AdvantureConfig.data != null)
-        {
-            AdvantureConfig.data.enpowerStarCount_hard=int.Parse(args[0]);
-        }
-    }
-
-    #region 作弊码
-
-    private static void ExecuteCheatKey(List<string> args)
-    {
-        if (args.Count == 0) return;
-        var key = args[0];
-        var gameApp = GameAPP.Instance;
-        if (gameApp == null) return;
-        var cheatKey = gameApp.GetComponent<CheatKey>();
-        if (cheatKey == null) return;
-        cheatKey.key = key;
     }
 
     #endregion

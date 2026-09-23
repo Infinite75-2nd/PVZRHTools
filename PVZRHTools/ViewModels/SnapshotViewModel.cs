@@ -60,7 +60,7 @@ public partial class SnapshotViewModel(IDataSyncService dataSyncService) : Modif
     [ReactiveCommand]
     public async Task GetSnapshot()
     {
-        await DataSyncService.SendCommand(new SyncData()
+        await DataSyncService.SendCommand(new SyncData
         {
             Command = Strings.GetSnapshot,
             Parameters = []
@@ -72,7 +72,7 @@ public partial class SnapshotViewModel(IDataSyncService dataSyncService) : Modif
     [ReactiveCommand]
     public void RestoreSnapshot()
     {
-        DataSyncService.SendCommand(new SyncData()
+        DataSyncService.SendCommand(new SyncData
         {
             Command = Strings.RestoreSnapshot,
             Parameters = []

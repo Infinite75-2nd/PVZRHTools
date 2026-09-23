@@ -1,8 +1,10 @@
+using System;
 using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using PVZRHTools.Models;
+using PVZRHTools.Utils;
 using PVZRHTools.ViewModels;
 using Ursa.Controls;
 
@@ -14,9 +16,9 @@ public partial class TravelBuffView : UserControl
     {
         InitializeComponent();
         AddHandler(ToggleButton.IsCheckedChangedEvent, OnCheckBoxChanged, RoutingStrategies.Bubble,
-            handledEventsToo: true);
+            true);
         AddHandler(NumericIntUpDown.ValueChangedEvent, OnNumericValueChanged, RoutingStrategies.Bubble,
-            handledEventsToo: true);
+            true);
     }
 
     private TravelBuffViewModel? VM => DataContext as TravelBuffViewModel;
@@ -52,38 +54,59 @@ public partial class TravelBuffView : UserControl
     {
         var filter = string.IsNullOrWhiteSpace(text) ? null : text.Trim();
         foreach (var item in collection)
-        {
-            item.IsVisible = filter == null || item.Name.Contains(filter, System.StringComparison.OrdinalIgnoreCase);
-        }
+            item.IsVisible = filter == null ||
+                             TmpMarkup.ToPlainText(item.Name)
+                                 .Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                             item.Name.Contains(filter, StringComparison.OrdinalIgnoreCase);
     }
 
-    private void OnAdvBuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnAdvBuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.AdvBuffs!);
+    }
 
-    private void OnInGameAdvBuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnInGameAdvBuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.InGameAdvBuffs!);
+    }
 
-    private void OnUltiBuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnUltiBuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.UltiBuffs!);
+    }
 
-    private void OnInGameUltiBuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnInGameUltiBuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.InGameUltiBuffs!);
+    }
 
-    private void OnDebuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnDebuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.Debuffs!);
+    }
 
-    private void OnInGameDebuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnInGameDebuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.InGameDebuffs!);
+    }
 
-    private void OnInGameInvestBuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnInGameInvestBuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.InGameInvestBuffs!);
+    }
 
-    private void OnInvestBuffSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnInvestBuffSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.InvestBuffs!);
+    }
 
-    private void OnUnlockedPlantSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnUnlockedPlantSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.UnlockedPlants!);
+    }
 
-    private void OnInGameUnlockedPlantSearchChanged(object? sender, TextChangedEventArgs e) =>
+    private void OnInGameUnlockedPlantSearchChanged(object? sender, TextChangedEventArgs e)
+    {
         ApplySearchFilter((sender as TextBox)?.Text, VM?.InGameUnlockedPlants!);
+    }
 }

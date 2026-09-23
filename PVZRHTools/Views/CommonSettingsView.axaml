@@ -411,7 +411,7 @@
             </Border>
             <Border>
                 <StackPanel Orientation="Vertical">
-                    <u:Divider Content="作弊码"/>
+                    <u:Divider Content="作弊码" />
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <Button Content="cheatmode" Command="{Binding CheatKey_CheatModeCommand}" />
                         <Button Content="moresun" Command="{Binding CheatKey_MoreSunCommand}" />

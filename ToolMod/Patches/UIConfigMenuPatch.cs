@@ -8,6 +8,8 @@ public static class UIConfigMenuPatch
 {
     [HarmonyPrefix]
     [HarmonyPatch(nameof(UIConfigMenu.OnExit))]
-    public static bool PreOnExit(UIConfigMenu __instance) =>
-        !__instance.TryGetComponent<KeyBindingUI>(out _) && !__instance.TryGetComponent<GameKeyBindingUI>(out _);
+    public static bool PreOnExit(UIConfigMenu __instance)
+    {
+        return !__instance.TryGetComponent<KeyBindingUI>(out _) && !__instance.TryGetComponent<GameKeyBindingUI>(out _);
+    }
 }

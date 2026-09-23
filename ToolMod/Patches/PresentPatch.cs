@@ -45,7 +45,8 @@ public static class PresentPatch
     public static bool PreAnimEvent(Present __instance)
     {
         // 检查是否是PvE布阵的礼盒（第3行，第0-4列）
-        if (__instance.thePlantRow is 2 && __instance.thePlantColumn >= 0 && __instance.thePlantColumn < PVEPresentFlag.Length && PVEPresentFlag[__instance.thePlantColumn])
+        if (__instance.thePlantRow is 2 && __instance.thePlantColumn >= 0 &&
+            __instance.thePlantColumn < PVEPresentFlag.Length && PVEPresentFlag[__instance.thePlantColumn])
         {
             PVEPresentFlag[__instance.thePlantColumn] = false;
 

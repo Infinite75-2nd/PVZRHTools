@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using System;
+using Core;
 using HarmonyLib;
 using static ToolMod.Utils;
 
@@ -13,11 +14,11 @@ public static class InGameTextPatch
     {
         try
         {
-            var travelMgr = ResolveTravelMgr(autoCreate: true);
+            var travelMgr = ResolveTravelMgr(true);
             if (travelMgr == null) return;
             SyncInGameBuffs();
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogError($"[PVZRHTools] InGameTextPatch 异常: {ex.Message}\n{ex.StackTrace}");
         }

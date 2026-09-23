@@ -10,6 +10,8 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Semi PathIcon 同款 24x24：官方小电视，双眼对称 -->
+            <StreamGeometry x:Key="SemiIconBilibiliLogo">M17.813,4.653 L18.667,4.653 C20.177,4.707 21.436,5.231 22.44,6.227 C23.444,7.222 23.964,8.476 24,9.987 L24,17.347 C23.964,18.857 23.444,20.116 22.44,21.12 C21.436,22.124 20.178,22.644 18.667,22.68 L5.333,22.68 C3.823,22.644 2.564,22.124 1.56,21.12 C0.556,20.116 0.036,18.858 0,17.347 L0,9.987 C0.036,8.476 0.556,7.222 1.56,6.227 C2.564,5.231 3.822,4.707 5.333,4.653 L6.107,4.653 L4.933,3.533 C4.684,3.284 4.56,2.982 4.56,2.627 C4.56,2.271 4.684,1.969 4.933,1.72 L4.96,1.693 C5.227,1.444 5.533,1.32 5.88,1.32 C6.227,1.32 6.533,1.444 6.8,1.693 L9.653,4.44 C9.724,4.511 9.787,4.582 9.84,4.653 L14.107,4.653 C14.16,4.582 14.223,4.511 14.267,4.44 L17.12,1.693 C17.387,1.444 17.693,1.32 18.04,1.32 C18.387,1.32 18.702,1.471 18.969,1.72 C19.236,1.969 19.36,2.271 19.36,2.627 C19.36,2.982 19.236,3.284 18.987,3.533 Z M5.333,7.24 C4.587,7.258 3.96,7.516 3.453,8.013 C2.947,8.511 2.684,9.143 2.667,9.907 L2.667,17.427 C2.684,18.191 2.947,18.822 3.453,19.32 C3.96,19.818 4.587,20.076 5.333,20.093 L18.667,20.093 C19.413,20.076 20.04,19.818 20.547,19.32 C21.053,18.822 21.316,18.191 21.333,17.427 L21.333,9.907 C21.316,9.142 21.053,8.511 20.547,8.013 C20.04,7.516 19.413,7.258 18.667,7.24 Z M8,11.107 C8.373,11.107 8.684,11.231 8.933,11.48 C9.183,11.729 9.316,12.049 9.333,12.44 L9.333,13.613 C9.316,14.004 9.183,14.324 8.933,14.573 C8.684,14.823 8.373,14.947 8,14.947 C7.627,14.947 7.316,14.822 7.067,14.573 C6.817,14.324 6.684,14.004 6.667,13.613 L6.667,12.44 C6.667,12.067 6.796,11.751 7.053,11.493 C7.311,11.236 7.627,11.107 8,11.107 Z M16,11.107 C16.373,11.107 16.684,11.231 16.933,11.48 C17.183,11.729 17.316,12.049 17.333,12.44 L17.333,13.613 C17.316,14.004 17.183,14.324 16.933,14.573 C16.684,14.823 16.373,14.947 16,14.947 C15.627,14.947 15.316,14.822 15.067,14.573 C14.817,14.324 14.684,14.004 14.667,13.613 L14.667,12.44 C14.684,12.049 14.817,11.729 15.067,11.48 C15.316,11.231 15.627,11.107 16,11.107 Z</StreamGeometry>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <LinearGradientBrush x:Key="ButtonGradientBorderBrush">
@@ -50,6 +52,56 @@
         </Style>
         <!-- 全局按钮边框渐变动画：鼠标悬停时切换为渐变边框 -->
         <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonGradientBorderBrush}" />
+        </Style>
+
+        <!-- Ursa IconButton：主题会在 :pointerover 覆盖 PART_Background.BorderBrush，必须直接打模板边框且提高优先级 -->
+        <Style Selector="u|IconButton">
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="u|IconButton /template/ Border#PART_Background">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.5" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="u|IconButton:pointerover /template/ Border#PART_Background">
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonGradientBorderBrush}" />
+        </Style>
+        <Style Selector="u|IconButton /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+
+        <!-- IconDropDownButton / Repeat / Split / Toggle -->
+        <Style Selector="u|IconDropDownButton, u|IconRepeatButton, u|IconSplitButton, u|IconToggleButton, u|ThemeToggleButton">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.5" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="u|IconDropDownButton:pointerover, u|IconRepeatButton:pointerover, u|IconSplitButton:pointerover, u|IconToggleButton:pointerover, u|ThemeToggleButton:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonGradientBorderBrush}" />
+        </Style>
+        <Style Selector="u|IconDropDownButton /template/ ContentPresenter#PART_ContentPresenter, u|IconRepeatButton /template/ ContentPresenter#PART_ContentPresenter, u|IconSplitButton /template/ ContentPresenter#PART_ContentPresenter, u|IconToggleButton /template/ ContentPresenter#PART_ContentPresenter, u|ThemeToggleButton /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+
+        <!-- NumericUpDown 边框渐变 -->
+        <Style Selector="u|NumericUpDown">
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.5" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="u|NumericUpDown:pointerover">
             <Setter Property="BorderBrush" Value="{DynamicResource ButtonGradientBorderBrush}" />
         </Style>
 
@@ -143,6 +195,15 @@
             <Setter Property="BorderThickness" Value="5" />
             <Setter Property="Padding" Value="5" />
             <Setter Property="BorderBrush" Value="{DynamicResource SemiAIGeneral3}" />
+        </Style>
+
+        <Style Selector="ToolTip">
+            <Setter Property="Background" Value="{DynamicResource SemiColorBackground3}" />
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SemiColorBorder}" />
+        </Style>
+        <Style Selector="ToolTip TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource SemiColorText0}" />
         </Style>
     </Application.Styles>
 </Application>

@@ -27,14 +27,32 @@ public class ToolsUpdater : MonoBehaviour
     {
     }
 
+    public static ToolsUpdater Instance { get; set; }
+
+    [HideFromIl2Cpp] public PatchDataCache DataObserver { get; set; } = new();
+
     public void Awake()
     {
         Instance = this;
     }
 
-    public static ToolsUpdater Instance { get; set; }
+    public void Update()
+    {
+        if (!InGame) return;
+        if (GameAPP.theGameStatus is GameStatus.InGame)
+        {
+            ProcessGameSpeed();
+            ProcessHotkeys();
+            ProcessInGameActions();
+            ProcessZombieSea();
+        }
 
-    [HideFromIl2Cpp] public PatchDataCache DataObserver { get; set; } = new();
+        if (GameAPP.theGameStatus is GameStatus.InGame or GameStatus.OpenOptions)
+            if (Input.GetKeyDown(KeyShowGameInfo))
+                ShowGameInfo = !ShowGameInfo;
+
+        ProcessLockData();
+    }
 
     public void ProcessGameSpeed()
     {
@@ -51,18 +69,11 @@ public class ToolsUpdater : MonoBehaviour
         }
 
         if (!TimeStop && !TimeSlow)
-        {
             Time.timeScale =
-                GameSpeedEnabled ? GameSpeed : (GameAPP.config != null ? GameAPP.config.gameSpeed : 1f);
-        }
+                GameSpeedEnabled ? GameSpeed : GameAPP.config != null ? GameAPP.config.gameSpeed : 1f;
         else if (!TimeStop && TimeSlow)
-        {
             Time.timeScale = 0.2f;
-        }
-        else if (TimeStop && !TimeSlow)
-        {
-            Time.timeScale = 0;
-        }
+        else if (TimeStop && !TimeSlow) Time.timeScale = 0;
 
         try
         {
@@ -108,11 +119,9 @@ public class ToolsUpdater : MonoBehaviour
         // 图鉴种植 - 鼠标在棋盘网格内时才在鼠标所在格子种植物（网格外不识别任何格子）
         if (Input.GetKeyDown(KeyAlmanacCreatePlant) && AlmanacSeedType is not PlantType.Nothing &&
             IsMouseInsideGrid())
-        {
             if (CreatePlant.Instance != null)
                 CreatePlant.Instance.SetPlant(Mouse.Instance.theMouseColumn, Mouse.Instance.theMouseRow,
                     AlmanacSeedType);
-        }
 
         // 切换魅惑僵尸模式
         if (Input.GetKeyDown(KeyAlmanacZombieMindCtrl))
@@ -122,7 +131,6 @@ public class ToolsUpdater : MonoBehaviour
         if (Input.GetKeyDown(KeyAlmanacCreateZombie) &&
             AlmanacZombieType is not ZombieType.Nothing &&
             IsMouseInsideGrid())
-        {
             if (CreateZombie.Instance != null)
             {
                 if (AlmanacZombieMindCtrl)
@@ -132,7 +140,6 @@ public class ToolsUpdater : MonoBehaviour
                     CreateZombie.Instance.SetZombie(Mouse.Instance.theMouseRow, AlmanacZombieType,
                         Mouse.Instance.mouseX);
             }
-        }
 
         // 植物罐子 - 使用 ScaryPot_plant 类型（网格外不识别任何格子）
         if (Input.GetKeyDown(KeyAlmanacCreatePlantVase) && AlmanacSeedType is not PlantType.Nothing &&
@@ -143,10 +150,7 @@ public class ToolsUpdater : MonoBehaviour
             if (gridItem != null)
             {
                 var scaryPot = gridItem.GetComponent<ScaryPot>();
-                if (scaryPot != null)
-                {
-                    scaryPot.thePlantType = (PlantType)AlmanacSeedType;
-                }
+                if (scaryPot != null) scaryPot.thePlantType = AlmanacSeedType;
             }
         }
 
@@ -160,31 +164,26 @@ public class ToolsUpdater : MonoBehaviour
             if (gridItem != null)
             {
                 var scaryPot = gridItem.GetComponent<ScaryPot>();
-                if (scaryPot != null)
-                {
-                    scaryPot.theZombieType = AlmanacZombieType;
-                }
+                if (scaryPot != null) scaryPot.theZombieType = AlmanacZombieType;
             }
         }
 
-        if (Input.GetKeyDown(KeyGodEvolutionChooseBuff) && InGame && ShootingManager.Instance !=null && GameAPP.canvasUp.GetComponentsInChildren<MultipleChoiceMenu>().Count is 0)
-        {
+        if (Input.GetKeyDown(KeyGodEvolutionChooseBuff) && InGame && ShootingManager.Instance != null &&
+            GameAPP.canvasUp.GetComponentsInChildren<MultipleChoiceMenu>().Count is 0)
             ShootingManager.Instance.ShowBuff();
-        }
 
         // 星辉buff功能 - 点击植物解锁星辉buff模式（如果该植物有星辉buff功能）
         try
         {
             if (PatchDataCache.StarUpBuff && Board.Instance != null && Mouse.Instance != null)
-            {
                 // 左键点击植物来应用星辉buff。
                 // 游戏内部 Mouse.GetColumnFromX/GetRowFromY 会把网格外的点击 clamp 到最近的合法格子，
                 // 仅靠 theMouseColumn/theMouseRow 无法区分点击是否在网格外，
                 // 因此先判断鼠标是否真的落在棋盘网格区域内，网格外不识别任何格子。
                 if (Input.GetMouseButtonDown(0) && IsMouseInsideGrid())
                 {
-                    int column = Mouse.Instance.theMouseColumn;
-                    int row = Mouse.Instance.theMouseRow;
+                    var column = Mouse.Instance.theMouseColumn;
+                    var row = Mouse.Instance.theMouseRow;
 
                     // 检查点击位置是否有植物
                     var plants = Lawnf.Get1x1Plants(column, row);
@@ -192,13 +191,10 @@ public class ToolsUpdater : MonoBehaviour
                     {
                         var plant = plants[0];
                         if (plant != null && !plant.isCrashed && plant.thePlantHealth > 0)
-                        {
                             // 使用辅助方法给植物上星辉buff
                             ApplyStarUpBuff(plant);
-                        }
                     }
                 }
-            }
         }
         catch
         {
@@ -212,8 +208,8 @@ public class ToolsUpdater : MonoBehaviour
                 // 左键点击植物来操控，再次点击同一植物则停止操控（网格外点击不识别任何格子）
                 if (Input.GetMouseButtonDown(0) && IsMouseInsideGrid())
                 {
-                    int column = Mouse.Instance.theMouseColumn;
-                    int row = Mouse.Instance.theMouseRow;
+                    var column = Mouse.Instance.theMouseColumn;
+                    var row = Mouse.Instance.theMouseRow;
 
                     // 先检查是否点击了当前操控的植物（根据植物当前位置）
                     var controled = Board.Instance.controledPlant;
@@ -230,10 +226,8 @@ public class ToolsUpdater : MonoBehaviour
                         {
                             var plant = plants[0];
                             if (plant != null)
-                            {
                                 // 设置为操控植物
                                 Board.Instance.controledPlant = plant;
-                            }
                         }
                     }
                 }
@@ -243,25 +237,13 @@ public class ToolsUpdater : MonoBehaviour
                 {
                     // 使用游戏内置的 MoveControlPlant 方法
                     // index: 0=上, 1=左, 2=下, 3=右
-                    if (Input.GetKeyDown(KeyCode.UpArrow))
-                    {
-                        Board.Instance.MoveControlPlant(0);
-                    }
+                    if (Input.GetKeyDown(KeyCode.UpArrow)) Board.Instance.MoveControlPlant(0);
 
-                    if (Input.GetKeyDown(KeyCode.DownArrow))
-                    {
-                        Board.Instance.MoveControlPlant(2);
-                    }
+                    if (Input.GetKeyDown(KeyCode.DownArrow)) Board.Instance.MoveControlPlant(2);
 
-                    if (Input.GetKeyDown(KeyCode.LeftArrow))
-                    {
-                        Board.Instance.MoveControlPlant(1);
-                    }
+                    if (Input.GetKeyDown(KeyCode.LeftArrow)) Board.Instance.MoveControlPlant(1);
 
-                    if (Input.GetKeyDown(KeyCode.RightArrow))
-                    {
-                        Board.Instance.MoveControlPlant(3);
-                    }
+                    if (Input.GetKeyDown(KeyCode.RightArrow)) Board.Instance.MoveControlPlant(3);
                 }
             }
         }
@@ -271,11 +253,11 @@ public class ToolsUpdater : MonoBehaviour
     }
 
     /// <summary>
-    /// 判断鼠标世界坐标是否位于棋盘网格区域内。
-    /// 游戏内部 Mouse.GetColumnFromX / GetRowFromY 对网格外的点击总是 clamp 到最近格子的坐标，
-    /// 因此必须用原始鼠标世界坐标（mouseX/mouseY）与游戏自身的网格边界
-    /// （Board.gridSystem.GridMinX/GridMaxX/GridMinY/GridMaxY）比对，
-    /// 才能实现"点网格之外不识别到任何格子"。
+    ///     判断鼠标世界坐标是否位于棋盘网格区域内。
+    ///     游戏内部 Mouse.GetColumnFromX / GetRowFromY 对网格外的点击总是 clamp 到最近格子的坐标，
+    ///     因此必须用原始鼠标世界坐标（mouseX/mouseY）与游戏自身的网格边界
+    ///     （Board.gridSystem.GridMinX/GridMaxX/GridMinY/GridMaxY）比对，
+    ///     才能实现"点网格之外不识别到任何格子"。
     /// </summary>
     private static bool IsMouseInsideGrid()
     {
@@ -288,8 +270,8 @@ public class ToolsUpdater : MonoBehaviour
             var grid = board.gridSystem;
             if (grid == null) return false;
 
-            float x = mouse.mouseX;
-            float y = mouse.mouseY;
+            var x = mouse.mouseX;
+            var y = mouse.mouseY;
 
             // GridMinX/GridMaxX/GridMinY/GridMaxY 由游戏自身 Lawnf.GetBoxXFromColumn/GetBoxYFromRow 计算，
             // 与点击→格子的映射一致，即为棋盘网格的精确外边界。
@@ -314,10 +296,7 @@ public class ToolsUpdater : MonoBehaviour
             if (LockLightLevel >= 0 && Board.Instance.gridSystem != null)
             {
                 var gridEnumerator = Board.Instance.gridSystem.System_Collections_IEnumerable_GetEnumerator();
-                while (gridEnumerator.MoveNext())
-                {
-                    gridEnumerator.Current.Cast<BoardGrid>().lightLevel = LockLightLevel;
-                }
+                while (gridEnumerator.MoveNext()) gridEnumerator.Current.Cast<BoardGrid>().lightLevel = LockLightLevel;
             }
         }
 
@@ -325,16 +304,15 @@ public class ToolsUpdater : MonoBehaviour
         {
             var gameLoseObjs = FindObjectsOfTypeAll(Il2CppType.Of<GameLose>());
             if (gameLoseObjs != null)
-            {
                 foreach (var gameLose in gameLoseObjs)
                 {
                     if (gameLose == null) continue;
                     var collider = gameLose.GetComponent<BoxCollider2D>();
                     if (collider != null) collider.enabled = !NoFail;
                 }
-            }
         }
-        LastNoFail = NoFail;        
+
+        LastNoFail = NoFail;
     }
 
     public void ProcessZombieSea()
@@ -363,8 +341,8 @@ public class ToolsUpdater : MonoBehaviour
             if (Board.Instance != null)
             {
                 var t = Board.Instance.boardTag;
-                t.enableTravelPlant = (OriginalBoardTag?.enableTravelPlant ?? false) || RemoveFusionLimit;
-                t.enableAllTravelPlant = (OriginalBoardTag?.enableAllTravelPlant ?? false) || RemoveFusionLimit;
+                //t.enableTravelPlant = (OriginalBoardTag?.enableTravelPlant ?? false) || RemoveFusionLimit;
+                //t.enableAllTravelPlant = (OriginalBoardTag?.enableAllTravelPlant ?? false) || RemoveFusionLimit;
                 t.isColumn = (OriginalBoardTag?.isColumn ?? false) || ColumnPlanting;
                 t.isSeedRain = (OriginalBoardTag?.isSeedRain ?? false) || SeedRain;
                 Board.Instance.boardTag = t;
@@ -378,32 +356,22 @@ public class ToolsUpdater : MonoBehaviour
         {
             GarlicDayTime = 0;
             foreach (var zombie in Board.Instance!.zombieArray)
-            {
                 if (zombie != null)
                 {
                     var coroutine = zombie.DeLayGarliced(0.1f, false, false);
                     if (coroutine != null) zombie.StartCoroutine_Auto(coroutine);
                 }
-            }
         }
 
         if (PlantsAllUpgrade)
-        {
             foreach (var plant in Board.Instance.boardEntity.plantArray)
-            {
-                if(plant.theLevel<3)
+                if (plant.theLevel < 3)
                     plant.Upgrade(3);
-            }
-        }
 
         if (PlantsAllStarUp)
-        {
             foreach (var plant in Board.Instance.boardEntity.plantArray)
-            {
-                if(plant!=null)
+                if (plant != null)
                     ApplyStarUpBuff(plant);
-            }
-        }
 
         // 免疫强制扣血 - 通过缓存植物血量并在异常扣血时恢复来实现
         if (ImmuneForceDeduct)
@@ -416,10 +384,8 @@ public class ToolsUpdater : MonoBehaviour
                     // 收集当前存活植物的ID
                     var alivePlantIds = new HashSet<int>();
                     foreach (var p in allPlants)
-                    {
                         if (p != null)
                             alivePlantIds.Add(p.GetInstanceID());
-                    }
 
                     // 清理已死亡植物的缓存
                     var deadPlantIds = PlantHealthCache.Keys.Where(id => !alivePlantIds.Contains(id)).ToList();
@@ -445,10 +411,7 @@ public class ToolsUpdater : MonoBehaviour
                         }
 
                         // 只有当植物血量大于0时才更新缓存
-                        if (plant.thePlantHealth > 0)
-                        {
-                            PlantHealthCache[plantId] = plant.thePlantHealth;
-                        }
+                        if (plant.thePlantHealth > 0) PlantHealthCache[plantId] = plant.thePlantHealth;
                     }
                 }
 
@@ -467,89 +430,69 @@ public class ToolsUpdater : MonoBehaviour
         }
 
         if (SuperStarNoCD)
-        {
             if (Board.Instance!.bigStarActiveCountDown > 0.5f)
-            {
                 Board.Instance.bigStarActiveCountDown = 0.5f;
-            }
-        }
 
         // 土豆雷无CD - 使用 FindObjectsOfType 替代 Harmony patch 避免栈溢出
         if (MineNoCD)
-        {
             try
             {
                 var mines = FindObjectsOfType<PotatoMine>();
                 foreach (var mine in mines)
-                {
                     if (mine != null && mine.attributeCountdown > 0.05f)
                         mine.attributeCountdown = 0.05f;
-                }
             }
             catch
             {
             }
-        }
 
         // 大嘴花无CD - 使用 FindObjectsOfType 替代 Harmony patch 避免栈溢出
         if (ChomperNoCD)
-        {
             try
             {
                 var chompers = FindObjectsOfType<Chomper>();
                 foreach (var chomper in chompers)
-                {
                     if (chomper != null && chomper.attributeCountdown > 0.05f)
                         chomper.attributeCountdown = 0.05f;
-                }
             }
             catch
             {
             }
-        }
 
         // 植物升级功能 - 右键点击场上植物升级
 
         if (PlantUpgrade && Board.Instance != null && Mouse.Instance != null)
-        {
             try
             {
                 // 检测鼠标右键点击
                 if (Input.GetMouseButtonDown(1))
                 {
                     // 获取鼠标所在格子的植物
-                    int column = Mouse.Instance.theMouseColumn;
-                    int row = Mouse.Instance.theMouseRow;
+                    var column = Mouse.Instance.theMouseColumn;
+                    var row = Mouse.Instance.theMouseRow;
 
                     // 使用 Lawnf.Get1x1Plants 获取该格子的所有植物
                     var plants = Lawnf.Get1x1Plants(column, row);
                     if (plants != null && plants.Count > 0)
-                    {
                         // 遍历该格子的植物，找到可以升级的植物
                         foreach (var plant in plants)
-                        {
                             if (plant != null && plant.theLevel < 3)
                             {
                                 // 升级植物
-                                plant.Upgrade(plant.theLevel + 1, true, false);
+                                plant.Upgrade(plant.theLevel + 1, true);
                                 break; // 只升级一个植物
                             }
-                        }
-                    }
                 }
             }
             catch
             {
             }
-        }
 
         if (RandomCard)
         {
-            Il2CppSystem.Collections.Generic.List<PlantType> randomPlant = GameAPP.resourcesManager.allPlants;
+            var randomPlant = GameAPP.resourcesManager.allPlants;
             if (InGameUI.Instance && randomPlant != null && randomPlant.Count != 0)
-            {
-                for (int i = 0; i < InGameUI.Instance.cards.Count; i++)
-                {
+                for (var i = 0; i < InGameUI.Instance.cards.Count; i++)
                     try
                     {
                         var index = Random.RandomRangeInt(0, randomPlant.Count);
@@ -562,8 +505,6 @@ public class ToolsUpdater : MonoBehaviour
                     catch
                     {
                     }
-                }
-            }
         }
     }
 
@@ -595,24 +536,5 @@ public class ToolsUpdater : MonoBehaviour
                 }
             }
         }
-    }
-
-    public void Update()
-    {
-        if (!InGame) return;
-        if (GameAPP.theGameStatus is GameStatus.InGame)
-        {
-            ProcessGameSpeed();
-            ProcessHotkeys();
-            ProcessInGameActions();
-            ProcessZombieSea();
-        }
-
-        if (GameAPP.theGameStatus is GameStatus.InGame or GameStatus.OpenOptions)
-        {
-            if (Input.GetKeyDown(KeyShowGameInfo)) ShowGameInfo = !ShowGameInfo;
-        }
-
-        ProcessLockData();
     }
 }

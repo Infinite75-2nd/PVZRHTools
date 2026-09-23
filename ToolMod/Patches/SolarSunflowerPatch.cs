@@ -14,7 +14,7 @@ public static class SolarSunflowerPatch
         __state = Board.Instance.boardTag;
         if (UnlockRedCardPlants)
         {
-            Board.BoardTag boardTag = Board.Instance.boardTag;
+            var boardTag = Board.Instance.boardTag;
             boardTag.isTreasure = true;
             Board.Instance.boardTag = boardTag;
         }

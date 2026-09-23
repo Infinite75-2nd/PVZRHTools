@@ -19,10 +19,10 @@ public static class Paths
     public const string GameKeysFileName = @"GameKeys.json";
 
     public const string GithubLink = @"https://github.com/Infinite75-2nd/PVZRHTools";
+    public static readonly string LatestSnapshotPath = Path.Combine(ConfigPath, "LatestSnapshot.json");
 
     public static string GameDataPath =>
         $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}Low\LanPiaoPiao\PlantsVsZombiesRH";
 
     public static string ModifierDataPath => $@"{GameDataPath}\Infinite75.PVZRHTools.ModifierData.json";
-    public static readonly string LatestSnapshotPath = Path.Combine(ConfigPath, "LatestSnapshot.json");
 }

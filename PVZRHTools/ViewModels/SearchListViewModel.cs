@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using PVZRHTools.Models;
 using PVZRHTools.Services;
+using PVZRHTools.Utils;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using ToolData;
@@ -10,43 +11,6 @@ namespace PVZRHTools.ViewModels;
 
 public partial class SearchListViewModel : ModifierPageViewModelBase
 {
-    public IInitDataService InitDataService { get; }
-
-    [Reactive] public partial string SearchText { get; set; }
-    [Reactive] public partial int SoundID { get; set; }
-    [Reactive] public partial int ParticleID { get; set; }
-
-    public ObservableCollection<SearchItem> Plants { get; set; } = [];
-    public ObservableCollection<SearchItem> Zombies { get; set; } = [];
-    public ObservableCollection<SearchItem> FirstArmors { get; set; } = [];
-    public ObservableCollection<SearchItem> SecondArmors { get; set; } = [];
-    public ObservableCollection<SearchItem> Bullets { get; set; } = [];
-    public ObservableCollection<SearchItem> AdvBuffs { get; set; } = [];
-    public ObservableCollection<SearchItem> UltiBuffs { get; set; } = [];
-    public ObservableCollection<SearchItem> Debuffs { get; set; } = [];
-    public ObservableCollection<SearchItem> InvestBuffs { get; set; } = [];
-    public ObservableCollection<SearchItem> Items { get; set; } = [];
-
-    [ReactiveCommand]
-    public void PlaySound()
-    {
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.PlaySound,
-            Parameters = [SoundID.ToString()]
-        });
-    }
-
-    [ReactiveCommand]
-    public void PlayParticle()
-    {
-        DataSyncService.SendCommand(new SyncData()
-        {
-            Command = Strings.PlayParticle,
-            Parameters = [ParticleID.ToString()]
-        });
-    }
-
     public SearchListViewModel(IDataSyncService dataSyncService, IInitDataService initDataService) : base(
         dataSyncService)
     {
@@ -88,6 +52,43 @@ public partial class SearchListViewModel : ModifierPageViewModelBase
             .Subscribe(_ => ApplyFilter());
     }
 
+    public IInitDataService InitDataService { get; }
+
+    [Reactive] public partial string SearchText { get; set; }
+    [Reactive] public partial int SoundID { get; set; }
+    [Reactive] public partial int ParticleID { get; set; }
+
+    public ObservableCollection<SearchItem> Plants { get; set; } = [];
+    public ObservableCollection<SearchItem> Zombies { get; set; } = [];
+    public ObservableCollection<SearchItem> FirstArmors { get; set; } = [];
+    public ObservableCollection<SearchItem> SecondArmors { get; set; } = [];
+    public ObservableCollection<SearchItem> Bullets { get; set; } = [];
+    public ObservableCollection<SearchItem> AdvBuffs { get; set; } = [];
+    public ObservableCollection<SearchItem> UltiBuffs { get; set; } = [];
+    public ObservableCollection<SearchItem> Debuffs { get; set; } = [];
+    public ObservableCollection<SearchItem> InvestBuffs { get; set; } = [];
+    public ObservableCollection<SearchItem> Items { get; set; } = [];
+
+    [ReactiveCommand]
+    public void PlaySound()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.PlaySound,
+            Parameters = [SoundID.ToString()]
+        });
+    }
+
+    [ReactiveCommand]
+    public void PlayParticle()
+    {
+        DataSyncService.SendCommand(new SyncData
+        {
+            Command = Strings.PlayParticle,
+            Parameters = [ParticleID.ToString()]
+        });
+    }
+
     private void ApplyFilter()
     {
         var searchText = SearchText?.ToLower() ?? string.Empty;
@@ -107,16 +108,11 @@ public partial class SearchListViewModel : ModifierPageViewModelBase
     private void ApplyFilterToCollection(ObservableCollection<SearchItem> collection, string searchText)
     {
         foreach (var item in collection)
-        {
             if (string.IsNullOrEmpty(searchText))
-            {
                 item.IsVisible = true;
-            }
             else
-            {
-                item.IsVisible = item.Name.ToLower().Contains(searchText) ||
+                item.IsVisible = TmpMarkup.ToPlainText(item.Name).ToLower().Contains(searchText) ||
+                                 item.Name.ToLower().Contains(searchText) ||
                                  item.ID.ToString().Contains(searchText);
-            }
-        }
     }
 }

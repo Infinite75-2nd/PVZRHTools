@@ -18,112 +18,120 @@ public static class ToolUtils
                && Directory.Exists(Path.Combine(path, "PlantsVsZombiesRH_Data"));
     }
 
-    public static bool GetBepInExEnabled(string gameRootPath) =>
-        File.Exists(Path.Combine(gameRootPath, Paths.DoorstopConfigName))
-        && Convert.ToBoolean(NativeMethods.ReadValue(Path.Combine(gameRootPath, Paths.DoorstopConfigName), "General",
-            "enabled"));
+    public static bool GetBepInExEnabled(string gameRootPath)
+    {
+        return File.Exists(Path.Combine(gameRootPath, Paths.DoorstopConfigName))
+               && Convert.ToBoolean(NativeMethods.ReadValue(Path.Combine(gameRootPath, Paths.DoorstopConfigName),
+                   "General",
+                   "enabled"));
+    }
 
     public static void SetBepInExEnabled(string gameRootPath, bool enabled)
     {
         if (File.Exists(Path.Combine(gameRootPath, Paths.DoorstopConfigName)))
-        {
             NativeMethods.WriteValue(Path.Combine(gameRootPath, Paths.DoorstopConfigName), "General", "enabled",
                 enabled.ToString());
-        }
     }
 
 
-    public static void SimpleOneWaySync<TSender, TRet>(this TSender vm,
-        Expression<Func<TSender, TRet>> expression, string propertyName, bool skipInitial = false)
-        where TSender : ModifierPageViewModelBase
+    extension<TSender>(TSender vm) where TSender : ModifierPageViewModelBase
     {
-        vm.WhenAnyValue(expression).Subscribe(value =>
+        public void SimpleOneWaySync<TRet>(Expression<Func<TSender, TRet>> expression, string propertyName, bool skipInitial = false) where TRet : notnull
         {
-            if (value is null) return;
-            SyncData data = new()
+            vm.WhenAnyValue(expression).Subscribe(value =>
             {
-                Command = propertyName,
-                Parameters = [value.ToString()!]
-            };
-            vm.DataSyncService.SendCommand(data);
-        });
-    }
-
-    public static void SimpleSyncFlaggedDouble<TSender>(this TSender vm,
-        Expression<Func<TSender, double>> expressionDouble, Expression<Func<TSender, bool>> expressionBool,
-        string propertyName, bool onlyFlag = false) where TSender : ModifierPageViewModelBase
-    {
-        if (!onlyFlag)
-        {
-            vm.WhenAnyValue(expressionDouble).Subscribe(value =>
-            {
+                if (value is null) return;
                 SyncData data = new()
                 {
                     Command = propertyName,
-                    Parameters = [expressionBool.Compile()(vm) ? value.ToString(CultureInfo.InvariantCulture) : "-1.0"]
+                    Parameters = [value.ToString()!]
                 };
                 vm.DataSyncService.SendCommand(data);
             });
         }
 
-        vm.WhenAnyValue(expressionBool).Subscribe(value =>
+        public void SimpleSyncFlaggedDouble(Expression<Func<TSender, double>> expressionDouble, Expression<Func<TSender, bool>> expressionBool,
+            string propertyName, bool onlyFlag = false)
         {
-            SyncData data = new()
-            {
-                Command = propertyName,
-                Parameters = [value ? expressionDouble.Compile()(vm).ToString(CultureInfo.InvariantCulture) : "-1.0"]
-            };
-            vm.DataSyncService.SendCommand(data);
-        });
-    }
+            if (!onlyFlag)
+                vm.WhenAnyValue(expressionDouble).Subscribe(value =>
+                {
+                    SyncData data = new()
+                    {
+                        Command = propertyName,
+                        Parameters = [expressionBool.Compile()(vm) ? value.ToString(CultureInfo.InvariantCulture) : "-1.0"]
+                    };
+                    vm.DataSyncService.SendCommand(data);
+                });
 
-    public static void SimpleSyncFlaggedInt<TSender>(this TSender vm,
-        Expression<Func<TSender, int>> expressionInt, Expression<Func<TSender, bool>> expressionBool,
-        string propertyName, bool onlyFlag = false) where TSender : ModifierPageViewModelBase
-    {
-        if (!onlyFlag)
-        {
-            vm.WhenAnyValue(expressionInt).Subscribe(value =>
+            vm.WhenAnyValue(expressionBool).Subscribe(value =>
             {
                 SyncData data = new()
                 {
                     Command = propertyName,
-                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : "-1"]
+                    Parameters = [value ? expressionDouble.Compile()(vm).ToString(CultureInfo.InvariantCulture) : "-1.0"]
                 };
                 vm.DataSyncService.SendCommand(data);
             });
         }
 
-        vm.WhenAnyValue(expressionBool).Subscribe(value =>
+        public void SimpleSyncFlaggedInt(Expression<Func<TSender, int>> expressionInt, Expression<Func<TSender, bool>> expressionBool,
+            string propertyName, bool onlyFlag = false)
         {
-            SyncData data = new()
-            {
-                Command = propertyName,
-                Parameters = [value ? $"{expressionInt.Compile()(vm)}" : "-1"]
-            };
-            vm.DataSyncService.SendCommand(data);
-        });
-    }
+            if (!onlyFlag)
+                vm.WhenAnyValue(expressionInt).Subscribe(value =>
+                {
+                    SyncData data = new()
+                    {
+                        Command = propertyName,
+                        Parameters = [expressionBool.Compile()(vm) ? $"{value}" : "-1"]
+                    };
+                    vm.DataSyncService.SendCommand(data);
+                });
 
-    /// <summary>
-    /// 带启用开关的 double 同步。关闭时发送 -Infinity（负无穷）作为禁用标志，
-    /// 从而允许负数值作为合法输入（区别于旧版用 -1 作为关闭标志）。
-    /// </summary>
-    public static void SimpleSyncFlaggedDoubleNegInf<TSender>(this TSender vm,
-        Expression<Func<TSender, double>> expressionDouble, Expression<Func<TSender, bool>> expressionBool,
-        string propertyName, bool onlyFlag = false) where TSender : ModifierPageViewModelBase
-    {
-        if (!onlyFlag)
+            vm.WhenAnyValue(expressionBool).Subscribe(value =>
+            {
+                SyncData data = new()
+                {
+                    Command = propertyName,
+                    Parameters = [value ? $"{expressionInt.Compile()(vm)}" : "-1"]
+                };
+                vm.DataSyncService.SendCommand(data);
+            });
+        }
+
+        /// <summary>
+        ///     带启用开关的 double 同步。关闭时发送 -Infinity（负无穷）作为禁用标志，
+        ///     从而允许负数值作为合法输入（区别于旧版用 -1 作为关闭标志）。
+        /// </summary>
+        public void SimpleSyncFlaggedDoubleNegInf(Expression<Func<TSender, double>> expressionDouble, Expression<Func<TSender, bool>> expressionBool,
+            string propertyName, bool onlyFlag = false)
         {
-            vm.WhenAnyValue(expressionDouble).Subscribe(value =>
+            if (!onlyFlag)
+                vm.WhenAnyValue(expressionDouble).Subscribe(value =>
+                {
+                    SyncData data = new()
+                    {
+                        Command = propertyName,
+                        Parameters =
+                        [
+                            expressionBool.Compile()(vm)
+                                ? value.ToString(CultureInfo.InvariantCulture)
+                                : float.NegativeInfinity.ToString(CultureInfo.InvariantCulture)
+                        ]
+                    };
+                    vm.DataSyncService.SendCommand(data);
+                });
+
+            vm.WhenAnyValue(expressionBool).Subscribe(value =>
             {
                 SyncData data = new()
                 {
                     Command = propertyName,
                     Parameters =
                     [
-                        expressionBool.Compile()(vm)
-                            ? value.ToString(CultureInfo.InvariantCulture)
+                        value
+                            ? expressionDouble.Compile()(vm).ToString(CultureInfo.InvariantCulture)
                             : float.NegativeInfinity.ToString(CultureInfo.InvariantCulture)
                     ]
                 };
@@ -131,52 +139,34 @@ public static class ToolUtils
             });
         }
 
-        vm.WhenAnyValue(expressionBool).Subscribe(value =>
+        /// <summary>
+        ///     带启用开关的 int 同步。关闭时发送 int.MinValue（-inf 的整型等价）作为禁用标志，
+        ///     从而允许负数值作为合法输入（区别于旧版用 -1 作为关闭标志）。
+        /// </summary>
+        public void SimpleSyncFlaggedIntNegInf(Expression<Func<TSender, int>> expressionInt, Expression<Func<TSender, bool>> expressionBool,
+            string propertyName, bool onlyFlag = false)
         {
-            SyncData data = new()
-            {
-                Command = propertyName,
-                Parameters =
-                [
-                    value
-                        ? expressionDouble.Compile()(vm).ToString(CultureInfo.InvariantCulture)
-                        : float.NegativeInfinity.ToString(CultureInfo.InvariantCulture)
-                ]
-            };
-            vm.DataSyncService.SendCommand(data);
-        });
-    }
+            if (!onlyFlag)
+                vm.WhenAnyValue(expressionInt).Subscribe(value =>
+                {
+                    SyncData data = new()
+                    {
+                        Command = propertyName,
+                        Parameters = [expressionBool.Compile()(vm) ? $"{value}" : $"{int.MinValue}"]
+                    };
+                    vm.DataSyncService.SendCommand(data);
+                });
 
-    /// <summary>
-    /// 带启用开关的 int 同步。关闭时发送 int.MinValue（-inf 的整型等价）作为禁用标志，
-    /// 从而允许负数值作为合法输入（区别于旧版用 -1 作为关闭标志）。
-    /// </summary>
-    public static void SimpleSyncFlaggedIntNegInf<TSender>(this TSender vm,
-        Expression<Func<TSender, int>> expressionInt, Expression<Func<TSender, bool>> expressionBool,
-        string propertyName, bool onlyFlag = false) where TSender : ModifierPageViewModelBase
-    {
-        if (!onlyFlag)
-        {
-            vm.WhenAnyValue(expressionInt).Subscribe(value =>
+            vm.WhenAnyValue(expressionBool).Subscribe(value =>
             {
                 SyncData data = new()
                 {
                     Command = propertyName,
-                    Parameters = [expressionBool.Compile()(vm) ? $"{value}" : $"{int.MinValue}"]
+                    Parameters = [value ? $"{expressionInt.Compile()(vm)}" : $"{int.MinValue}"]
                 };
                 vm.DataSyncService.SendCommand(data);
             });
         }
-
-        vm.WhenAnyValue(expressionBool).Subscribe(value =>
-        {
-            SyncData data = new()
-            {
-                Command = propertyName,
-                Parameters = [value ? $"{expressionInt.Compile()(vm)}" : $"{int.MinValue}"]
-            };
-            vm.DataSyncService.SendCommand(data);
-        });
     }
 }
 

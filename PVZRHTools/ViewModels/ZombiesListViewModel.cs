@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using Avalonia.Threading;
@@ -13,15 +14,6 @@ namespace PVZRHTools.ViewModels;
 
 public partial class ZombiesListViewModel : ModifierPageViewModelBase
 {
-    public IInitDataService InitDataService { get; set; }
-    private INotificationService _notificationService { get; set; }
-    private INavigationService _navigationService { get; set; }
-    [Reactive] public partial bool IsLoading { get; set; }
-    [Reactive] public partial int CurrentWave { get; set; } = -1;
-    [Reactive] public partial string CurrentWaveString { get; set; } = "未获取";
-
-    [Reactive] public partial ObservableCollection<WaveZombiesItem> ZombiesList { get; set; } = [];
-
     public ZombiesListViewModel(IDataSyncService dataSyncService, IInitDataService initDataService,
         INotificationService notificationService, INavigationService navigationService) : base(
         dataSyncService)
@@ -31,6 +23,15 @@ public partial class ZombiesListViewModel : ModifierPageViewModelBase
         _navigationService = navigationService;
         dataSyncService.MessageReceived += MessageReceived;
     }
+
+    public IInitDataService InitDataService { get; set; }
+    private INotificationService _notificationService { get; set; }
+    private INavigationService _navigationService { get; set; }
+    [Reactive] public partial bool IsLoading { get; set; }
+    [Reactive] public partial int CurrentWave { get; set; } = -1;
+    [Reactive] public partial string CurrentWaveString { get; set; } = "未获取";
+
+    [Reactive] public partial ObservableCollection<WaveZombiesItem> ZombiesList { get; set; } = [];
 
     public void MessageReceived(object? sender, SyncData data)
     {
@@ -42,14 +43,12 @@ public partial class ZombiesListViewModel : ModifierPageViewModelBase
             {
                 ZombiesList.Clear();
                 foreach (var kvp in zldata.ZombiesList)
-                {
                     ZombiesList.Add(new WaveZombiesItem
                     {
                         Wave = kvp.Key,
                         Zombies = kvp.Value,
                         IsCurrentWave = kvp.Key == zldata.CurrentWave
                     });
-                }
 
                 CurrentWave = zldata.CurrentWave;
                 CurrentWaveString = CurrentWave < 0 ? "未获取" : $"当前为第{CurrentWave}波";
@@ -82,7 +81,7 @@ public partial class ZombiesListViewModel : ModifierPageViewModelBase
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"ChangeZombiesList error: {ex.Message}");
+            Debug.WriteLine($"ChangeZombiesList error: {ex.Message}");
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using HarmonyLib;
 using UnityEngine;
 using static ToolMod.Components.PatchDataCache;
@@ -6,35 +7,50 @@ using static ToolMod.Components.PatchDataCache;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 砸罐子修复补丁 - 核心补丁类
-/// 功能：
-/// 1. 多个罐子重叠时只砸开第一个罐子
-/// 2. 小丑类的爆炸和巨人的砸击无法破坏罐子
-/// 3. 土豆炸弹和大炸弹等AOE攻击无法破坏罐子
-/// 4. 巨人僵尸忽略罐子，直接向前走
+///     砸罐子修复补丁 - 核心补丁类
+///     功能：
+///     1. 多个罐子重叠时只砸开第一个罐子
+///     2. 小丑类的爆炸和巨人的砸击无法破坏罐子
+///     3. 土豆炸弹和大炸弹等AOE攻击无法破坏罐子
+///     4. 巨人僵尸忽略罐子，直接向前走
 /// </summary>
 [HarmonyPatch]
 public static class PotSmashingPatches
 {
     // 跟踪当前锤击事件中已经砸开的罐子
-    private static readonly HashSet<ScaryPot> _hitPotsInCurrentSwing = new HashSet<ScaryPot>();
+    private static readonly HashSet<ScaryPot> _hitPotsInCurrentSwing = new();
 
     // 跟踪当前锤击事件中已经处理的罐子（包括被阻止的）
-    private static readonly HashSet<ScaryPot> _processedPotsInCurrentSwing = new HashSet<ScaryPot>();
+    private static readonly HashSet<ScaryPot> _processedPotsInCurrentSwing = new();
 
     // 跟踪通过ScaryPot.Hitted调用的罐子
-    private static readonly HashSet<ScaryPot> _hittedPots = new HashSet<ScaryPot>();
+    private static readonly HashSet<ScaryPot> _hittedPots = new();
 
     // 标记当前是否正在处理僵尸爆炸（Lawnf.ZombieExplode）
-    private static bool _isProcessingZombieExplode = false;
+    private static bool _isProcessingZombieExplode;
 
     // 标记当前是否正在处理小丑爆炸
-    private static bool _isProcessingJackboxExplosion = false;
+    private static bool _isProcessingJackboxExplosion;
 
-    public static void SetProcessingZombieExplode(bool value) => _isProcessingZombieExplode = value;
-    public static bool IsProcessingZombieExplode() => _isProcessingZombieExplode;
-    public static void SetProcessingJackboxExplosion(bool value) => _isProcessingJackboxExplosion = value;
-    public static bool IsProcessingJackboxExplosion() => _isProcessingJackboxExplosion;
+    public static void SetProcessingZombieExplode(bool value)
+    {
+        _isProcessingZombieExplode = value;
+    }
+
+    public static bool IsProcessingZombieExplode()
+    {
+        return _isProcessingZombieExplode;
+    }
+
+    public static void SetProcessingJackboxExplosion(bool value)
+    {
+        _isProcessingJackboxExplosion = value;
+    }
+
+    public static bool IsProcessingJackboxExplosion()
+    {
+        return _isProcessingJackboxExplosion;
+    }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(ScaryPot), nameof(ScaryPot.Hitted))]
@@ -90,8 +106,8 @@ public static class PotSmashingPatches
     {
         try
         {
-            var stackTrace = new System.Diagnostics.StackTrace();
-            for (int i = 0; i < stackTrace.FrameCount; i++)
+            var stackTrace = new StackTrace();
+            for (var i = 0; i < stackTrace.FrameCount; i++)
             {
                 var frame = stackTrace.GetFrame(i);
                 var method = frame?.GetMethod();
@@ -116,8 +132,8 @@ public static class PotSmashingPatches
     {
         try
         {
-            var stackTrace = new System.Diagnostics.StackTrace();
-            for (int i = 0; i < stackTrace.FrameCount; i++)
+            var stackTrace = new StackTrace();
+            for (var i = 0; i < stackTrace.FrameCount; i++)
             {
                 var frame = stackTrace.GetFrame(i);
                 var method = frame?.GetMethod();
@@ -147,8 +163,8 @@ public static class PotSmashingPatches
     {
         try
         {
-            var stackTrace = new System.Diagnostics.StackTrace();
-            for (int i = 0; i < stackTrace.FrameCount; i++)
+            var stackTrace = new StackTrace();
+            for (var i = 0; i < stackTrace.FrameCount; i++)
             {
                 var frame = stackTrace.GetFrame(i);
                 var method = frame?.GetMethod();
@@ -175,8 +191,8 @@ public static class PotSmashingPatches
     {
         try
         {
-            var stackTrace = new System.Diagnostics.StackTrace();
-            for (int i = 0; i < stackTrace.FrameCount; i++)
+            var stackTrace = new StackTrace();
+            for (var i = 0; i < stackTrace.FrameCount; i++)
             {
                 var frame = stackTrace.GetFrame(i);
                 var method = frame?.GetMethod();
@@ -208,7 +224,7 @@ public static class PotSmashingPatches
 }
 
 /// <summary>
-/// 巨人僵尸忽略罐子补丁
+///     巨人僵尸忽略罐子补丁
 /// </summary>
 //[HarmonyPatch]
 public static class GargantuarIgnorePotPatches
@@ -272,7 +288,7 @@ public static class GargantuarIgnorePotPatches
 }
 
 /// <summary>
-/// 小丑僵尸爆炸保护补丁 - 让小丑可以爆炸，但爆炸不影响罐子
+///     小丑僵尸爆炸保护补丁 - 让小丑可以爆炸，但爆炸不影响罐子
 /// </summary>
 [HarmonyPatch]
 public static class JackboxZombieProtectionPatches
@@ -414,7 +430,7 @@ public static class JackboxZombieProtectionPatches
 }
 
 /// <summary>
-/// Lawnf.ZombieExplode 补丁 - 阻止僵尸爆炸破坏罐子
+///     Lawnf.ZombieExplode 补丁 - 阻止僵尸爆炸破坏罐子
 /// </summary>
 [HarmonyPatch]
 public static class ZombieExplodeProtectionPatches

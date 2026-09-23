@@ -6,6 +6,8 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:v="using:PVZRHTools.Views"
                       xmlns:u="https://irihi.tech/ursa"
+                      xmlns:converters="using:PVZRHTools.Converters"
+                      xmlns:utils="using:PVZRHTools.Utils"
                       xmlns:i="using:Avalonia.Xaml.Interactivity"
                       mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                       x:Class="PVZRHTools.Views.MainWindowView"
@@ -36,31 +38,56 @@
 
                 <u:NavMenu
                     Name="MainMenu"
+                    Classes="enable_animation"
+                    u:SizeAnimationHelper.CreateAnimation="{x:Static utils:NavMenuWidthAnimation.Generator}"
                     ExpandWidth="200"
                     ItemsSource="{Binding MenuItems}"
+                    HeaderBinding="{Binding MenuHeader}"
+                    IconBinding="{Binding MenuIcon}"
                     CommandBinding="{Binding NavigateCommand}"
                     Margin="10,10,0,0">
                     <u:NavMenu.Header>
                         <Grid HorizontalAlignment="Center" ColumnDefinitions="Auto, Auto">
+                            <Panel
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                Cursor="Hand"
+                                Margin="4,12"
+                                ToolTip.Tip="展开/收起侧边栏"
+                                u:NavMenu.CanToggle="True">
+                                <PathIcon
+                                    Width="24"
+                                    Height="24"
+                                    Data="{DynamicResource SemiIconBox}" />
+                            </Panel>
                             <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Classes="H3"
                                 Text="PVZRHTools"
-                                Theme="{DynamicResource TitleTextBlock}" />
+                                Theme="{DynamicResource TitleTextBlock}"
+                                IsVisible="{Binding !#MainMenu.IsHorizontalCollapsed}" />
                         </Grid>
                     </u:NavMenu.Header>
+                    <u:NavMenu.IconTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <PathIcon Width="16"
+                                      Height="16"
+                                      Data="{Binding Converter={x:Static converters:ResourceKeyToGeometryConverter.Instance}}" />
+                        </DataTemplate>
+                    </u:NavMenu.IconTemplate>
                     <u:NavMenu.HeaderTemplate>
-                        <DataTemplate x:DataType="vm:MenuItemViewModel">
+                        <DataTemplate x:DataType="x:String">
                             <TextBlock HorizontalAlignment="Left"
-                                       Text="{Binding MenuHeader}"
+                                       Text="{Binding}"
                                        Theme="{DynamicResource TitleTextBlock}"
                                        Classes="H6"
                                        Foreground="{DynamicResource SemiAIGeneral8}" />
                         </DataTemplate>
                     </u:NavMenu.HeaderTemplate>
                     <u:NavMenu.Footer>
-                        <v:ModifierAuthorsView DataContext="{Binding ModifierAuthors}" />
+                        <v:ModifierAuthorsView DataContext="{Binding ModifierAuthors}"
+                                               IsVisible="{Binding !#MainMenu.IsHorizontalCollapsed}" />
                     </u:NavMenu.Footer>
                 </u:NavMenu>
                 <ScrollViewer Grid.Column="1"

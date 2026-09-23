@@ -4,7 +4,7 @@ using ToolMod.Components;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 寒冰加农炮无CD装填补丁 - IceCannon.AnimShoot
+///     寒冰加农炮无CD装填补丁 - IceCannon.AnimShoot
 /// </summary>
 [HarmonyPatch(typeof(IceCannon))]
 public static class IceCannonPatch

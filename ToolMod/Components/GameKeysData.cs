@@ -1,9 +1,9 @@
 namespace ToolMod.Components;
 
 /// <summary>
-/// GameKeys.json 的数据结构，保存游戏原版按键绑定的 KeyCode 整数值。
-/// 字段名与 KeyCodeManager 的静态属性一一对应。
-/// 默认值为 0（KeyCode.None），首次保存时会以当前 KeyCodeManager 的实际值为准整体覆盖。
+///     GameKeys.json 的数据结构，保存游戏原版按键绑定的 KeyCode 整数值。
+///     字段名与 KeyCodeManager 的静态属性一一对应。
+///     默认值为 0（KeyCode.None），首次保存时会以当前 KeyCodeManager 的实际值为准整体覆盖。
 /// </summary>
 public class GameKeysData
 {

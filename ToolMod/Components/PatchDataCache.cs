@@ -109,6 +109,9 @@ public class PatchDataCache
     public static bool PlantsAllStarUp { get; set; }
     public static bool SuperStarNoCD { get; set; }
     public static int LockWheat { get; set; } = -1;
+    public static float PlantSpeedMultiplier { get; set; } = -1.0f;
+    public static float PlantAttackMultiplier { get; set; } = -1.0f;
+    public static float PlantHealthMultiplier { get; set; } = -1.0f;
 
     // 僵尸特性
     public static int ZombieDamageLimit { get; set; } = -1;
@@ -162,7 +165,7 @@ public class PatchDataCache
     public static Dictionary<AdvBuff, int> AdvBuffs { get; set; } = [];
     public static Dictionary<UltiBuff, int> UltiBuffs { get; set; } = [];
     public static Dictionary<TravelDebuff, bool> Debuffs { get; set; } = [];
-    public static Dictionary<InvestBuff, bool> InvestBuffs { get; set; } = []; 
+    public static Dictionary<InvestBuff, bool> InvestBuffs { get; set; } = [];
     public static Dictionary<TravelUnlocks, bool> UnlockedPlants { get; set; } = [];
     public static Dictionary<AdvBuff, int> InGameAdvBuffs { get; set; } = [];
     public static Dictionary<UltiBuff, int> InGameUltiBuffs { get; set; } = [];
@@ -187,7 +190,7 @@ public class PatchDataCache
     public static bool GodEvolutionUncrashable { get; set; }
     public static bool GodEvolutionQualityWeightEnabled { get; set; }
     public static float GodEvolutionQualityDefault { get; set; } = 65;
-    public static float GodEvolutionQualitySilver { get; set; } =23;
+    public static float GodEvolutionQualitySilver { get; set; } = 23;
     public static float GodEvolutionQualityGold { get; set; } = 10;
     public static float GodEvolutionQualityDiamond { get; set; } = 2;
     public static float GodEvolutionDamageMultiplier { get; set; } = -1.0f;
@@ -228,16 +231,14 @@ public class PatchDataCache
     // 深渊模式
     public static bool StarAdvFreeBuff { get; set; }
 
-
     #endregion
 
     #region 对象缓存
 
     public static GameObject? SeedGroup =>
         Utils.InGame && InGameUI.Instance != null ? InGameUI.Instance.SeedBank : null;
-    
-    public static Board.BoardTag? OriginalBoardTag { get; set; }
 
+    public static Board.BoardTag? OriginalBoardTag { get; set; }
 
     #endregion
 
@@ -246,13 +247,17 @@ public class PatchDataCache
     [HideFromIl2Cpp]
     public static Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.List<ZombieSpawnData>>
         ZombieSpawnDataList => InitZombieList.zombieList;
+
     [HideFromIl2Cpp]
-    public static Il2CppSystem.Collections.Generic.Dictionary<AdvBuff, string> AdvancedBuffsText=> TravelDictionary.advancedBuffsText;
+    public static Il2CppSystem.Collections.Generic.Dictionary<AdvBuff, string> AdvancedBuffsText =>
+        TravelDictionary.advancedBuffsText;
 
     [HideFromIl2Cpp] public static TreasureData TreasureData => new();
     [HideFromIl2Cpp] public static GardenData GardenData => new();
     [HideFromIl2Cpp] public static TypeMgr TypeMgr => new();
-    [HideFromIl2Cpp] public static Il2CppSystem.Collections.Generic. Dictionary<PlantType, BaseConfig> Configs=>Config.configs;
+
+    [HideFromIl2Cpp]
+    public static Il2CppSystem.Collections.Generic.Dictionary<PlantType, BaseConfig> Configs => Config.configs;
 
     #endregion
 
@@ -297,6 +302,4 @@ public class PatchDataCache
     public static float OriginalWaveInterval;
 
     #endregion
-
-
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -21,13 +20,17 @@ namespace PVZRHTools.Services;
 
 public class GameBootstrapService : IGameBootstrapService
 {
-    public bool NeedsBepInExInstallation(string gameRootPath) =>
-        !File.Exists(Path.Combine(gameRootPath, "winhttp.dll")) ||
-        !Directory.Exists(Path.Combine(gameRootPath, "BepInEx")) ||
-        !Directory.Exists(Path.Combine(gameRootPath, "dotnet"));
+    public bool NeedsBepInExInstallation(string gameRootPath)
+    {
+        return !File.Exists(Path.Combine(gameRootPath, "winhttp.dll")) ||
+               !Directory.Exists(Path.Combine(gameRootPath, "BepInEx")) ||
+               !Directory.Exists(Path.Combine(gameRootPath, "dotnet"));
+    }
 
-    public bool IsBepInExInstalled(string gameRootPath) =>
-        !NeedsBepInExInstallation(gameRootPath);
+    public bool IsBepInExInstalled(string gameRootPath)
+    {
+        return !NeedsBepInExInstallation(gameRootPath);
+    }
 
     public void InstallBepInEx(string gameRootPath)
     {
@@ -52,13 +55,17 @@ public class GameBootstrapService : IGameBootstrapService
         }
     }
 
-    public bool NeedsModifierInstallation(string gameRootPath) =>
-        !File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe")) ||
-        !File.Exists(Path.Combine(gameRootPath, Paths.PluginsPath, "ToolMod.dll")) ||
-        !File.Exists(Path.Combine(gameRootPath, Paths.PluginsPath, "ToolData.dll"));
+    public bool NeedsModifierInstallation(string gameRootPath)
+    {
+        return !File.Exists(Path.Combine(gameRootPath, "PVZRHTools.exe")) ||
+               !File.Exists(Path.Combine(gameRootPath, Paths.PluginsPath, "ToolMod.dll")) ||
+               !File.Exists(Path.Combine(gameRootPath, Paths.PluginsPath, "ToolData.dll"));
+    }
 
-    public bool IsModifierInstalled(string gameRootPath) =>
-        !NeedsModifierInstallation(gameRootPath);
+    public bool IsModifierInstalled(string gameRootPath)
+    {
+        return !NeedsModifierInstallation(gameRootPath);
+    }
 
     public bool TryInstallModifier(string gameRootPath, out string? errorMessage)
     {
@@ -102,7 +109,7 @@ public class GameBootstrapService : IGameBootstrapService
             Directory.CreateDirectory(Path.Combine(gameRootPath, Paths.ConfigPath));
             File.Create(Path.Combine(gameRootPath, Paths.BootConfigPath)).Close();
             File.WriteAllText(Path.Combine(gameRootPath, Paths.BootConfigPath), JsonSerializer.Serialize(
-                new BootConfig()
+                new BootConfig
                 {
                     GameVersion = Strings.GameVersion,
                     ModifierEnabled = modifierEnabled,
@@ -126,7 +133,6 @@ public class GameBootstrapService : IGameBootstrapService
     public bool IsModifierEnabled(string gameRootPath)
     {
         if (File.Exists(Path.Combine(gameRootPath, Paths.BootConfigPath)))
-        {
             try
             {
                 return JsonSerializer.Deserialize(File.ReadAllText(Path.Combine(gameRootPath, Paths.BootConfigPath)),
@@ -137,17 +143,20 @@ public class GameBootstrapService : IGameBootstrapService
                 WriteBootConfig(gameRootPath, true);
                 return true;
             }
-        }
 
         WriteBootConfig(gameRootPath, true);
         return true;
     }
 
-    public void EnableBepInEx(string gameRootPath) =>
+    public void EnableBepInEx(string gameRootPath)
+    {
         ToolUtils.SetBepInExEnabled(gameRootPath, true);
+    }
 
-    public void DisableBepInEx(string gameRootPath) =>
+    public void DisableBepInEx(string gameRootPath)
+    {
         ToolUtils.SetBepInExEnabled(gameRootPath, false);
+    }
 
     public async Task ProcessOutdatedModifierAsync(string gamePath)
     {
@@ -160,18 +169,14 @@ public class GameBootstrapService : IGameBootstrapService
         if (shouldUpdate != MessageBoxResult.Yes) return;
 
         if (TryInstallModifier(gamePath, out var error))
-        {
             Locator.Current.GetService<INotificationService>()?.NotificationManager?.Show(
                 $"\"{dirName}\" 的修改器已更新完成", NotificationType.Success);
-        }
         else
-        {
             await OverlayMessageBox.ShowAsync(
                 $"更新修改器失败：{error}",
                 "更新失败",
                 icon: MessageBoxIcon.Error,
                 button: MessageBoxButton.OK);
-        }
     }
 
     public bool IsGamePathOutdated(string gamePath)
@@ -188,7 +193,7 @@ public class GameBootstrapService : IGameBootstrapService
 
         // 检测 PVZRHTools.exe 版本
         var modifierExePath = Path.Combine(gamePath, Paths.ModifierExeName);
-        bool exeOutdated = false;
+        var exeOutdated = false;
         if (File.Exists(modifierExePath))
         {
             var exeVersion = FileVersionInfo.GetVersionInfo(modifierExePath).FileVersion;
@@ -196,14 +201,12 @@ public class GameBootstrapService : IGameBootstrapService
                 Version.TryParse(exeVersion, out var exeVer) &&
                 Version.TryParse(currentVersion, out var curVer) &&
                 exeVer < curVer)
-            {
                 exeOutdated = true;
-            }
         }
 
         // 检测 ToolMod.dll 版本
         var toolModPath = Path.Combine(gamePath, Paths.PluginsPath, "ToolMod.dll");
-        bool dllOutdated = false;
+        var dllOutdated = false;
         if (File.Exists(toolModPath))
         {
             var dllVersion = FileVersionInfo.GetVersionInfo(toolModPath).FileVersion;
@@ -211,14 +214,11 @@ public class GameBootstrapService : IGameBootstrapService
                 Version.TryParse(dllVersion, out var dllVer) &&
                 Version.TryParse(currentVersion, out var curVer2) &&
                 dllVer < curVer2)
-            {
                 dllOutdated = true;
-            }
         }
 
         return exeOutdated || dllOutdated;
     }
-
 }
 
 public interface IGameBootstrapService

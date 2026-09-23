@@ -4,8 +4,8 @@ using static ToolMod.Components.PatchDataCache;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 加农炮无CD装填补丁 - CobCannon.AnimShoot
-/// 在加农炮发射后立即触发charge动画并重置冷却时间，实现无冷却装填
+///     加农炮无CD装填补丁 - CobCannon.AnimShoot
+///     在加农炮发射后立即触发charge动画并重置冷却时间，实现无冷却装填
 /// </summary>
 [HarmonyPatch(typeof(CobCannon))]
 public static class CobCannonPatch

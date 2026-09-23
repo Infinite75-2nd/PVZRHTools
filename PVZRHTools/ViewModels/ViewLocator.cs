@@ -18,10 +18,7 @@ public partial class ViewLocator : IDataTemplate
     public Control? Build(object? data)
     {
         var _navigationService = Locator.Current.GetService<INavigationService>()!;
-        if (data is null)
-        {
-            return null;
-        }
+        if (data is null) return null;
 
         var viewModel = _navigationService.CurrentViewModel;
         var viewModelType = viewModel.GetType();

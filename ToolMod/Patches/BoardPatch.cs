@@ -22,9 +22,9 @@ public static class BoardPatch
         var t = __instance.boardTag;
         t.isColumn |= ColumnPlanting;
         t.isSeedRain |= SeedRain;
-        t.isTravel |= RemoveFusionLimit;
-        t.enableTravelPlant |= RemoveFusionLimit;
-        t.enableAllTravelPlant |= RemoveFusionLimit;
+        //t.isTravel |= RemoveFusionLimit;
+        //t.enableTravelPlant |= RemoveFusionLimit;
+        //t.enableAllTravelPlant |= RemoveFusionLimit;
         __instance.boardTag = t;
         NewBoard = true;
     }
@@ -38,13 +38,9 @@ public static class BoardPatch
             if (Board.Instance != null && Board.Instance.config != null)
             {
                 if (NewZombieUpdateCD > 0f)
-                {
                     Board.Instance.config.waveInterval = NewZombieUpdateCD;
-                }
                 else
-                {
                     Board.Instance.config.waveInterval = OriginalWaveInterval;
-                }
             }
         }
         catch
@@ -53,8 +49,8 @@ public static class BoardPatch
     }
 
     /// <summary>
-    /// 修改 GetSun 方法 - 移除阳光上限限制
-    /// 3.6：Board.GetSun 签名为 (float count, bool save = true)
+    ///     修改 GetSun 方法 - 移除阳光上限限制
+    ///     3.6：Board.GetSun 签名为 (float count, bool save = true)
     /// </summary>
     [HarmonyPatch(nameof(Board.GetSun))]
     [HarmonyPrefix]
@@ -65,10 +61,8 @@ public static class BoardPatch
         try
         {
             if (__instance != null)
-            {
                 // 3.6：不再依赖旧版 GetSun 的中间参数，直接按 count 累加即可避免上限裁剪。
                 __instance.theSun += (int)count;
-            }
 
             return false;
         }
@@ -79,7 +73,7 @@ public static class BoardPatch
     }
 
     /// <summary>
-    /// 修改UseSun方法 - 确保使用阳光时不受上限限制
+    ///     修改UseSun方法 - 确保使用阳光时不受上限限制
     /// </summary>
     [HarmonyPatch(nameof(Board.UseSun))]
     [HarmonyPrefix]
@@ -91,7 +85,7 @@ public static class BoardPatch
         {
             if (__instance != null)
             {
-                int countInt = (int)count; // 3.3.1版本UseSun参数类型为float，需要转换为int
+                var countInt = (int)count; // 3.3.1版本UseSun参数类型为float，需要转换为int
                 __instance.theSun -= countInt;
             }
 
@@ -111,10 +105,7 @@ public static class BoardPatch
         try
         {
             // 处理无限积分（使用新的独立开关或旧的兼容开关）
-            if (UnlimitedScore && __instance != null)
-            {
-                __instance.thePoints = int.MaxValue;
-            }
+            if (UnlimitedScore && __instance != null) __instance.thePoints = int.MaxValue;
 
             // 处理诅咒免疫：
             // 1. 移除所有植物上的 PlantCurseEffect（EffectType 103）
@@ -146,13 +137,9 @@ public static class BoardPatch
             if (__instance != null && __instance.config != null)
             {
                 if (NewZombieUpdateCD > 0f)
-                {
                     __instance.config.waveInterval = NewZombieUpdateCD;
-                }
                 else
-                {
                     __instance.config.waveInterval = OriginalWaveInterval;
-                }
             }
 
             // 旗帜波词条功能 - 检测旗帜波并应用词条
@@ -163,17 +150,14 @@ public static class BoardPatch
                     return;
 
                 // 检测旗帜波状态变化（从非旗帜波变为旗帜波）
-                bool currentHugeWave = __instance.theWave % 10 is 0;
-                bool wasHugeWave = LastHugeWaveState;
+                var currentHugeWave = __instance.theWave % 10 is 0;
+                var wasHugeWave = LastHugeWaveState;
                 LastHugeWaveState = currentHugeWave;
 
                 // 只在进入旗帜波时应用词条（避免重复应用）
-                if (currentHugeWave && !wasHugeWave)
-                {
-                    UnlockNextFlagWaveBuff();
-                }
+                if (currentHugeWave && !wasHugeWave) UnlockNextFlagWaveBuff();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ModCore.Instance.Log?.LogError($"旗帜波词条检测失败: {ex.Message}\n{ex.StackTrace}");
             }
@@ -184,8 +168,8 @@ public static class BoardPatch
     }
 
     /// <summary>
-    /// 移除所有植物上的诅咒效果（EffectType 103 = PlantCurseEffect）
-    /// 并重置视觉样式
+    ///     移除所有植物上的诅咒效果（EffectType 103 = PlantCurseEffect）
+    ///     并重置视觉样式
     /// </summary>
     private static void ClearAllPlantsCurseEffect()
     {
@@ -197,7 +181,6 @@ public static class BoardPatch
             if (allPlants == null) return;
 
             foreach (var plant in allPlants)
-            {
                 if (plant != null && plant.thePlantHealth > 0)
                 {
                     // 1. 移除 PlantCurseEffect（EffectType 103）
@@ -206,7 +189,6 @@ public static class BoardPatch
                     // 2. 重置视觉颜色
                     ResetPlantColor(plant);
                 }
-            }
         }
         catch
         {
@@ -214,8 +196,8 @@ public static class BoardPatch
     }
 
     /// <summary>
-    /// 移除单棵植物上的 PlantCurseEffect（EffectType 103）
-    /// 通过 Entity.RemoveBuff 移除 effects 字典中的诅咒条目
+    ///     移除单棵植物上的 PlantCurseEffect（EffectType 103）
+    ///     通过 Entity.RemoveBuff 移除 effects 字典中的诅咒条目
     /// </summary>
     private static void RemoveCurseEffect(Plant plant)
     {
@@ -234,8 +216,8 @@ public static class BoardPatch
     }
 
     /// <summary>
-    /// 重置植物颜色到正常状态（白色）
-    /// 仅作为 RemoveCurseEffect 的补充，确保视觉上完全恢复正常
+    ///     重置植物颜色到正常状态（白色）
+    ///     仅作为 RemoveCurseEffect 的补充，确保视觉上完全恢复正常
     /// </summary>
     private static void ResetPlantColor(Plant plant)
     {
@@ -252,8 +234,8 @@ public static class BoardPatch
     }
 
     /// <summary>
-    /// 设置所有植物的 canBeCrashed 属性
-    /// 参考 SuperMachinePotComponent.cs 的实现
+    ///     设置所有植物的 canBeCrashed 属性
+    ///     参考 SuperMachinePotComponent.cs 的实现
     /// </summary>
     private static void SetAllPlantsCanBeCrashed(bool value)
     {
@@ -265,9 +247,7 @@ public static class BoardPatch
             if (allPlants == null) return;
 
             foreach (var plant in allPlants)
-            {
                 if (plant != null && plant.thePlantHealth > 0)
-                {
                     try
                     {
                         var plantType = plant.GetType();
@@ -279,8 +259,6 @@ public static class BoardPatch
                     catch
                     {
                     }
-                }
-            }
         }
         catch
         {
@@ -294,21 +272,18 @@ public static class BoardPatch
     {
         if (fromWheat && LockWheat >= 0)
         {
-            Plant plantObject = CreatePlant.Instance.SetPlant(
+            var plantObject = CreatePlant.Instance.SetPlant(
                 theColumn,
                 theRow,
                 (PlantType)LockWheat
             );
 
-            if (plantObject != null)
-            {
-                plantObject.wheatType = 1;
-            }
+            if (plantObject != null) plantObject.wheatType = 1;
 
             if (plantObject == null)
             {
-                float boxX = Mouse.Instance.GetBoxXFromColumn(theColumn);
-                float landY = Mouse.Instance.GetLandY(boxX, theRow);
+                var boxX = Mouse.Instance.GetBoxXFromColumn(theColumn);
+                var landY = Mouse.Instance.GetLandY(boxX, theRow);
                 Lawnf.SetDroppedCard(new Vector2(boxX, landY), (PlantType)LockWheat);
             }
             else
@@ -336,40 +311,34 @@ public static class BoardPatch
             // 先检查是否真正“配置了”任何初始词条：
             // - 若所有数组都为 null / 长度为 0 / 全是 false，则认为没有设置初始词条，直接跳过，
             //   避免在场景切换时用一堆 false 覆盖当前已有的词条状态。
-            bool hasAnyInitialAdv = AdvBuffs is { Count: > 0 } && AdvBuffs.Values.Any(v => v > 0);
-            bool hasAnyInitialUlti = UltiBuffs is { Count: > 0 } && UltiBuffs.Values.Any(v => v > 0);
-            bool hasAnyInitialInvest = InvestBuffs is { Count: > 0 } && InvestBuffs.Values.Any(v => v);
-            bool hasAnyInitialDebuff = Debuffs is { Count: > 0 } && Debuffs.Values.Any(v => v);
-            bool hasAnyInitialUnlockedPlant = UnlockedPlants is { Count: > 0 } && UnlockedPlants.Values.Any(v => v);
-            
+            var hasAnyInitialAdv = AdvBuffs is { Count: > 0 } && AdvBuffs.Values.Any(v => v > 0);
+            var hasAnyInitialUlti = UltiBuffs is { Count: > 0 } && UltiBuffs.Values.Any(v => v > 0);
+            var hasAnyInitialInvest = InvestBuffs is { Count: > 0 } && InvestBuffs.Values.Any(v => v);
+            var hasAnyInitialDebuff = Debuffs is { Count: > 0 } && Debuffs.Values.Any(v => v);
+            var hasAnyInitialUnlockedPlant = UnlockedPlants is { Count: > 0 } && UnlockedPlants.Values.Any(v => v);
+
             // 如果所有初始词条都"完全为空"，则认为玩家没有配置初始词条，什么都不做。
-            if (!hasAnyInitialAdv && !hasAnyInitialUlti && !hasAnyInitialInvest && !hasAnyInitialDebuff && !hasAnyInitialUnlockedPlant)
-            {
-                return;
-            }
+            if (!hasAnyInitialAdv && !hasAnyInitialUlti && !hasAnyInitialInvest && !hasAnyInitialDebuff &&
+                !hasAnyInitialUnlockedPlant) return;
 
 
             // 应用初始词条到当前游戏状态
 
             if (TravelDictionary.advancedBuffsText != null)
-            {
                 foreach (var kvp in TravelDictionary.advancedBuffsText)
                 {
                     InGameAdvBuffs.TryAdd(kvp.Key, 0);
                     AdvBuffs.TryAdd(kvp.Key, 0);
                     InGameAdvBuffs[kvp.Key] = Math.Max(InGameAdvBuffs[kvp.Key], AdvBuffs[kvp.Key]);
                 }
-            }
 
             if (TravelDictionary.ultimateBuffsText != null)
-            {
                 foreach (var kvp in TravelDictionary.ultimateBuffsText)
                 {
                     InGameUltiBuffs.TryAdd(kvp.Key, 0);
                     UltiBuffs.TryAdd(kvp.Key, 0);
                     InGameUltiBuffs[kvp.Key] = Math.Max(InGameUltiBuffs[kvp.Key], UltiBuffs[kvp.Key]);
                 }
-            }
 
             var keys = InvestBuffs.Keys;
 
@@ -381,28 +350,24 @@ public static class BoardPatch
             }
 
             if (TravelDictionary.debuffData != null)
-            {
                 foreach (var kvp in TravelDictionary.debuffData)
                 {
                     InGameDebuffs.TryAdd(kvp.Key, false);
                     Debuffs.TryAdd(kvp.Key, false);
                     InGameDebuffs[kvp.Key] = InGameDebuffs[kvp.Key] || Debuffs[kvp.Key];
                 }
-            }
 
             // 应用初始解锁植物到游戏内状态
             if (TravelDictionary.unlocksText != null)
-            {
                 foreach (var kvp in TravelDictionary.unlocksText)
                 {
                     InGameUnlockedPlants.TryAdd(kvp.Key, false);
                     UnlockedPlants.TryAdd(kvp.Key, false);
                     InGameUnlockedPlants[kvp.Key] = InGameUnlockedPlants[kvp.Key] || UnlockedPlants[kvp.Key];
                 }
-            }
 
             // 应用词条到游戏（初始词条不允许移除已有词条）
-            bool oldAllow = AllowBuffRemoval;
+            var oldAllow = AllowBuffRemoval;
             try
             {
                 AllowBuffRemoval = false;
@@ -411,8 +376,7 @@ public static class BoardPatch
             finally
             {
                 AllowBuffRemoval = oldAllow;
-            } 
-            
+            }
         }
         catch (Exception ex)
         {
@@ -421,37 +385,32 @@ public static class BoardPatch
     }
 
     /// <summary>
-    /// 禁用游戏内置的 WASD 操控植物功能（当随机升级模式开启时）
+    ///     禁用游戏内置的 WASD 操控植物功能（当随机升级模式开启时）
     /// </summary>
     [HarmonyPrefix]
     [HarmonyPatch(nameof(Board.ControledPlantUpdate))]
     public static bool PreControledPlantUpdate()
     {
         // 当随机升级模式开启时，禁用游戏内置的 WASD 操控
-        if (RandomUpgradeMode)
-        {
-            return false; // 跳过原方法
-        }
+        if (RandomUpgradeMode) return false; // 跳过原方法
 
         return true; // 执行原方法
     }
 
     /// <summary>
-    /// 旗帜波词条：按顺序每次解锁一个旗帜波的所有词条（永久保持到本局结束）
+    ///     旗帜波词条：按顺序每次解锁一个旗帜波的所有词条（永久保持到本局结束）
     /// </summary>
     private static void UnlockNextFlagWaveBuff()
     {
         try
         {
             // 防重复解锁：检查当前波数是否已经解锁过
-            int currentWave = Board.Instance != null ? (Board.Instance.theWave + 1) / 10 : -1;
+            var currentWave = Board.Instance != null ? (Board.Instance.theWave + 1) / 10 : -1;
             if (currentWave < 0)
-            {
                 // 同一波已经解锁过，跳过
                 return;
-            }
 
-            var travelMgr = ResolveTravelMgr(autoCreate: true);
+            var travelMgr = ResolveTravelMgr(true);
             if (travelMgr == null)
             {
                 ModCore.Instance.Log?.LogWarning("无法找到 TravelMgr，无法应用旗帜波词条");
@@ -464,31 +423,19 @@ public static class BoardPatch
 
             if (InGame)
             {
-                foreach (var adv in buffs.AdvBuffs)
-                {
-                    travelMgr?.GetNormalBuff((AdvBuff)adv);
-                }
+                foreach (var adv in buffs.AdvBuffs) travelMgr?.GetNormalBuff((AdvBuff)adv);
 
-                foreach (var ulti in buffs.UltiBuffs)
-                {
-                    travelMgr?.GetUltiBuff((UltiBuff)ulti);
-                }
+                foreach (var ulti in buffs.UltiBuffs) travelMgr?.GetUltiBuff((UltiBuff)ulti);
 
-                foreach (var debuff in buffs.Debuffs)
-                {
-                    travelMgr?.GetDebuff((TravelDebuff)debuff);
-                }
+                foreach (var debuff in buffs.Debuffs) travelMgr?.GetDebuff((TravelDebuff)debuff);
 
-                foreach (var invest in buffs.InvestBuffs)
-                {
-                    travelMgr?.GetInvestBuff((InvestBuff)invest);
-                }
+                foreach (var invest in buffs.InvestBuffs) travelMgr?.GetInvestBuff((InvestBuff)invest);
 
                 try
                 {
                     if (InGameText.Instance != null)
                     {
-                        string displayText = buffs.Description;
+                        var displayText = buffs.Description;
                         if (displayText.IsNullOrWhiteSpace())
                         {
                             var fullNames = new List<string>();
@@ -502,20 +449,15 @@ public static class BoardPatch
                             var buffNames = fullNames.Select(ExtractBuffName)
                                 .Where(buffName => !string.IsNullOrEmpty(buffName)).ToList();
 
-                            if (buffNames.Count > 0)
-                            {
-                                displayText = string.Join("、", buffNames);
-                            }
+                            if (buffNames.Count > 0) displayText = string.Join("、", buffNames);
                         }
 
                         if (!string.IsNullOrEmpty(displayText))
-                        {
                             // 显示旗帜波文本
                             InGameText.Instance.ShowText(displayText, 5);
-                        }
                     }
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     ModCore.Instance.Log?.LogWarning($"[PVZRHTools] 显示旗帜波解锁文本失败: {ex}");
                 }
@@ -524,14 +466,14 @@ public static class BoardPatch
             // 增加旗帜波索引（无论是否有词条都要增加）
             CurrentFlagWaveIndex++;
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogError($"[PVZRHTools] 旗帜波词条应用失败: {ex}");
         }
     }
 
     /// <summary>
-    /// 从词条文本中提取词条名字（去除ID前缀和描述）
+    ///     从词条文本中提取词条名字（去除ID前缀和描述）
     /// </summary>
     private static string ExtractBuffName(string? fullText)
     {
@@ -541,7 +483,7 @@ public static class BoardPatch
         // 如果包含 "#数字 " 前缀，去除它
         if (fullText.StartsWith("#"))
         {
-            int spaceIndex = fullText.IndexOf(' ');
+            var spaceIndex = fullText.IndexOf(' ');
             if (spaceIndex > 0 && spaceIndex < fullText.Length - 1)
             {
                 fullText = fullText.Substring(spaceIndex + 1);
@@ -549,37 +491,29 @@ public static class BoardPatch
             else if (spaceIndex < 0)
             {
                 // 如果没有空格，尝试找到第一个非数字字符
-                int firstNonDigit = 0;
-                for (int i = 1; i < fullText.Length; i++)
-                {
+                var firstNonDigit = 0;
+                for (var i = 1; i < fullText.Length; i++)
                     if (!char.IsDigit(fullText[i]))
                     {
                         firstNonDigit = i;
                         break;
                     }
-                }
 
-                if (firstNonDigit > 0)
-                {
-                    fullText = fullText.Substring(firstNonDigit);
-                }
+                if (firstNonDigit > 0) fullText = fullText.Substring(firstNonDigit);
             }
         }
 
         // 如果包含 "：" 或 ":" 分隔符，只取前面的部分（词条名字）
-        int colonIndex = fullText.IndexOf('：');
+        var colonIndex = fullText.IndexOf('：');
         if (colonIndex < 0) colonIndex = fullText.IndexOf(':');
-        if (colonIndex > 0)
-        {
-            fullText = fullText.Substring(0, colonIndex).Trim();
-        }
+        if (colonIndex > 0) fullText = fullText.Substring(0, colonIndex).Trim();
 
         return fullText.Trim();
     }
 
     /// <summary>
-    /// 从词条文本中提取词条名字和描述（去除ID前缀，保留名字和描述）
-    /// 返回格式：词条名字：（词条功能描述）
+    ///     从词条文本中提取词条名字和描述（去除ID前缀，保留名字和描述）
+    ///     返回格式：词条名字：（词条功能描述）
     /// </summary>
     private static string ExtractBuffNameWithDescription(string? fullText)
     {
@@ -589,7 +523,7 @@ public static class BoardPatch
         // 如果包含 "#数字 " 前缀，去除它
         if (fullText.StartsWith("#"))
         {
-            int spaceIndex = fullText.IndexOf(' ');
+            var spaceIndex = fullText.IndexOf(' ');
             if (spaceIndex > 0 && spaceIndex < fullText.Length - 1)
             {
                 fullText = fullText.Substring(spaceIndex + 1);
@@ -597,20 +531,15 @@ public static class BoardPatch
             else if (spaceIndex < 0)
             {
                 // 如果没有空格，尝试找到第一个非数字字符
-                int firstNonDigit = 0;
-                for (int i = 1; i < fullText.Length; i++)
-                {
+                var firstNonDigit = 0;
+                for (var i = 1; i < fullText.Length; i++)
                     if (!char.IsDigit(fullText[i]))
                     {
                         firstNonDigit = i;
                         break;
                     }
-                }
 
-                if (firstNonDigit > 0)
-                {
-                    fullText = fullText.Substring(firstNonDigit);
-                }
+                if (firstNonDigit > 0) fullText = fullText.Substring(firstNonDigit);
             }
         }
 

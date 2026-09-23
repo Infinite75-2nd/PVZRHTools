@@ -36,9 +36,9 @@ public static class ProgressMgrPatch
             {
                 infoChild.GameObject().active = true;
                 // 使用 timeUntilNextWave 显示刷新CD（3.3.1版本中newZombieWaveCountDown字段已被移除）
-                float refreshCD = 0f;
-                int currentWave = 0;
-                int maxWave = 0;
+                var refreshCD = 0f;
+                var currentWave = 0;
+                var maxWave = 0;
                 if (Board.Instance != null)
                 {
                     refreshCD = Board.Instance.timeUntilNextWave;
@@ -50,19 +50,15 @@ public static class ProgressMgrPatch
                     // 如果游戏还没有更新（通常会在 NewZombieUpdate() 中更新），
                     // 则使用 NewZombieUpdateCD 作为临时显示值
                     if (refreshCD <= 0f && currentWave > 0 && currentWave < maxWave)
-                    {
                         // 检查 NewZombieUpdateCD 是否有效（通常在 0-30 秒之间）
                         if (NewZombieUpdateCD > 0f)
-                        {
                             // 使用 NewZombieUpdateCD 作为临时显示值
                             // 游戏会在 NewZombieUpdate() 中更新 timeUntilNextWave
                             refreshCD = NewZombieUpdateCD;
-                        }
-                        // 如果 NewZombieUpdateCD 无效，保持 refreshCD 为 0，显示 "N/A"
-                    }
+                    // 如果 NewZombieUpdateCD 无效，保持 refreshCD 为 0，显示 "N/A"
                 }
 
-                string cdText = refreshCD > 0f ? $"{refreshCD:F1}" : "N/A";
+                var cdText = refreshCD > 0f ? $"{refreshCD:F1}" : "N/A";
                 infoChild.GameObject().GetComponent<TextMeshProUGUI>().text =
                     $"波数: {currentWave}/{maxWave} 刷新CD: {cdText}";
             }

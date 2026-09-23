@@ -13,9 +13,34 @@ namespace PVZRHTools.Services;
 
 public class ModifierInfoService : IModifierInfoService
 {
+    public ModifierInfoService(IModsManagementService modsManagementService, IGameBootstrapService gameBootstrapService)
+    {
+        _modsManagementService = modsManagementService;
+        _gameBootstrapService = gameBootstrapService;
+        if (Directory.Exists(Paths.GameDataPath))
+        {
+            try
+            {
+                ModifierInfo = File.Exists(Paths.ModifierDataPath)
+                    ? JsonSerializer.Deserialize(File.ReadAllText(Paths.ModifierDataPath),
+                        JsonSGC.Default.ModifierInfo)!
+                    : new ModifierInfo();
+            }
+            catch
+            {
+                ModifierInfo = new ModifierInfo();
+            }
+        }
+        else
+        {
+            Directory.CreateDirectory(Paths.GameDataPath);
+            ModifierInfo = new ModifierInfo();
+        }
+    }
+
+    private IModsManagementService _modsManagementService { get; }
+    private IGameBootstrapService _gameBootstrapService { get; }
     public ModifierInfo ModifierInfo { get; set; }
-    private IModsManagementService _modsManagementService { get; set; }
-    private IGameBootstrapService _gameBootstrapService { get; set; }
 
     public void Save(ObservableCollection<GameInstanceInfo> gameInstances)
     {
@@ -58,7 +83,7 @@ public class ModifierInfoService : IModifierInfoService
         if (ModifierInfo.GamePaths.Contains(gameRootPath)) return AddGamePathResult.AlreadyExists;
         ModifierInfo.GamePaths.Add(gameRootPath);
         SaveModifierInfo();
-        
+
         return AddGamePathResult.Added;
     }
 
@@ -85,31 +110,6 @@ public class ModifierInfoService : IModifierInfoService
         var outdatedPaths = ModifierInfo.GamePaths.Where(p => _gameBootstrapService.IsGamePathOutdated(p)).ToList();
         ModifierInfo.ModifierVersion = Strings.ModifierVersion;
         return outdatedPaths;
-    }
-
-    public ModifierInfoService(IModsManagementService modsManagementService, IGameBootstrapService gameBootstrapService)
-    {
-        _modsManagementService = modsManagementService;
-        _gameBootstrapService = gameBootstrapService;
-        if (Directory.Exists(Paths.GameDataPath))
-        {
-            try
-            {
-                ModifierInfo = File.Exists(Paths.ModifierDataPath)
-                    ? JsonSerializer.Deserialize(File.ReadAllText(Paths.ModifierDataPath),
-                        JsonSGC.Default.ModifierInfo)!
-                    : new ModifierInfo();
-            }
-            catch
-            {
-                ModifierInfo = new ModifierInfo();
-            }
-        }
-        else
-        {
-            Directory.CreateDirectory(Paths.GameDataPath);
-            ModifierInfo = new ModifierInfo();
-        }
     }
 }
 

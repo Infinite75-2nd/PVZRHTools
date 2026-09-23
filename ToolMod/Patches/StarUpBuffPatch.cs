@@ -9,8 +9,8 @@ public static class StarUpBuffPatch
 {
     [HarmonyPatch(nameof(StarUpBuff.AppearWeight), MethodType.Getter)]
     [HarmonyPostfix]
-    public static void PostAppearWeight(StarUpBuff __instance,ref float __result)
+    public static void PostAppearWeight(StarUpBuff __instance, ref float __result)
     {
-        if(GodEvolutionForceStarUpBuff)__result = 1;
+        if (GodEvolutionForceStarUpBuff) __result = 1;
     }
 }

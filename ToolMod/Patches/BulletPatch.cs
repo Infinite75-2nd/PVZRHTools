@@ -8,6 +8,19 @@ namespace ToolMod.Patches;
 [HarmonyPatch(typeof(Bullet))]
 public class BulletPatch
 {
+    // 需要排除的子弹类型（这些子弹使用原始逻辑）
+    private static readonly HashSet<string> _excludedBulletNames =
+    [
+        "Bullet_star", "Bullet_cactusStar", "Bullet_superStar", "Bullet_ultimateStar",
+        "Bullet_lanternStar", "Bullet_seaStar", "Bullet_jackboxStar", "Bullet_pickaxeStar",
+        "Bullet_magnetStar", "Bullet_ironStar", "Bullet_threeSpike",
+        "Bullet_magicTrack", "Bullet_normalTrack", "Bullet_iceTrack", "Bullet_fireTrack",
+        "Bullet_doom", "Bullet_doom_throw", "Bullet_endoSun", "Bullet_extremeSnowPea",
+        "Bullet_iceSword", "Bullet_lourCactus", "Bullet_melonCannon",
+        "Bullet_shulkLeaf_ultimate", "Bullet_smallGoldCannon", "Bullet_smallSun",
+        "Bullet_springMelon", "Bullet_sunCabbage", "Bullet_ultimateSun"
+    ];
+
     [HarmonyPostfix]
     [HarmonyPatch(nameof(Bullet.Update))]
     public static void PostUpdate(Bullet __instance)
@@ -52,7 +65,7 @@ public class BulletPatch
             !__instance.shootByZombie &&
             __instance.from_zombie == null)
         {
-            __instance.isLand = false;//todo
+            __instance.isLand = false; //todo
             return false;
         }
 
@@ -118,7 +131,7 @@ public class BulletPatch
             if (zombie.theHealth <= 0) return true;
 
             // 概率判断
-            float randomValue = Random.Range(0f, 100f);
+            var randomValue = Random.Range(0f, 100f);
             if (randomValue >= ZombieBulletReflect) return true;
 
             // 标记子弹已命中，防止后续处理
@@ -140,7 +153,7 @@ public class BulletPatch
     }
 
     /// <summary>
-    /// 创建反弹的铁豆子弹
+    ///     创建反弹的铁豆子弹
     /// </summary>
     private static void CreateReflectedBullet(Bullet originalBullet, Zombie zombie)
     {
@@ -149,8 +162,8 @@ public class BulletPatch
             if (CreateBullet.Instance == null) return;
 
             // 获取原子弹的位置和行
-            Vector3 pos = originalBullet.transform.position;
-            int row = originalBullet.theBulletRow;
+            var pos = originalBullet.transform.position;
+            var row = originalBullet.theBulletRow;
 
             // 创建一个铁豆子弹，向左飞行
             // fromEnermy/isZombieBullet = true 表示这是僵尸子弹，可以伤害植物
@@ -164,10 +177,8 @@ public class BulletPatch
             );
 
             if (newBullet != null)
-            {
                 // 设置子弹伤害（使用原子弹的伤害）
                 newBullet.Damage = originalBullet.Damage;
-            }
         }
         catch
         {
@@ -175,23 +186,10 @@ public class BulletPatch
         }
     }
 
-    // 需要排除的子弹类型（这些子弹使用原始逻辑）
-    private static readonly HashSet<string> _excludedBulletNames =
-    [
-        "Bullet_star", "Bullet_cactusStar", "Bullet_superStar", "Bullet_ultimateStar",
-        "Bullet_lanternStar", "Bullet_seaStar", "Bullet_jackboxStar", "Bullet_pickaxeStar",
-        "Bullet_magnetStar", "Bullet_ironStar", "Bullet_threeSpike",
-        "Bullet_magicTrack", "Bullet_normalTrack", "Bullet_iceTrack", "Bullet_fireTrack",
-        "Bullet_doom", "Bullet_doom_throw", "Bullet_endoSun", "Bullet_extremeSnowPea",
-        "Bullet_iceSword", "Bullet_lourCactus", "Bullet_melonCannon",
-        "Bullet_shulkLeaf_ultimate", "Bullet_smallGoldCannon", "Bullet_smallSun",
-        "Bullet_springMelon", "Bullet_sunCabbage", "Bullet_ultimateSun"
-    ];
-
     private static bool ShouldExcludeBullet(Bullet bullet)
     {
         if (bullet == null) return true;
-        string className = bullet.GetType().Name;
+        var className = bullet.GetType().Name;
         if (_excludedBulletNames.Contains(className)) return true;
         // 激进排除：包含特定关键词的子弹
         return className.Contains("Star") || className.Contains("Spike") ||

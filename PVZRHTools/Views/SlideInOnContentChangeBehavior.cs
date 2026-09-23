@@ -6,7 +6,6 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Xaml.Interactivity;
 
-
 namespace PVZRHTools.Views;
 
 public class SlideInOnContentChangeBehavior : Behavior<ContentControl>
@@ -34,9 +33,7 @@ public class SlideInOnContentChangeBehavior : Behavior<ContentControl>
     {
         base.OnAttachedToVisualTree();
         if (AssociatedObject != null)
-        {
             AssociatedObject.GetObservable(ContentControl.ContentProperty).Subscribe(_ => OnContentChanged());
-        }
     }
 
     private void OnContentChanged()
@@ -72,9 +69,7 @@ public class SlideInOnContentChangeBehavior : Behavior<ContentControl>
         };
 
         if (AssociatedObject.RenderTransform is not TranslateTransform)
-        {
             AssociatedObject.RenderTransform = new TranslateTransform();
-        }
 
         animation.RunAsync(AssociatedObject);
     }

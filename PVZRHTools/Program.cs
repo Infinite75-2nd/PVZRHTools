@@ -22,13 +22,15 @@ namespace PVZRHTools;
 
 public static class Program
 {
+    public const string Mutex = "Infinite75.PVZRHTools";
+
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
     public static void Main(string[] args)
     {
-        using var mutex = new Mutex(true, Mutex, out bool createdNew);
+        using var mutex = new Mutex(true, Mutex, out var createdNew);
         if (createdNew)
         {
             App.Bootstrap = !(args.Length >= 2 && args[0] is Strings.RunModifierArgument);
@@ -58,9 +60,7 @@ public static class Program
             if (process.Id == currentProcess.Id || process.MainWindowHandle == IntPtr.Zero) continue;
             NativeMethods.SetForegroundWindow(process.MainWindowHandle);
             if (NativeMethods.IsIconic(process.MainWindowHandle))
-            {
                 NativeMethods.ShowWindow(process.MainWindowHandle, 1); // 恢复窗口
-            }
 
             break;
         }
@@ -68,7 +68,8 @@ public static class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
@@ -80,6 +81,5 @@ public static class Program
                         : new ModifierServicesModule()));
             })
             .RegisterReactiveUIViewsFromEntryAssembly();
-
-    public const string Mutex = "Infinite75.PVZRHTools";
+    }
 }

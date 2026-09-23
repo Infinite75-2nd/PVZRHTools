@@ -65,98 +65,16 @@ public class ModsManagementService : IModsManagementService
         }
     }
 
-    private void ProcessDllFile(string dllPath, string targetFileName, string pluginsFolder, string hengMingModsFolder)
-    {
-        AssemblyDefinition assembly;
-        try
-        {
-            assembly = AssemblyDefinition.ReadAssembly(dllPath);
-        }
-        catch
-        {
-            // 不是有效的 .NET 程序集，跳过
-            return;
-        }
-
-        using (assembly)
-        {
-            var hasBasePlugin = CheckTypeInheritance(assembly, BasePluginTypeName);
-            var hasLoadBase = CheckTypeInheritance(assembly, LoadBaseTypeName);
-
-            var fileName = targetFileName;
-
-            if (hasBasePlugin)
-            {
-                var destPath = Path.Combine(pluginsFolder, fileName);
-                File.Copy(dllPath, destPath, overwrite: true);
-            }
-            else if (hasLoadBase)
-            {
-                var destPath = Path.Combine(hengMingModsFolder, fileName);
-                File.Copy(dllPath, destPath, overwrite: true);
-            }
-        }
-    }
-
-    private void ProcessZipFile(string zipPath, string pluginsFolder, string hengMingModsFolder)
-    {
-        using var archive = ZipFile.OpenRead(zipPath);
-        foreach (var entry in archive.Entries)
-        {
-            if (!entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-                continue;
-
-            var tempPath = Path.GetTempFileName() + ".dll";
-            try
-            {
-                entry.ExtractToFile(tempPath, overwrite: true);
-                ProcessDllFile(tempPath, Path.GetFileName(entry.FullName), pluginsFolder, hengMingModsFolder);
-            }
-            finally
-            {
-                if (File.Exists(tempPath))
-                    File.Delete(tempPath);
-            }
-        }
-    }
-
-    private bool CheckTypeInheritance(AssemblyDefinition assembly, string targetTypeName)
-        => assembly.MainModule.Types.Any(type => IsTypeInheritedFrom(type, targetTypeName));
-
-    private bool IsTypeInheritedFrom(TypeDefinition type, string targetTypeName)
-    {
-        if (!type.IsClass || type.IsAbstract)
-            return false;
-
-        var baseType = type.BaseType;
-        while (baseType != null)
-        {
-            var fullName = baseType.FullName;
-            if (fullName == targetTypeName)
-                return true;
-
-            try
-            {
-                var resolved = baseType.Resolve();
-                baseType = resolved?.BaseType;
-            }
-            catch
-            {
-                break;
-            }
-        }
-
-        return false;
-    }
-
     public void ToggleMod(GameInstanceInfo info, ModInfo mod)
     {
         var oldPath = mod.ModFilePath;
         if (!File.Exists(oldPath)) return;
 
         var newPath = mod.IsEnabled
-            ? (oldPath.EndsWith(".disabled") ? oldPath[..^".disabled".Length] : oldPath)
-            : (oldPath.EndsWith(".dll") ? oldPath + ".disabled" : oldPath);
+            ? oldPath.EndsWith(".disabled") ? oldPath[..^".disabled".Length] : oldPath
+            : oldPath.EndsWith(".dll")
+                ? oldPath + ".disabled"
+                : oldPath;
 
         if (oldPath != newPath)
         {
@@ -197,6 +115,92 @@ public class ModsManagementService : IModsManagementService
         return info;
     }
 
+    private void ProcessDllFile(string dllPath, string targetFileName, string pluginsFolder, string hengMingModsFolder)
+    {
+        AssemblyDefinition assembly;
+        try
+        {
+            assembly = AssemblyDefinition.ReadAssembly(dllPath);
+        }
+        catch
+        {
+            // 不是有效的 .NET 程序集，跳过
+            return;
+        }
+
+        using (assembly)
+        {
+            var hasBasePlugin = CheckTypeInheritance(assembly, BasePluginTypeName);
+            var hasLoadBase = CheckTypeInheritance(assembly, LoadBaseTypeName);
+
+            var fileName = targetFileName;
+
+            if (hasBasePlugin)
+            {
+                var destPath = Path.Combine(pluginsFolder, fileName);
+                File.Copy(dllPath, destPath, true);
+            }
+            else if (hasLoadBase)
+            {
+                var destPath = Path.Combine(hengMingModsFolder, fileName);
+                File.Copy(dllPath, destPath, true);
+            }
+        }
+    }
+
+    private void ProcessZipFile(string zipPath, string pluginsFolder, string hengMingModsFolder)
+    {
+        using var archive = ZipFile.OpenRead(zipPath);
+        foreach (var entry in archive.Entries)
+        {
+            if (!entry.FullName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var tempPath = Path.GetTempFileName() + ".dll";
+            try
+            {
+                entry.ExtractToFile(tempPath, true);
+                ProcessDllFile(tempPath, Path.GetFileName(entry.FullName), pluginsFolder, hengMingModsFolder);
+            }
+            finally
+            {
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
+            }
+        }
+    }
+
+    private bool CheckTypeInheritance(AssemblyDefinition assembly, string targetTypeName)
+    {
+        return assembly.MainModule.Types.Any(type => IsTypeInheritedFrom(type, targetTypeName));
+    }
+
+    private bool IsTypeInheritedFrom(TypeDefinition type, string targetTypeName)
+    {
+        if (!type.IsClass || type.IsAbstract)
+            return false;
+
+        var baseType = type.BaseType;
+        while (baseType != null)
+        {
+            var fullName = baseType.FullName;
+            if (fullName == targetTypeName)
+                return true;
+
+            try
+            {
+                var resolved = baseType.Resolve();
+                baseType = resolved?.BaseType;
+            }
+            catch
+            {
+                break;
+            }
+        }
+
+        return false;
+    }
+
     private void ScanModFiles(string folderPath, ObservableCollection<ModInfo> modsList)
     {
         if (!Directory.Exists(folderPath))
@@ -205,24 +209,20 @@ public class ModsManagementService : IModsManagementService
         // 获取所有 .dll 文件
         var dllFiles = Directory.GetFiles(folderPath, "*.dll", SearchOption.TopDirectoryOnly);
         foreach (var filePath in dllFiles)
-        {
             modsList.Add(new ModInfo
             {
                 ModFilePath = filePath,
                 IsEnabled = true
             });
-        }
 
         // 获取所有 .disabled 文件
         var disabledFiles = Directory.GetFiles(folderPath, "*.disabled", SearchOption.TopDirectoryOnly);
         foreach (var filePath in disabledFiles)
-        {
             modsList.Add(new ModInfo
             {
                 ModFilePath = filePath,
                 IsEnabled = false
             });
-        }
     }
 }
 

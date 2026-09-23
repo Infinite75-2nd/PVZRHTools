@@ -6,7 +6,7 @@ using static ToolMod.Utils;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 巨人盲盒僵尸：覆盖 FirstArmorFall，在盔甲掉落时按 PvE 槽6 指定僵尸生成并让自身死亡
+///     巨人盲盒僵尸：覆盖 FirstArmorFall，在盔甲掉落时按 PvE 槽6 指定僵尸生成并让自身死亡
 /// </summary>
 [HarmonyPatch(typeof(RandomGargantuar))]
 public static class RandomGargantuarPatch
@@ -18,8 +18,8 @@ public static class RandomGargantuarPatch
         if (!InGame || Board.Instance == null || CreateZombie.Instance == null)
             return true;
 
-        int instId = __instance.GetInstanceID();
-        if (!PveBlindBoxSlotByInstance.TryGetValue(instId, out int slot) || slot != 6)
+        var instId = __instance.GetInstanceID();
+        if (!PveBlindBoxSlotByInstance.TryGetValue(instId, out var slot) || slot != 6)
             return true; // 只处理 PvE 布阵中的那一个巨人盲盒
 
         if (ZombieSlot6Index < 0)
@@ -32,7 +32,7 @@ public static class RandomGargantuarPatch
         if (axis == null) return true;
 
         var pos = axis.position;
-        int row = __instance.theZombieRow;
+        var row = __instance.theZombieRow;
 
         if (__instance.isMindControlled)
             CreateZombie.Instance.SetZombieWithMindControl(row, ZombieSlot6Index, pos.x);

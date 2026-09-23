@@ -4,7 +4,7 @@ using ToolMod.Components;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 究极加农炮无CD装填补丁 - UltimateCannon.AnimShoot
+///     究极加农炮无CD装填补丁 - UltimateCannon.AnimShoot
 /// </summary>
 [HarmonyPatch(typeof(UltimateCannon))]
 public static class UltimateCannonPatch

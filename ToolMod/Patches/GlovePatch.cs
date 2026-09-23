@@ -25,6 +25,7 @@ public static class GlovePatch
                 __instance.fullCD = GloveFullCD >= 0 ? GloveFullCD : OriginalGloveFullCD;
                 if (GloveNoCD) __instance.CD = __instance.fullCD;
             }
+
             var cdChild = __instance.transform.FindChild("ModifierGloveCD");
             if (cdChild == null) return;
             if (__instance.avaliable || !ShowGameInfo)

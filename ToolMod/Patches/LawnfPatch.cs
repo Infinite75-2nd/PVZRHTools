@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using static ToolMod.Components.PatchDataCache;
 
 namespace ToolMod.Patches;
 
@@ -12,5 +11,4 @@ public static class LawnfPatch
     {
         return true;
     }
-
 }

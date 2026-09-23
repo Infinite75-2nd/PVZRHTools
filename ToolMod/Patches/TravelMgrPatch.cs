@@ -9,13 +9,13 @@ using static ToolMod.Components.PatchDataCache;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 监听游戏词条状态变化，实时同步到修改器
+///     监听游戏词条状态变化，实时同步到修改器
 /// </summary>
 [HarmonyPatch(typeof(TravelMgr))]
 public static class TravelMgrPatch
 {
     /// <summary>
-    /// GetNormalBuff 后置补丁：解锁高级词条后实时同步到修改器
+    ///     GetNormalBuff 后置补丁：解锁高级词条后实时同步到修改器
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetNormalBuff))]
@@ -27,14 +27,14 @@ public static class TravelMgrPatch
             // 延迟一小段时间后同步，确保游戏状态已更新
             __instance.StartCoroutine(SyncBuffsDelayed());
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogWarning($"[PVZRHTools] PostGetNormalBuff 异常: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// GetUltiBuff 后置补丁：解锁究极词条后实时同步到修改器
+    ///     GetUltiBuff 后置补丁：解锁究极词条后实时同步到修改器
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetUltiBuff))]
@@ -46,14 +46,14 @@ public static class TravelMgrPatch
             // 延迟一小段时间后同步，确保游戏状态已更新
             __instance.StartCoroutine(SyncBuffsDelayed());
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogWarning($"[PVZRHTools] PostGetUltiBuff 异常: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// GetDebuff 后置补丁：解锁负面词条后实时同步到修改器
+    ///     GetDebuff 后置补丁：解锁负面词条后实时同步到修改器
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetDebuff))]
@@ -65,14 +65,14 @@ public static class TravelMgrPatch
             // 延迟一小段时间后同步，确保游戏状态已更新
             __instance.StartCoroutine(SyncBuffsDelayed());
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogWarning($"[PVZRHTools] PostGetDebuff 异常: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// GetInvestBuff 后置补丁：解锁投资词条后实时同步到修改器
+    ///     GetInvestBuff 后置补丁：解锁投资词条后实时同步到修改器
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.GetInvestBuff))]
@@ -83,16 +83,15 @@ public static class TravelMgrPatch
         {
             // 延迟一小段时间后同步，确保游戏状态已更新
             __instance.StartCoroutine(SyncBuffsDelayed());
-            
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogWarning($"[PVZRHTools] PostGetInvestBuff 异常: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// UnlockPlant 后置补丁：解锁植物后实时同步到修改器
+    ///     UnlockPlant 后置补丁：解锁植物后实时同步到修改器
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(nameof(TravelMgr.UnlockPlant))]
@@ -104,14 +103,14 @@ public static class TravelMgrPatch
             // 延迟一小段时间后同步，确保游戏状态已更新
             __instance.StartCoroutine(SyncBuffsDelayed());
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogWarning($"[PVZRHTools] PostUnlockPlant 异常: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// 延迟同步词条状态，确保游戏状态已更新
+    ///     延迟同步词条状态，确保游戏状态已更新
     /// </summary>
     private static IEnumerator SyncBuffsDelayed()
     {
@@ -120,9 +119,9 @@ public static class TravelMgrPatch
     }
 
     /// <summary>
-    /// TravelMgr 安全兜底补丁：
-    /// - 在 TravelMgr.GetNormalBuff 与 UpdateSynergies 发生早期空引用时，吞掉异常并记录告警，避免崩溃
-    /// - 原因：某些情况下（例如极早期恢复、MOD词条延迟注册），TravelMgr 内部数据结构未就绪
+    ///     TravelMgr 安全兜底补丁：
+    ///     - 在 TravelMgr.GetNormalBuff 与 UpdateSynergies 发生早期空引用时，吞掉异常并记录告警，避免崩溃
+    ///     - 原因：某些情况下（例如极早期恢复、MOD词条延迟注册），TravelMgr 内部数据结构未就绪
     /// </summary>
     [HarmonyFinalizer]
     [HarmonyPatch(nameof(TravelMgr.GetNormalBuff))]
@@ -144,7 +143,7 @@ public static class TravelMgrPatch
 
         return null;
     }
-    
+
     [HarmonyFinalizer]
     [HarmonyPatch(nameof(TravelMgr.GetUltiBuff))]
     public static Exception Finalizer_GetGetUltiBuff(Exception __exception)
@@ -164,7 +163,9 @@ public static class TravelMgrPatch
         }
 
         return null;
-    }    [HarmonyFinalizer]
+    }
+
+    [HarmonyFinalizer]
     [HarmonyPatch(nameof(TravelMgr.GetDebuff))]
     public static Exception Finalizer_GetDebuff(Exception __exception)
     {
@@ -183,7 +184,9 @@ public static class TravelMgrPatch
         }
 
         return null;
-    }    [HarmonyFinalizer]
+    }
+
+    [HarmonyFinalizer]
     [HarmonyPatch(nameof(TravelMgr.GetInvestBuff))]
     public static Exception Finalizer_GetInvestBuff(Exception __exception)
     {
@@ -202,7 +205,9 @@ public static class TravelMgrPatch
         }
 
         return null;
-    }    [HarmonyFinalizer]
+    }
+
+    [HarmonyFinalizer]
     [HarmonyPatch(nameof(TravelMgr.UnlockPlant))]
     public static Exception Finalizer_UnlockPlant(Exception __exception)
     {

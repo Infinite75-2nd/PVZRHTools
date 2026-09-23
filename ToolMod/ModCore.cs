@@ -12,13 +12,13 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using TMPro;
-using ToolMod.Components;
 using ToolData;
+using ToolMod.Components;
 using UnityEngine;
 using Paths = ToolData.Paths;
 using static ToolMod.Utils;
 using static ToolMod.Components.PatchDataCache;
+using Object = UnityEngine.Object;
 
 [assembly: AssemblyFileVersion(Strings.ModifierVersion)]
 [assembly: AssemblyCompany("PVZRHTools")]
@@ -27,333 +27,333 @@ using static ToolMod.Components.PatchDataCache;
 [assembly: AssemblyTitle("PVZRHTools")]
 [assembly: AssemblyVersion(Strings.ModifierVersion)]
 
-namespace ToolMod
+namespace ToolMod;
+
+[BepInPlugin("infinite75.toolmod", "PVZRHTools", Strings.ModifierVersion)]
+public class ModCore : BasePlugin
 {
-    [BepInPlugin("infinite75.toolmod", "PVZRHTools", Strings.ModifierVersion)]
-    public class ModCore : BasePlugin
+    public static ModCore Instance;
+
+    private DataSync DataSync { get; set; }
+    public GameObject ModifierObject { get; set; }
+    public GameObject CacheObject { get; set; }
+    public BootConfig BootConfig { get; set; }
+    public string ModifierPath { get; set; }
+    public bool Inited { get; private set; }
+    public InitData InitData { get; private set; }
+
+    public override void Load()
     {
-        public override void Load()
+        Console.OutputEncoding = Encoding.UTF8;
+        var bootConfigString = File.ReadAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.BootConfigPath));
+        BootConfig = JsonSerializer.Deserialize<BootConfig>(bootConfigString);
+        if (!BootConfig.ModifierEnabled) return;
+        if (File.Exists(Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName)))
+            ModifierPath = Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName);
+        else if (File.Exists(BootConfig.ModifierPath)) ModifierPath = BootConfig.ModifierPath;
+
+        if (string.IsNullOrEmpty(ModifierPath))
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            var bootConfigString = File.ReadAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.BootConfigPath));
-            BootConfig = JsonSerializer.Deserialize<BootConfig>(bootConfigString);
-            if (!BootConfig.ModifierEnabled) return;
-            if (File.Exists(Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName)))
-            {
-                ModifierPath = Path.Combine(BepInEx.Paths.GameRootPath, Paths.ModifierExeName);
-            }
-            else if (File.Exists(BootConfig.ModifierPath))
-            {
-                ModifierPath = BootConfig.ModifierPath;
-            }
-
-            if (string.IsNullOrEmpty(ModifierPath))
-            {
-                Log.LogFatal("PVZRHTools.exe不存在，修改器已禁用");
-                return;
-            }
-
-            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
-            ClassInjector.RegisterTypeInIl2Cpp<DataProcessor>();
-            ClassInjector.RegisterTypeInIl2Cpp<ToolsUpdater>();
-            ClassInjector.RegisterTypeInIl2Cpp<PlantStatisticsModifier>();
-            ClassInjector.RegisterTypeInIl2Cpp<KeyBindingButton>();
-            ClassInjector.RegisterTypeInIl2Cpp<KeyBindingUI>();
-            ClassInjector.RegisterTypeInIl2Cpp<GameKeyBindingUI>();
-            Instance = this;
-            AppDomain.CurrentDomain.ProcessExit += (sender, e) => Unload();
+            Log.LogFatal("PVZRHTools.exe不存在，修改器已禁用");
+            return;
         }
 
-        public void LateInit()
+        Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
+        ClassInjector.RegisterTypeInIl2Cpp<DataProcessor>();
+        ClassInjector.RegisterTypeInIl2Cpp<ToolsUpdater>();
+        ClassInjector.RegisterTypeInIl2Cpp<PlantStatisticsModifier>();
+        ClassInjector.RegisterTypeInIl2Cpp<KeyBindingButton>();
+        ClassInjector.RegisterTypeInIl2Cpp<KeyBindingUI>();
+        ClassInjector.RegisterTypeInIl2Cpp<GameKeyBindingUI>();
+        Instance = this;
+        AppDomain.CurrentDomain.ProcessExit += (sender, e) => Unload();
+    }
+
+    public void LateInit()
+    {
+        if (Inited) return;
+        GameAPP.theGameStatus = GameStatus.OutGame;
+        ModifierObject = new GameObject("PVZRHTools");
+        ModifierObject.AddComponent<DataProcessor>();
+        ModifierObject.AddComponent<ToolsUpdater>();
+        CacheObject = new GameObject("CacheObject");
+        CacheObject.SetActive(false);
+        CacheObject.transform.SetParent(ModifierObject.transform);
+        Object.DontDestroyOnLoad(ModifierObject);
+        GenerateInitData();
+
+        // 加载并应用保存的设置
+        SettingsLoader.LoadAndApplySettings();
+        HotKeysLoader.Load();
+        GameKeysLoader.Load();
+
+        DataSync = new DataSync(Strings.PipeName);
+        DataSync.Connected += (sender, e) => { Log.LogMessage("修改器已连接"); };
+        DataSync.MessageReceived += MessageReceived;
+        DataSync.Disconnected += (sender, e) =>
         {
-            if (Inited) return;
-            GameAPP.theGameStatus = GameStatus.OutGame;
-            ModifierObject = new("PVZRHTools");
-            ModifierObject.AddComponent<DataProcessor>();
-            ModifierObject.AddComponent<ToolsUpdater>();
-            CacheObject = new GameObject("CacheObject");
-            CacheObject.SetActive(false);
-            CacheObject.transform.SetParent(ModifierObject.transform);
-            UnityEngine.Object.DontDestroyOnLoad(ModifierObject);
-            GenerateInitData();
+            Log.LogMessage("修改器已断开");
+            Environment.Exit(0);
+        };
+        DataSync.Start();
 
-            // 加载并应用保存的设置
-            SettingsLoader.LoadAndApplySettings();
-            HotKeysLoader.Load();
-            GameKeysLoader.Load();
-
-            DataSync = new DataSync(Strings.PipeName);
-            DataSync.Connected += (sender, e) => { Log.LogMessage("修改器已连接"); };
-            DataSync.MessageReceived += MessageReceived;
-            DataSync.Disconnected += (sender, e) =>
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = ModifierPath,
+            ArgumentList =
             {
-                Log.LogMessage("修改器已断开");
-                Environment.Exit(0);
-            };
-            DataSync.Start();
+                Strings.RunModifierArgument,
+                BepInEx.Paths.GameRootPath,
+                Environment.ProcessId.ToString()
+            },
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+        var process = Process.Start(startInfo);
+        Inited = true;
+        MakeKeyBindingUI();
+        MakeGameKeyBindingUI();
+    }
 
-            var startInfo = new ProcessStartInfo()
-            {
-                FileName = ModifierPath,
-                ArgumentList =
-                {
-                    Strings.RunModifierArgument,
-                    BepInEx.Paths.GameRootPath,
-                    Environment.ProcessId.ToString()
-                },
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-            };
-            var process = Process.Start(startInfo);
-            Inited = true;
-            MakeKeyBindingUI();
-            MakeGameKeyBindingUI();
+    private void MakeKeyBindingUI()
+    {
+        var keyBindingUI = Object.Instantiate(GameAPP.UIManager.UIPrefabs[UIType.UIConfigMenu], CacheObject.transform);
+        keyBindingUI.name = "KeyBindingUI";
+        keyBindingUI.AddComponent<KeyBindingUI>();
+        GameAPP.UIManager.UIPrefabs.Add((UIType)999, keyBindingUI);
+    }
 
-        }
+    private void MakeGameKeyBindingUI()
+    {
+        var gameKeyBindingUI =
+            Object.Instantiate(GameAPP.UIManager.UIPrefabs[UIType.UIConfigMenu], CacheObject.transform);
+        gameKeyBindingUI.name = "GameKeyBindingUI";
+        gameKeyBindingUI.AddComponent<GameKeyBindingUI>();
+        GameAPP.UIManager.UIPrefabs.Add((UIType)998, gameKeyBindingUI);
+    }
 
-        private void MakeKeyBindingUI()
-        {
-            var keyBindingUI =UnityEngine.Object.Instantiate(GameAPP.UIManager.UIPrefabs[UIType.UIConfigMenu], CacheObject.transform);
-            keyBindingUI.name = "KeyBindingUI";
-            keyBindingUI.AddComponent<KeyBindingUI>();
-            GameAPP.UIManager.UIPrefabs.Add((UIType)999, keyBindingUI);
-        }
-
-        private void MakeGameKeyBindingUI()
-        {
-            var gameKeyBindingUI = UnityEngine.Object.Instantiate(GameAPP.UIManager.UIPrefabs[UIType.UIConfigMenu], CacheObject.transform);
-            gameKeyBindingUI.name = "GameKeyBindingUI";
-            gameKeyBindingUI.AddComponent<GameKeyBindingUI>();
-            GameAPP.UIManager.UIPrefabs.Add((UIType)998, gameKeyBindingUI);
-        }
-
-        private static void MessageReceived(object? sender, string message)
-        {
+    private static void MessageReceived(object? sender, string message)
+    {
 #if DEBUG
             //Instance.Log.LogMessage($"Received Command from Modifier UI: \n{message}");
 #endif
-            var data = JsonSerializer.Deserialize<SyncData>(message);
-            if (DataProcessor.Instance is null) return;
-            lock (DataProcessor.Instance.Buffer)
-            {
-                DataProcessor.Instance.Buffer.Enqueue(data);
-            }
+        var data = JsonSerializer.Deserialize<SyncData>(message);
+        if (DataProcessor.Instance is null) return;
+        lock (DataProcessor.Instance.Buffer)
+        {
+            DataProcessor.Instance.Buffer.Enqueue(data);
+        }
+    }
+
+    public override bool Unload()
+    {
+        if (GameAPP.config != null && GameAPP.config.gameSpeed == 0) GameAPP.config.gameSpeed = 1;
+        SendCommand(new SyncData
+        {
+            Command = Strings.Exit,
+            Parameters = []
+        });
+        Thread.Sleep(100);
+        try
+        {
+            DataSync.Stop();
+            DataSync.Dispose();
+        }
+        catch
+        {
         }
 
-        public override bool Unload()
+        return true;
+    }
+
+    public void GenerateInitData()
+    {
+        try
         {
-            if (GameAPP.config != null && GameAPP.config.gameSpeed == 0) GameAPP.config.gameSpeed = 1;
-            SendCommand(new()
+            SortedDictionary<int, string> plants = [];
+            SortedDictionary<int, string> zombies = [];
+            SortedDictionary<int, string> advBuffs = [];
+            SortedDictionary<int, string> ultiBuffs = [];
+            SortedDictionary<int, string> debuffs = [];
+            SortedDictionary<int, string> investBuffs = [];
+            SortedDictionary<int, string> unlockablePlants = [];
+            SortedDictionary<int, string> bullets = [];
+            SortedDictionary<int, string> firsts = [];
+            SortedDictionary<int, string> seconds = [];
+            foreach (var pt in GameAPP.resourcesManager.allPlants)
             {
-                Command = Strings.Exit,
-                Parameters = []
-            });
-            Thread.Sleep(100);
-            try
-            {
-                DataSync.Stop();
-                DataSync.Dispose();
+                var displayName = "";
+                try
+                {
+                    var plantInfo = AlmanacDataLoader.GetPlantData(pt);
+                    if (plantInfo != null && !string.IsNullOrWhiteSpace(plantInfo.name))
+                        displayName = plantInfo.name.Trim();
+                }
+                catch
+                {
+                }
+
+                var item = !string.IsNullOrWhiteSpace(displayName)
+                    ? $"{displayName} ({(int)pt})"
+                    : $"{pt} ({(int)pt})";
+                plants[(int)pt] = item;
             }
-            catch { }
-            return true;
-        }
 
-        public void GenerateInitData()
-        {
+            foreach (var zt in GameAPP.resourcesManager.allZombieTypes)
+            {
+                var displayName = "";
+                try
+                {
+                    var zombieInfo = AlmanacDataLoader.GetZombieData(zt);
+                    if (zombieInfo != null && !string.IsNullOrWhiteSpace(zombieInfo.name))
+                        displayName = zombieInfo.name.Trim();
+                }
+                catch
+                {
+                }
+
+                var item = !string.IsNullOrWhiteSpace(displayName)
+                    ? $"{displayName} ({(int)zt})"
+                    : $"{zt} ({(int)zt})";
+                zombies[(int)zt] = item;
+                ZombieHP.Add(zt, -1);
+            }
+
             try
             {
-                SortedDictionary<int, string> plants = [];
-                SortedDictionary<int, string> zombies = [];
-                SortedDictionary<int, string> advBuffs = [];
-                SortedDictionary<int, string> ultiBuffs = [];
-                SortedDictionary<int, string> debuffs = [];
-                SortedDictionary<int, string> investBuffs = [];
-                SortedDictionary<int, string> unlockablePlants = [];
-                SortedDictionary<int, string> bullets = [];
-                SortedDictionary<int, string> firsts = [];
-                SortedDictionary<int, string> seconds = [];
-                foreach (var pt in GameAPP.resourcesManager.allPlants)
+                // Advanced
+                if (TravelDictionary.advancedBuffsText != null && TravelDictionary.advancedBuffsText.Count > 0)
+                    foreach (var advBuffKey in TravelDictionary.advancedBuffsText)
+                    {
+                        if (advBuffKey is null) continue;
+                        var id = (int)advBuffKey.Key;
+                        advBuffs.Add(id, $"#{id} {advBuffKey.value}");
+                        AdvBuffs.Add((AdvBuff)id, 0);
+                        InGameAdvBuffs.Add((AdvBuff)id, 0);
+                    }
+
+                // Ultimate
+                if (TravelDictionary.ultimateBuffsText != null && TravelDictionary.ultimateBuffsText.Count > 0)
+                    foreach (var ultiBuffKey in TravelDictionary.ultimateBuffsText)
+                    {
+                        if (ultiBuffKey is null) continue;
+                        var id = (int)ultiBuffKey.Key;
+                        ultiBuffs.Add(id, $"#{id} {ultiBuffKey.value}");
+                        UltiBuffs.Add((UltiBuff)id, 0);
+                        InGameUltiBuffs.Add((UltiBuff)id, 0);
+                    }
+
+                // Debuff
+                if (TravelDictionary.debuffData != null && TravelDictionary.debuffData.Count > 0)
                 {
-                    string displayName = "";
-                    try
+                    var maxDebuffKey = -1;
+                    foreach (var kvp in TravelDictionary.debuffData)
                     {
-                        var plantInfo = AlmanacDataLoader.GetPlantData(pt);
-                        if (plantInfo != null && !string.IsNullOrWhiteSpace(plantInfo.name))
-                            displayName = plantInfo.name.Trim();
-                    }
-                    catch
-                    {
+                        var key = (int)kvp.Key;
+                        if (key > maxDebuffKey) maxDebuffKey = key;
                     }
 
-                    var item = !string.IsNullOrWhiteSpace(displayName)
-                        ? $"{displayName} ({(int)pt})"
-                        : $"{pt} ({(int)pt})";
-                    plants[(int)pt] = item;
-                }
-
-                foreach (var zt in GameAPP.resourcesManager.allZombieTypes)
-                {
-                    string displayName = "";
-                    try
+                    for (var id = 0; id <= maxDebuffKey; id++)
                     {
-                        var zombieInfo = AlmanacDataLoader.GetZombieData(zt);
-                        if (zombieInfo != null && !string.IsNullOrWhiteSpace(zombieInfo.name))
-                            displayName = zombieInfo.name.Trim();
-                    }
-                    catch
-                    {
-                    }
-
-                    var item = !string.IsNullOrWhiteSpace(displayName)
-                        ? $"{displayName} ({(int)zt})"
-                        : $"{zt} ({(int)zt})";
-                    zombies[(int)zt] = item;
-                    ZombieHP.Add(zt, -1);
-                }
-
-                try
-                {
-                    // Advanced
-                    if (TravelDictionary.advancedBuffsText != null && TravelDictionary.advancedBuffsText.Count > 0)
-                    {
-                        foreach (var advBuffKey in TravelDictionary.advancedBuffsText)
+                        if (!TravelDictionary.debuffData!.ContainsKey((TravelDebuff)id)) continue;
+                        var text = "";
+                        try
                         {
-                            if (advBuffKey is null) continue;
-                            var id = (int)advBuffKey.Key;
-                            advBuffs.Add(id, $"#{id} {advBuffKey.value}");
-                            AdvBuffs.Add((AdvBuff)id, 0);
-                            InGameAdvBuffs.Add((AdvBuff)id, 0);
+                            if (TravelDictionary.debuffData != null &&
+                                TravelDictionary.debuffData.ContainsKey((TravelDebuff)id))
+                                text = TravelDictionary.debuffData[(TravelDebuff)id].Item1;
                         }
-                    }
-
-                    // Ultimate
-                    if (TravelDictionary.ultimateBuffsText != null && TravelDictionary.ultimateBuffsText.Count > 0)
-                    {
-                        foreach (var ultiBuffKey in TravelDictionary.ultimateBuffsText)
+                        catch
                         {
-                            if (ultiBuffKey is null) continue;
-                            var id = (int)ultiBuffKey.Key;
-                            ultiBuffs.Add(id, $"#{id} {ultiBuffKey.value}");
-                            UltiBuffs.Add((UltiBuff)id, 0);
-                            InGameUltiBuffs.Add((UltiBuff)id, 0);
-                        }
-                    }
-
-                    // Debuff
-                    if (TravelDictionary.debuffData != null && TravelDictionary.debuffData.Count > 0)
-                    {
-                        int maxDebuffKey = -1;
-                        foreach (var kvp in TravelDictionary.debuffData)
-                        {
-                            int key = (int)kvp.Key;
-                            if (key > maxDebuffKey) maxDebuffKey = key;
                         }
 
-                        for (int id = 0; id <= maxDebuffKey; id++)
-                        {
-                            if (!TravelDictionary.debuffData!.ContainsKey((TravelDebuff)id)) continue;
-                            string text = "";
-                            try
-                            {
-                                if (TravelDictionary.debuffData != null &&
-                                    TravelDictionary.debuffData.ContainsKey((TravelDebuff)id))
-                                {
-                                    text = TravelDictionary.debuffData[(TravelDebuff)id].Item1;
-                                }
-                            }
-                            catch
-                            {
-                            }
-
-                            debuffs.Add(id,
-                                $"#{id} {(string.IsNullOrEmpty(text) ? ((TravelDebuff)id).ToString() : text)}");
-                            Debuffs.Add((TravelDebuff)id, false);
-                            InGameDebuffs.Add((TravelDebuff)id, false);
-                        }
+                        debuffs.Add(id,
+                            $"#{id} {(string.IsNullOrEmpty(text) ? ((TravelDebuff)id).ToString() : text)}");
+                        Debuffs.Add((TravelDebuff)id, false);
+                        InGameDebuffs.Add((TravelDebuff)id, false);
                     }
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning(ex);
+            }
+
+
+            // Invest：优先通过 TravelMgr.GetText 读取真实文本，不直接访问 TravelMgr.InvestBuffsData
+            try
+            {
+                var values = Enum.GetValues(typeof(InvestBuff));
+                var maxInvestId = -1;
+
+                foreach (var val in values)
                 {
-                    Log.LogWarning(ex);
+                    var id = (int)val;
+                    if (id > maxInvestId) maxInvestId = id;
+                    var text = TryGetTravelTextViaReflection((InvestBuff)id);
+                    if (string.IsNullOrWhiteSpace(text) ||
+                        text.StartsWith("EnumValue", StringComparison.OrdinalIgnoreCase))
+                        text = GetInvestBuffChineseName(id);
+                    if (string.IsNullOrWhiteSpace(text))
+                        text = ((InvestBuff)id).ToString();
+                    investBuffs.Add(id, $"#{id} {text}");
+                    InvestBuffs.Add((InvestBuff)id, false);
+                    InGameInvestBuffs.Add((InvestBuff)id, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex);
+            }
+
+            // Unlockable Plants (强究解锁)
+            if (TravelDictionary.unlocksText != null && TravelDictionary.unlocksText.Count > 0)
+                foreach (var unlockEntry in TravelDictionary.unlocksText)
+                {
+                    if (unlockEntry is null) continue;
+                    var id = (int)unlockEntry.Key;
+                    unlockablePlants.Add(id, $"#{id} {unlockEntry.value}");
+                    UnlockedPlants[(TravelUnlocks)id] = false;
+                    InGameUnlockedPlants[(TravelUnlocks)id] = false;
                 }
 
-
-                // Invest：优先通过 TravelMgr.GetText 读取真实文本，不直接访问 TravelMgr.InvestBuffsData
-                try
+            foreach (var t in GameAPP.resourcesManager.allBullets)
+                if (GameAPP.resourcesManager.bulletPrefabs[t] != null)
                 {
-                    var values = Enum.GetValues(typeof(InvestBuff));
-                    int maxInvestId = -1;
-
-                    foreach (var val in values)
-                    {
-                        int id = (int)val;
-                        if (id > maxInvestId) maxInvestId = id;
-                        string? text = TryGetTravelTextViaReflection((InvestBuff)id);
-                        if (string.IsNullOrWhiteSpace(text) ||
-                            text.StartsWith("EnumValue", StringComparison.OrdinalIgnoreCase))
-                            text = GetInvestBuffChineseName(id);
-                        if (string.IsNullOrWhiteSpace(text))
-                            text = ((InvestBuff)id).ToString();
-                        investBuffs.Add(id, $"#{id} {text}");
-                        InvestBuffs.Add((InvestBuff)id, false);
-                        InGameInvestBuffs.Add((InvestBuff)id, false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.LogError(ex);
+                    var text =
+                        $"{GameAPP.resourcesManager.bulletPrefabs[t].name} ({(int)t})";
+                    bullets.Add((int)t, text);
+                    BulletDamage.Add(t, -1);
                 }
 
-                // Unlockable Plants (强究解锁)
-                if (TravelDictionary.unlocksText != null && TravelDictionary.unlocksText.Count > 0)
-                {
-                    foreach (var unlockEntry in TravelDictionary.unlocksText)
-                    {
-                        if (unlockEntry is null) continue;
-                        var id = (int)unlockEntry.Key;
-                        unlockablePlants.Add(id, $"#{id} {unlockEntry.value}");
-                        UnlockedPlants[(TravelUnlocks)id] = false;
-                        InGameUnlockedPlants[(TravelUnlocks)id] = false;
-                    }
-                }
+            foreach (var first in Enum.GetValues(typeof(Zombie.FirstArmorType)))
+            {
+                firsts.Add((int)first, $"{first}");
+                FirstArmorHP.Add((Zombie.FirstArmorType)first, -1);
+            }
 
-                foreach (var t in GameAPP.resourcesManager.allBullets)
-                    if (GameAPP.resourcesManager.bulletPrefabs[t] != null)
-                    {
-                        var text =
-                            $"{GameAPP.resourcesManager.bulletPrefabs[t].name} ({(int)t})";
-                        bullets.Add((int)t, text);
-                        BulletDamage.Add(t, -1);
-                    }
+            foreach (var second in Enum.GetValues(typeof(Zombie.SecondArmorType)))
+            {
+                seconds.Add((int)second, $"{second}");
+                SecondArmorHP.Add((Zombie.SecondArmorType)second, -1);
+            }
 
-                foreach (var first in Enum.GetValues(typeof(Zombie.FirstArmorType)))
-                {
-                    firsts.Add((int)first, $"{first}");
-                    FirstArmorHP.Add((Zombie.FirstArmorType)first, -1);
-                }
-
-                foreach (var second in Enum.GetValues(typeof(Zombie.SecondArmorType)))
-                {
-                    seconds.Add((int)second, $"{second}");
-                    SecondArmorHP.Add((Zombie.SecondArmorType)second, -1);
-                }
-
-                InitData = new()
-                {
-                    Plants = new(plants),
-                    Zombies = new(zombies),
-                    AdvBuffs = new(advBuffs),
-                    UltiBuffs = new(ultiBuffs),
-                    Bullets = new(bullets),
-                    FirstArmors = new(firsts),
-                    SecondArmors = new(seconds),
-                    Debuffs = new(debuffs),
-                    InvestBuffs = new(investBuffs),
-                    UnlockablePlants = new(unlockablePlants)
-                };
-                File.WriteAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath),
-                    JsonSerializer.Serialize(InitData));
+            InitData = new InitData
+            {
+                Plants = new Dictionary<int, string>(plants),
+                Zombies = new Dictionary<int, string>(zombies),
+                AdvBuffs = new Dictionary<int, string>(advBuffs),
+                UltiBuffs = new Dictionary<int, string>(ultiBuffs),
+                Bullets = new Dictionary<int, string>(bullets),
+                FirstArmors = new Dictionary<int, string>(firsts),
+                SecondArmors = new Dictionary<int, string>(seconds),
+                Debuffs = new Dictionary<int, string>(debuffs),
+                InvestBuffs = new Dictionary<int, string>(investBuffs),
+                UnlockablePlants = new Dictionary<int, string>(unlockablePlants)
+            };
+            File.WriteAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath),
+                JsonSerializer.Serialize(InitData));
 #if DEBUG
                 /*Task.Run(() =>
                 {
@@ -373,23 +373,14 @@ namespace ToolMod
                         Log.LogInfo($"Dumping Bullet String: {line.Value}");
                 });*/
 #endif
-            }
-            catch
-            {
-            }
         }
+        catch
+        {
+        }
+    }
 
-        public void SendCommand(SyncData data) =>
-            Task.Run(async () => await DataSync.SendAsync(JsonSerializer.Serialize(data)));
-
-        public static ModCore Instance;
-
-        private DataSync DataSync { get; set; }
-        public GameObject ModifierObject { get; set; }
-        public GameObject CacheObject{ get; set; }
-        public BootConfig BootConfig { get; set; }
-        public string ModifierPath { get; set; }
-        public bool Inited { get; private set; } = false;
-        public InitData InitData { get; private set; }
+    public void SendCommand(SyncData data)
+    {
+        Task.Run(async () => await DataSync.SendAsync(JsonSerializer.Serialize(data)));
     }
 }

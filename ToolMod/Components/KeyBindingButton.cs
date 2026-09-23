@@ -1,6 +1,5 @@
 using System;
 using System.Linq.Expressions;
-using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Attributes;
 using Il2CppInterop.Runtime.Injection;
 using TMPro;
@@ -10,27 +9,25 @@ using UnityEngine.Events;
 namespace ToolMod.Components;
 
 /// <summary>
-/// 按键绑定控件 MonoBehaviour。
-/// 挂载在游戏内 TheButton 预制体的同一 GameObject 上，实现点击后检测按键并绑定。
-///
-/// 使用方式：
-///   btn.Bind(() => PatchDataCache.KeySpeedStop);
-///
-/// Bind 方法通过表达式树创建读写委托，与 Utils.SimpleSyncKeyCode 同理。
+///     按键绑定控件 MonoBehaviour。
+///     挂载在游戏内 TheButton 预制体的同一 GameObject 上，实现点击后检测按键并绑定。
+///     使用方式：
+///     btn.Bind(() => PatchDataCache.KeySpeedStop);
+///     Bind 方法通过表达式树创建读写委托，与 Utils.SimpleSyncKeyCode 同理。
 /// </summary>
 public class KeyBindingButton : MonoBehaviour
 {
-    private TextMeshProUGUI _label;
-    private bool _isListening;
     private KeyCode[] _allKeys;
     private Func<KeyCode> _boundGetter;
+    private bool _isListening;
+    private TextMeshProUGUI _label;
 
     #region 静态属性
 
     /// <summary>
-    /// 当前正处于按键检测状态的 KeyBindingButton 实例。
-    /// 同一时刻最多只有一个按钮在检测，可用于外部查询或 UI 状态指示。
-    /// 为 null 表示没有任何按钮处于检测状态。
+    ///     当前正处于按键检测状态的 KeyBindingButton 实例。
+    ///     同一时刻最多只有一个按钮在检测，可用于外部查询或 UI 状态指示。
+    ///     为 null 表示没有任何按钮处于检测状态。
     /// </summary>
     public static KeyBindingButton CurrentlyListening { get; private set; }
 
@@ -42,15 +39,15 @@ public class KeyBindingButton : MonoBehaviour
     public KeyCode BoundKey { get; set; } = KeyCode.None;
 
     /// <summary>
-    /// 按键绑定变化时的回调。
+    ///     按键绑定变化时的回调。
     /// </summary>
     [HideFromIl2Cpp]
     public Action<KeyCode> OnKeyBindingChanged { get; set; }
 
     /// <summary>
-    /// 按键绑定变化后的保存动作。
-    /// 修改器按键默认保存到 HotKeys.json；
-    /// 游戏原版按键菜单可替换为 <see cref="GameKeysLoader.Save"/>。
+    ///     按键绑定变化后的保存动作。
+    ///     修改器按键默认保存到 HotKeys.json；
+    ///     游戏原版按键菜单可替换为 <see cref="GameKeysLoader.Save" />。
     /// </summary>
     [HideFromIl2Cpp]
     public Action SaveAction { get; set; } = HotKeysLoader.Save;
@@ -59,7 +56,7 @@ public class KeyBindingButton : MonoBehaviour
     public bool AllowCancelWithEscape { get; set; } = true;
 
     /// <summary>是否将鼠标按键也视为合法绑定（默认 false，仅绑定键盘按键）</summary>
-    public bool IncludeMouseButtons { get; set; } = false;
+    public bool IncludeMouseButtons { get; set; }
 
     #endregion
 
@@ -137,23 +134,21 @@ public class KeyBindingButton : MonoBehaviour
     #region 表达式树绑定
 
     /// <summary>
-    /// 绑定到 PatchDataCache 中的 KeyCode 静态属性。
-    /// 通过表达式树同时创建 getter（读初始值）和 setter（写回调）。
-    ///
-    /// ---- 预期初始化流程（从 MakeKeyBindingUI 调用） ----
-    /// (1) new GameObject / Instantiate → Awake() → 显示 "None"
-    /// (2) 外部调用 btn.Bind(() => KeySpeedStop)
-    /// (3) expression.Compile() → getter 指向 PatchDataCache.KeySpeedStop 的 get 方法
-    /// (4) BoundKey = getter() → BoundKey = PatchDataCache.KeySpeedStop（★ 此处应读取到当前值）
-    /// (5) UpdateLabel() → 显示应变为 KeySpeedStop 的值（如 "Alpha6"）
-    /// (6) CreateSetter → setter 指向 PatchDataCache.KeySpeedStop 的 set 方法
-    /// (7) OnKeyBindingChanged = key => setter(key)
-    /// ---- 预期完成 ----
-    ///
-    /// 如果 (4) 之后 BoundKey 仍为 KeyCode.None，说明：
-    ///   - getter() 读取到的 PatchDataCache.KeySpeedStop 值不是预期值，或
-    ///   - Bind() 未被调用（组件实例是克隆出来的新实例），或
-    ///   - BoundKey = getter() 执行后又被其他地方覆盖了
+    ///     绑定到 PatchDataCache 中的 KeyCode 静态属性。
+    ///     通过表达式树同时创建 getter（读初始值）和 setter（写回调）。
+    ///     ---- 预期初始化流程（从 MakeKeyBindingUI 调用） ----
+    ///     (1) new GameObject / Instantiate → Awake() → 显示 "None"
+    ///     (2) 外部调用 btn.Bind(() => KeySpeedStop)
+    ///     (3) expression.Compile() → getter 指向 PatchDataCache.KeySpeedStop 的 get 方法
+    ///     (4) BoundKey = getter() → BoundKey = PatchDataCache.KeySpeedStop（★ 此处应读取到当前值）
+    ///     (5) UpdateLabel() → 显示应变为 KeySpeedStop 的值（如 "Alpha6"）
+    ///     (6) CreateSetter → setter 指向 PatchDataCache.KeySpeedStop 的 set 方法
+    ///     (7) OnKeyBindingChanged = key => setter(key)
+    ///     ---- 预期完成 ----
+    ///     如果 (4) 之后 BoundKey 仍为 KeyCode.None，说明：
+    ///     - getter() 读取到的 PatchDataCache.KeySpeedStop 值不是预期值，或
+    ///     - Bind() 未被调用（组件实例是克隆出来的新实例），或
+    ///     - BoundKey = getter() 执行后又被其他地方覆盖了
     /// </summary>
     /// <param name="propertyExpression">指向 KeyCode 属性的表达式，如 () => KeySpeedStop</param>
     public void Bind(Expression<Func<KeyCode>> propertyExpression)

@@ -8,7 +8,7 @@ using static ToolMod.Utils;
 namespace ToolMod.Patches;
 
 /// <summary>
-/// 黄金盲盒僵尸：覆盖 FirstArmorFall，在开盒时按 PvE 槽2~5 指定僵尸生成并让自身死亡
+///     黄金盲盒僵尸：覆盖 FirstArmorFall，在开盒时按 PvE 槽2~5 指定僵尸生成并让自身死亡
 /// </summary>
 [HarmonyPatch(typeof(RandomZombie))]
 public static class RandomZombiePatch
@@ -23,15 +23,15 @@ public static class RandomZombiePatch
         if (__instance == null)
             return true;
 
-        int instId = __instance.GetInstanceID();
-        if (!PveBlindBoxSlotByInstance.TryGetValue(instId, out int slot))
+        var instId = __instance.GetInstanceID();
+        if (!PveBlindBoxSlotByInstance.TryGetValue(instId, out var slot))
             return true;
 
         // 只处理 PvE 布阵中记录的 4 个黄金盲盒 (槽2~5)
         if (slot < 2 || slot > 5)
             return true;
 
-        ZombieType targetId = slot switch
+        var targetId = slot switch
         {
             2 => ZombieSlot2Index,
             3 => ZombieSlot3Index,
@@ -52,7 +52,7 @@ public static class RandomZombiePatch
             return true;
 
         var pos = axis.position;
-        int row = __instance.theZombieRow;
+        var row = __instance.theZombieRow;
 
         if (__instance.isMindControlled)
             CreateZombie.Instance.SetZombieWithMindControl(row, targetId, pos.x);

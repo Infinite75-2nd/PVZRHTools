@@ -23,8 +23,7 @@ public class UpdateCheckService(INotificationService notificationService)
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("PVZRHTools-UpdateChecker/1.0");
 
         string? json = null;
-        for (int i = 0; i < 10; i++)
-        {
+        for (var i = 0; i < 10; i++)
             try
             {
                 json = await httpClient.GetStringAsync(UpdateUrl, cts.Token);
@@ -45,7 +44,6 @@ public class UpdateCheckService(INotificationService notificationService)
                     break;
                 }
             }
-        }
 
         if (json == null) return;
 
@@ -61,9 +59,7 @@ public class UpdateCheckService(INotificationService notificationService)
 
         if (IsRemoteNewer(Strings.GameVersion, info.Value.GameVersion) ||
             IsRemoteNewer(Strings.ModifierVersion, info.Value.ModifierVersion))
-        {
             NotifyUpdate(info.Value);
-        }
     }
 
     private void NotifyUpdate(UpdateInfo info)
@@ -85,7 +81,7 @@ public class UpdateCheckService(INotificationService notificationService)
         if (!Version.TryParse(localBase, out var localVer)) return false;
         if (!Version.TryParse(remoteBase, out var remoteVer)) return false;
 
-        int cmp = remoteVer.CompareTo(localVer);
+        var cmp = remoteVer.CompareTo(localVer);
         if (cmp != 0) return cmp > 0;
 
         if (string.IsNullOrEmpty(localPre) && string.IsNullOrEmpty(remotePre)) return false;
@@ -97,7 +93,7 @@ public class UpdateCheckService(INotificationService notificationService)
 
     private static (string Base, string PreRelease) ParseVersion(string version)
     {
-        int dashIdx = version.IndexOf('-');
+        var dashIdx = version.IndexOf('-');
         return dashIdx >= 0
             ? (version[..dashIdx], version[(dashIdx + 1)..])
             : (version, "");

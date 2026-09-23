@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using Core;
+using GameLevel;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using ToolData;
@@ -16,6 +17,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using static ToolMod.Components.PatchDataCache;
 using Object = UnityEngine.Object;
+using Paths = BepInEx.Paths;
 using Random = UnityEngine.Random;
 
 namespace ToolMod;
@@ -25,28 +27,47 @@ public static class Utils
     public static bool InGame => Board.Instance != null && !Board.Instance.IsDestroyed() &&
                                  GameAPP.theGameStatus is not GameStatus.OpenOptions;
 
+    public static List<GameObject> Items =>
+    [
+        Resources.Load<GameObject>("Items/Fertilize/Ferilize"),
+        Resources.Load<GameObject>("Items/Bucket"),
+        Resources.Load<GameObject>("Items/Helmet"),
+        Resources.Load<GameObject>("Items/Jackbox"),
+        Resources.Load<GameObject>("Items/Pickaxe"),
+        Resources.Load<GameObject>("Items/Machine"),
+        Resources.Load<GameObject>("Items/SuperMachine"),
+        Resources.Load<GameObject>("Items/SproutPotPrize/SproutPotPrize"),
+        Resources.Load<GameObject>("Items/PortalHeart")
+    ];
+
     public static Action<List<string>> SimpleSyncEnum<T>(Expression<Func<T>> propertyExpression) where T : Enum
-        => args => CreateSetter(propertyExpression)(GetEnumFromInt<T>(Convert.ToInt32(args[0])));
+    {
+        return args => CreateSetter(propertyExpression)(GetEnumFromInt<T>(Convert.ToInt32(args[0])));
+    }
 
     public static Action<List<string>> SimpleSyncBool(Expression<Func<bool>> propertyExpression,
-        Action? callBack = null) =>
-        args =>
+        Action? callBack = null)
+    {
+        return args =>
         {
             CreateSetter(propertyExpression)(Convert.ToBoolean(args[0]));
             callBack?.Invoke();
         };
+    }
 
     public static Action<List<string>> SimpleSyncFloat(Expression<Func<float>> propertyExpression,
         Action? callBack = null)
-        => args =>
+    {
+        return args =>
         {
             CreateSetter(propertyExpression)(ParseFloat(args[0]));
             callBack?.Invoke();
         };
+    }
 
     /// <summary>
-    /// Convert.ToSingle 无法解析 "-Infinity"/"Infinity"/"NaN"。
-    /// 诸神进化幸运值关闭时会同步 -Infinity 作为禁用标志。
+    ///     Convert.ToSingle 无法解析 "-Infinity"/"Infinity"/"NaN"。
+    ///     诸神进化幸运值关闭时会同步 -Infinity 作为禁用标志。
     /// </summary>
     public static float ParseFloat(string value)
     {
@@ -68,37 +89,53 @@ public static class Utils
     }
 
     public static Action<List<string>> SimpleSyncInt(Expression<Func<int>> propertyExpression, Action? callBack = null)
-        => args =>
+    {
+        return args =>
         {
             CreateSetter(propertyExpression)(Convert.ToInt32(args[0]));
             callBack?.Invoke();
         };
-    
-    public static Action<List<string>> SimpleSyncLong(Expression<Func<long>> propertyExpression, Action? callBack = null)
-        => args =>
+    }
+
+    public static Action<List<string>> SimpleSyncLong(Expression<Func<long>> propertyExpression,
+        Action? callBack = null)
+    {
+        return args =>
         {
             CreateSetter(propertyExpression)(Convert.ToInt64(args[0]));
             callBack?.Invoke();
         };
+    }
 
     public static Action<List<string>> SimpleSyncString(Expression<Func<string>> propertyExpression,
         Action? callBack = null)
-        => args =>
+    {
+        return args =>
         {
             CreateSetter(propertyExpression)(args[0]);
             callBack?.Invoke();
         };
+    }
 
     public static Action<List<string>> SimpleSyncKeyCode(Expression<Func<KeyCode>> propertyExpression,
         Action? callBack = null)
-        => args =>
+    {
+        return args =>
         {
             CreateSetter(propertyExpression)((KeyCode)Enum.Parse(typeof(KeyCode), args[0]));
             callBack?.Invoke();
         };
+    }
 
-    public static T GetEnumFromInt<T>(int value) where T : Enum => (T)Enum.ToObject(typeof(T), value);
-    public static T GetRandomItem<T>(this IList<T> list) => list[Random.RandomRangeInt(0, list.Count)];
+    public static T GetEnumFromInt<T>(int value) where T : Enum
+    {
+        return (T)Enum.ToObject(typeof(T), value);
+    }
+
+    public static T GetRandomItem<T>(this IList<T> list)
+    {
+        return list[Random.RandomRangeInt(0, list.Count)];
+    }
 
     public static Action<T> CreateSetter<T>(Expression<Func<T>> propertyExpression)
     {
@@ -107,10 +144,10 @@ public static class Utils
 
         // 处理可能的类型转换（例如将值类型转换为 object）
         var body = propertyExpression.Body;
-        if (body is UnaryExpression { NodeType: ExpressionType.Convert or ExpressionType.ConvertChecked } unary)
-        {
-            body = unary.Operand;
-        }
+        if (body is UnaryExpression
+            {
+                NodeType: ExpressionType.Convert or ExpressionType.ConvertChecked
+            } unary) body = unary.Operand;
 
         // 确保主体是成员访问表达式
         if (body is not MemberExpression memberExpr)
@@ -145,7 +182,7 @@ public static class Utils
 
 
     /// <summary>
-    /// 统一获取 TravelMgr（兼容多种场景）
+    ///     统一获取 TravelMgr（兼容多种场景）
     /// </summary>
     /// <param name="autoCreate">是否在找不到时自动创建 TravelMgr（仅在需要修改词条时使用）</param>
     public static TravelMgr? ResolveTravelMgr(bool autoCreate = false)
@@ -159,25 +196,15 @@ public static class Utils
         {
         }
 
-        if (travelMgr == null && GameAPP.Instance != null)
-        {
-            travelMgr = GameAPP.Instance.GetComponent<TravelMgr>();
-        }
+        if (travelMgr == null && GameAPP.Instance != null) travelMgr = GameAPP.Instance.GetComponent<TravelMgr>();
 
-        if (travelMgr == null)
-        {
-            travelMgr = UnityEngine.Object.FindObjectOfType<TravelMgr>();
-        }
+        if (travelMgr == null) travelMgr = Object.FindObjectOfType<TravelMgr>();
 
-        if (travelMgr == null && GameAPP.board != null)
-        {
-            travelMgr = GameAPP.board.GetComponent<TravelMgr>();
-        }
+        if (travelMgr == null && GameAPP.board != null) travelMgr = GameAPP.board.GetComponent<TravelMgr>();
 
         // 仅在需要修改词条时才自动创建 TravelMgr
         // GetOrAdd TravelMgr + 设置 boardTag.isTravel/enableTravelBuff
         if (travelMgr == null && autoCreate && InGame && GameAPP.Instance != null)
-        {
             try
             {
                 travelMgr = GameAPP.Instance.GetComponent<TravelMgr>();
@@ -187,17 +214,13 @@ public static class Utils
 
                     // 关键修复：自动创建 TravelMgr 时，同步旗帜波状态，避免旗帜波检测失效
                     // 确保 _lastHugeWaveState 与当前游戏状态一致
-                    if (Board.Instance != null)
-                    {
-                        LastHugeWaveState = Board.Instance.isHugeWave;
-                    }
+                    if (Board.Instance != null) LastHugeWaveState = Board.Instance.isHugeWave;
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ModCore.Instance.Log.LogWarning($"ResolveTravelMgr: 自动创建 TravelMgr 失败: {ex.Message}");
             }
-        }
 
         return travelMgr;
     }
@@ -206,12 +229,12 @@ public static class Utils
     public static void SyncInGameBuffs()
     {
         if (!InGame) return;
-        ModCore.Instance.SendCommand(new SyncData()
+        ModCore.Instance.SendCommand(new SyncData
         {
             Command = Strings.UpdateAllBuffs,
             Parameters =
             [
-                JsonSerializer.Serialize(new SyncTravelBuffs()
+                JsonSerializer.Serialize(new SyncTravelBuffs
                 {
                     InGameAdvBuffs = InGameAdvBuffs.ToDictionary(x => (int)x.Key, x => x.Value),
                     InGameUltiBuffs = InGameUltiBuffs.ToDictionary(x => (int)x.Key, x => x.Value),
@@ -224,14 +247,13 @@ public static class Utils
     }
 
     /// <summary>
-    /// 实时同步游戏词条状态到修改器
-    /// 当游戏中解锁或关闭词条时调用此方法，更新 InGame*Buffs 数组并发送到UI
+    ///     实时同步游戏词条状态到修改器
+    ///     当游戏中解锁或关闭词条时调用此方法，更新 InGame*Buffs 数组并发送到UI
     /// </summary>
     public static void SyncGameBuffsToModifier()
     {
         // 从游戏状态读取所有词条，更新 InGame*Buffs 数组
         foreach (var adv in InGameAdvBuffs.Keys)
-        {
             try
             {
                 InGameAdvBuffs[adv] = Lawnf.TravelAdvanced(adv) ? 1 : 0;
@@ -239,10 +261,8 @@ public static class Utils
             catch
             {
             }
-        }
 
         foreach (var ulti in InGameUltiBuffs.Keys)
-        {
             try
             {
                 InGameUltiBuffs[ulti] = Lawnf.TravelUltimateLevel(ulti);
@@ -250,10 +270,8 @@ public static class Utils
             catch
             {
             }
-        }
 
         foreach (var debuff in InGameDebuffs.Keys)
-        {
             try
             {
                 InGameDebuffs[debuff] = Lawnf.TravelDebuff(debuff);
@@ -261,23 +279,18 @@ public static class Utils
             catch
             {
             }
-        }
 
         // 同步解锁植物的状态：从 TravelMgr.data.unlockedPlants 中读取
         foreach (var plant in InGameUnlockedPlants.Keys.ToList())
-        {
             try
             {
                 var travelMgr = ResolveTravelMgr();
                 if (travelMgr?.data?.unlockedPlants != null)
-                {
                     InGameUnlockedPlants[plant] = travelMgr.data.unlockedPlants.Contains(plant);
-                }
             }
             catch
             {
             }
-        }
 
         // 发送更新后的数据到UI
         // 1. 先发送词条列表（如果需要更新词条列表）
@@ -286,14 +299,14 @@ public static class Utils
     }
 
     /// <summary>
-    /// 重新读取所有词条数据（包括MOD添加的）并发送给UI
-    /// 在进入游戏后调用，确保MOD词条已注册
+    ///     重新读取所有词条数据（包括MOD添加的）并发送给UI
+    ///     在进入游戏后调用，确保MOD词条已注册
     /// </summary>
     public static void ReloadAndSendBuffsData()
     {
         try
         {
-            var travelMgr = ResolveTravelMgr(autoCreate: true);
+            var travelMgr = ResolveTravelMgr(true);
             if (travelMgr == null)
             {
                 ModCore.Instance.Log?.LogWarning("[PVZRHTools] ReloadAndSendBuffsData: 无法找到 TravelMgr 组件");
@@ -308,7 +321,7 @@ public static class Utils
                 return;
             }
 
-            bool needRefresh = false;
+            var needRefresh = false;
             // 更新本地数组大小（如果MOD添加了新词条）
             // 直接使用 Count 作为数组大小
             if (AdvBuffs.Count < TravelDictionary.advancedBuffsText.Count)
@@ -334,50 +347,41 @@ public static class Utils
             }
 
             if (Debuffs.Count < TravelDictionary.debuffData.Count)
-            {
                 foreach (var debuff in TravelDictionary.debuffData)
                 {
                     Debuffs.TryAdd(debuff.Key, false);
                     InGameDebuffs.TryAdd(debuff.Key, false);
                     needRefresh = true;
                 }
-            }
 
             if (!needRefresh) return;
 
             SortedDictionary<int, string> advBuffs = [];
             foreach (var kvp in TravelDictionary.advancedBuffsText)
-            {
                 advBuffs.Add((int)kvp.Key, $"#{(int)kvp.Key} {kvp.Value}");
-            }
 
             SortedDictionary<int, string> ultiBuffs = [];
             foreach (var kvp in TravelDictionary.ultimateBuffsText)
-            {
                 ultiBuffs.Add((int)kvp.Key, $"#{(int)kvp.Key} {kvp.Value}");
-            }
 
             SortedDictionary<int, string> debuffs = [];
-            foreach (var kvp in TravelDictionary.debuffData)
-            {
-                debuffs.Add((int)kvp.Key, $"#{(int)kvp.Key} {kvp.Value}");
-            }
+            foreach (var kvp in TravelDictionary.debuffData) debuffs.Add((int)kvp.Key, $"#{(int)kvp.Key} {kvp.Value}");
 
             // 更新并保存InitData
-            ModCore.Instance.InitData.AdvBuffs = new(advBuffs);
-            ModCore.Instance.InitData.UltiBuffs = new(ultiBuffs);
-            ModCore.Instance.InitData.Debuffs = new(debuffs);
+            ModCore.Instance.InitData.AdvBuffs = new Dictionary<int, string>(advBuffs);
+            ModCore.Instance.InitData.UltiBuffs = new Dictionary<int, string>(ultiBuffs);
+            ModCore.Instance.InitData.Debuffs = new Dictionary<int, string>(debuffs);
 
             // 保存更新后的InitData
-            File.WriteAllText(Path.Combine(BepInEx.Paths.GameRootPath, Paths.InitDataPath),
+            File.WriteAllText(Path.Combine(Paths.GameRootPath, ToolData.Paths.InitDataPath),
                 JsonSerializer.Serialize(ModCore.Instance.InitData));
-            ModCore.Instance.SendCommand(new SyncData()
+            ModCore.Instance.SendCommand(new SyncData
             {
                 Command = Strings.ReloadInitData,
                 Parameters = []
             });
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             ModCore.Instance.Log?.LogError($"[PVZRHTools] ReloadAndSendBuffsData 异常: {ex.Message}\n{ex.StackTrace}");
         }
@@ -388,7 +392,7 @@ public static class Utils
         try
         {
             OperatingBuff = true;
-            var travelMgr = ResolveTravelMgr(autoCreate: true);
+            var travelMgr = ResolveTravelMgr(true);
             if (travelMgr == null)
             {
                 ModCore.Instance.Log?.LogWarning("UpdateInGameBuffs: 无法找到 TravelMgr，可能未进入关卡/未初始化");
@@ -406,19 +410,15 @@ public static class Utils
             // - 勾选为 true 且当前未解锁 -> 只补充解锁这一条
             // - 从 true 取消勾选（上一次为 true、本次为 false） -> 只对这一条从当前局移除，相当于“关闭该词条”，不动其它词条。
             if (TravelDictionary.advancedBuffsText != null)
-            {
                 foreach (var kvp in TravelDictionary.advancedBuffsText)
                 {
                     if (!InGameAdvBuffs.ContainsKey(kvp.Key)) continue;
-                    bool unlocked =
-                        (data.advBuffs != null && data.advBuffs.Contains(kvp.Key));
+                    var unlocked =
+                        data.advBuffs != null && data.advBuffs.Contains(kvp.Key);
 
                     if (!unlocked && InGameAdvBuffs[kvp.Key] > 0)
                     {
-                        if (!InGame)
-                        {
-                            continue;
-                        }
+                        if (!InGame) continue;
 
                         try
                         {
@@ -438,53 +438,47 @@ public static class Utils
                             ModCore.Instance.Log?.LogInfo(
                                 $"UpdateInGameBuffs: 关闭高级词条 {kvp.Key} (id={kvp.Key})，已从当前局移除");
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             ModCore.Instance.Log?.LogWarning(
                                 $"UpdateInGameBuffs: 移除高级词条 {kvp.Key} (id={kvp.Key}) 失败: {ex.Message}");
                         }
                     }
                 }
-            }
 
             // 究极词条：以游戏为主，但对"手动取消勾选"的该词条执行一次关闭
             // - 勾选 true 且未解锁 -> 解锁
             // - 已解锁但修改等级（实时修改） -> 仅调整列表元素
             // - 从 true 取消勾选 -> 只对这一条从当前局移除，其它究极词条不受影响。
             if (TravelDictionary.ultimateBuffsText != null)
-            {
                 foreach (var kvp in TravelDictionary.ultimateBuffsText)
                 {
                     if (!InGameUltiBuffs.ContainsKey(kvp.Key)) continue;
-                    bool unlocked =
+                    var unlocked =
                         (data.ultiBuffs != null && data.ultiBuffs.Contains(kvp.Key)) ||
                         (data.ultiBuffs_lv2 != null && data.ultiBuffs_lv2.Contains(kvp.Key));
-            
+
                     // 新增词条：未解锁且 level > 0，调用 GetUltiBuff 触发游戏内部逻辑
                     if (!unlocked && InGameUltiBuffs[kvp.Key] > 0)
                     {
-                        if (!InGame)
-                        {
-                            continue;
-                        }
-            
+                        if (!InGame) continue;
+
                         try
                         {
                             travelMgr.GetUltiBuff(kvp.Key, InGameUltiBuffs[kvp.Key] == 2);
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             ModCore.Instance.Log?.LogWarning(
                                 $"UpdateInGameBuffs: GetUltiBuff({kvp.Key}) 异常: {ex.Message}");
                         }
                     }
-            
+
                     // 只要 level > 0，就确保列表状态与当前等级一致
                     // 这同时覆盖了两种情况：
                     // - 新解锁的词条（上面刚调用了 GetUltiBuff）
                     // - 已解锁的词条（实时修改等级，如 Lv1 -> Lv2 或 Lv2 -> Lv1）
                     if (InGameUltiBuffs[kvp.Key] > 0)
-                    {
                         try
                         {
                             if (InGameUltiBuffs[kvp.Key] == 1)
@@ -494,6 +488,7 @@ public static class Utils
                                     data.ultiBuffs.Remove(kvp.Key);
                                     data.ultiBuffs.Add(kvp.Key);
                                 }
+
                                 data.ultiBuffs_lv2?.Remove(kvp.Key);
                             }
                             else if (InGameUltiBuffs[kvp.Key] == 2)
@@ -503,6 +498,7 @@ public static class Utils
                                     data.ultiBuffs.Remove(kvp.Key);
                                     data.ultiBuffs.Add(kvp.Key);
                                 }
+
                                 if (data.ultiBuffs_lv2 != null)
                                 {
                                     data.ultiBuffs_lv2.Remove(kvp.Key);
@@ -510,14 +506,12 @@ public static class Utils
                                 }
                             }
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             ModCore.Instance.Log?.LogWarning(
                                 $"UpdateInGameBuffs: 手动更新词条列表 {kvp.Key} 失败: {ex.Message}");
                         }
-                    }
                     else if (InGameUltiBuffs[kvp.Key] is 0 && AllowBuffRemoval && unlocked)
-                    {
                         try
                         {
                             data.ultiBuffs?.Remove(kvp.Key);
@@ -525,38 +519,32 @@ public static class Utils
                             ModCore.Instance.Log?.LogInfo(
                                 $"UpdateInGameBuffs: 关闭强究词条 {kvp.Key} (id={kvp.Key})，已从当前局移除");
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             ModCore.Instance.Log?.LogWarning(
                                 $"UpdateInGameBuffs: 移除强究词条 {kvp.Key} (id={kvp.Key}) 失败: {ex.Message}");
                         }
-                    }
                 }
-            }
 
             // 负面词条（Debuff）：以游戏为主，但对“手动取消勾选”的该词条执行一次关闭
             // - 勾选 true 且未解锁 -> 解锁
             // - 从 true 取消勾选 -> 只对这一条从当前局移除，其它 Debuff 不受影响。
             if (TravelDictionary.debuffData != null)
-            {
                 foreach (var kvp in TravelDictionary.debuffData)
                 {
                     if (!InGameDebuffs.ContainsKey(kvp.Key)) continue;
-                    bool unlocked =
-                        (data.travelDebuffs != null && data.travelDebuffs.Contains(kvp.Key));
+                    var unlocked =
+                        data.travelDebuffs != null && data.travelDebuffs.Contains(kvp.Key);
 
                     if (!unlocked && InGameDebuffs[kvp.Key])
                     {
-                        if (!InGame)
-                        {
-                            continue;
-                        }
+                        if (!InGame) continue;
 
                         try
                         {
                             travelMgr.GetDebuff(kvp.Key);
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             ModCore.Instance.Log?.LogWarning(
                                 $"UpdateInGameBuffs: 解锁僵尸词条 {kvp.Key} (id={kvp.Key}) 失败: {ex.Message}");
@@ -570,49 +558,44 @@ public static class Utils
                             ModCore.Instance.Log?.LogInfo(
                                 $"UpdateInGameBuffs: 关闭僵尸词条 {kvp.Key} (id={kvp.Key})，已从当前局移除");
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             ModCore.Instance.Log?.LogWarning(
                                 $"UpdateInGameBuffs: 移除僵尸词条 {kvp.Key} (id={kvp.Key}) 失败: {ex.Message}");
                         }
                     }
                 }
-            }
 
             // 投资词条（Invest）：以游戏为主，但对“手动取消勾选”的该词条执行一次关闭
             // - 勾选 true 且未解锁 -> 解锁
             // - 从 true 取消勾选 -> 只对这一条从当前局移除，其它投资词条不受影响。
-            
+
             foreach (var invest in InGameInvestBuffs.Keys)
             {
-                bool unlocked = data.investmentBuffs != null && data.investmentBuffs.Contains(invest);
+                var unlocked = data.investmentBuffs != null && data.investmentBuffs.Contains(invest);
 
                 if (InGameInvestBuffs[invest] && !unlocked)
-                {
                     try
                     {
                         travelMgr.GetInvestBuff(invest);
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
                         ModCore.Instance.Log?.LogWarning(
                             $"UpdateInGameBuffs: 解锁投资词条 {invest} (id={invest}) 失败: {ex.Message}");
                     }
-                }
                 // 从 true 取消勾选时，且允许移除并且当前已解锁，则关闭这一条投资词条
                 else if (!InGameInvestBuffs[invest] && AllowBuffRemoval && unlocked)
-                {
                     try
                     {
                         data.investmentBuffs?.Remove(invest);
                         ModCore.Instance.Log?.LogInfo($"UpdateInGameBuffs: 关闭投资词条 {invest} (id={invest})，已从当前局移除");
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
                         ModCore.Instance.Log?.LogWarning(
                             $"UpdateInGameBuffs: 移除投资词条 {invest} (id={invest}) 失败: {ex.Message}");
                     }
-                }
             }
 
             // 解锁植物（Unlock）：以游戏为主，但对"手动取消勾选"的该条目执行一次关闭
@@ -620,8 +603,8 @@ public static class Utils
             // - 从 true 取消勾选 -> 只从 data.unlockedPlants 列表中移除该条目
             foreach (var unlock in InGameUnlockedPlants.Keys)
             {
-                bool unlocked = data.unlockedPlants != null &&
-                    data.unlockedPlants.Contains(unlock);
+                var unlocked = data.unlockedPlants != null &&
+                               data.unlockedPlants.Contains(unlock);
 
                 if (InGameUnlockedPlants[unlock] && !unlocked)
                 {
@@ -631,9 +614,10 @@ public static class Utils
                     {
                         travelMgr.UnlockPlant(unlock);
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
-                        ModCore.Instance.Log?.LogWarning($"UpdateInGameBuffs: 解锁植物条目 {unlock} (id={unlock}) 失败: {ex.Message}");
+                        ModCore.Instance.Log?.LogWarning(
+                            $"UpdateInGameBuffs: 解锁植物条目 {unlock} (id={unlock}) 失败: {ex.Message}");
                     }
                 }
                 else if (!InGameUnlockedPlants[unlock] && AllowBuffRemoval && unlocked)
@@ -643,9 +627,10 @@ public static class Utils
                         data.unlockedPlants?.Remove(unlock);
                         ModCore.Instance.Log?.LogInfo($"UpdateInGameBuffs: 关闭植物条目 {unlock} (id={unlock})，已从当前局移除");
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
-                        ModCore.Instance.Log?.LogWarning($"UpdateInGameBuffs: 移除植物条目 {unlock} (id={unlock}) 失败: {ex.Message}");
+                        ModCore.Instance.Log?.LogWarning(
+                            $"UpdateInGameBuffs: 移除植物条目 {unlock} (id={unlock}) 失败: {ex.Message}");
                     }
                 }
             }
@@ -705,7 +690,7 @@ public static class Utils
     }
 
     /// <summary>
-    /// 给植物上星辉buff的辅助方法
+    ///     给植物上星辉buff的辅助方法
     /// </summary>
     /// <param name="plant">目标植物</param>
     /// <returns>是否成功上星辉</returns>
@@ -736,7 +721,6 @@ public static class Utils
 
             // 步骤1：调用 StarUp 方法（如果存在）
             if (starUpMethod != null)
-            {
                 try
                 {
                     starUpMethod.Invoke(plant, null);
@@ -745,10 +729,9 @@ public static class Utils
                 {
                     ModCore.Instance.Log?.LogWarning($"调用 StarUp() 方法时出错: {ex.Message}");
                 }
-            }
 
             // 步骤2：设置 starUp 属性或字段为 true
-            bool setSuccess = false;
+            var setSuccess = false;
             if (starUpProperty != null)
             {
                 try
@@ -787,7 +770,6 @@ public static class Utils
 
             // 步骤3：调用 UpdateStarIcon 更新UI显示
             if (updateStarIconMethod != null)
-            {
                 try
                 {
                     updateStarIconMethod.Invoke(plant, null);
@@ -796,28 +778,17 @@ public static class Utils
                 {
                     ModCore.Instance.Log?.LogWarning($"调用 UpdateStarIcon() 方法时出错: {ex.Message}");
                 }
-            }
 
             // 验证是否设置成功
-            bool starUpValue = false;
+            var starUpValue = false;
             if (starUpProperty != null)
-            {
                 starUpValue = (bool)(starUpProperty.GetValue(plant) ?? false);
-            }
-            else if (starUpField != null)
-            {
-                starUpValue = (bool)(starUpField.GetValue(plant) ?? false);
-            }
+            else if (starUpField != null) starUpValue = (bool)(starUpField.GetValue(plant) ?? false);
 
-            if (starUpValue)
-            {
-                return true;
-            }
-            else
-            {
-                ModCore.Instance.Log?.LogWarning($"设置 starUp 后验证失败，值仍为 false");
-                return false;
-            }
+            if (starUpValue) return true;
+
+            ModCore.Instance.Log?.LogWarning($"设置 starUp 后验证失败，值仍为 false");
+            return false;
         }
         catch (Exception ex)
         {
@@ -852,7 +823,7 @@ public static class Utils
     }
 
     /// <summary>
-    /// 获取出怪列表数据
+    ///     获取出怪列表数据
     /// </summary>
     public static Dictionary<int, Dictionary<int, int>>? GetZombieListData()
     {
@@ -875,11 +846,9 @@ public static class Utils
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
                 if (zombieListField != null)
-                {
                     zombieList =
                         zombieListField.GetValue(null) as Il2CppSystem.Collections.Generic.List<
                             Il2CppSystem.Collections.Generic.List<ZombieSpawnData>>;
-                }
             }
 
             if (zombieList == null)
@@ -891,23 +860,20 @@ public static class Utils
             var result = new Dictionary<int, Dictionary<int, int>>();
 
             // 遍历所有波次（从1开始，跳过索引0）
-            for (int waveIndex = 1; waveIndex < zombieList.Count; waveIndex++)
+            for (var waveIndex = 1; waveIndex < zombieList.Count; waveIndex++)
             {
                 var wave = zombieList[waveIndex];
                 if (wave == null) continue;
 
                 var zombieTypes = new Dictionary<int, int>();
-                for (int i = 0; i < wave.Count; i++)
+                for (var i = 0; i < wave.Count; i++)
                 {
                     var data = wave[i];
                     if (data == null) continue;
                     zombieTypes.Add(i, (int)data.zombieType);
                 }
 
-                if (zombieTypes.Count > 0)
-                {
-                    result[waveIndex] = new Dictionary<int, int>(zombieTypes);
-                }
+                if (zombieTypes.Count > 0) result[waveIndex] = new Dictionary<int, int>(zombieTypes);
             }
 
             return result;
@@ -939,11 +905,9 @@ public static class Utils
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
                 if (zombieListField != null)
-                {
                     zombieList =
                         zombieListField.GetValue(null) as Il2CppSystem.Collections.Generic.List<
                             Il2CppSystem.Collections.Generic.List<ZombieSpawnData>>;
-                }
             }
 
             if (zombieList == null)
@@ -997,9 +961,10 @@ public static class Utils
             foreach (var t in zombiesNow)
             {
                 var zombie = t?.Cast<Zombie>();
-                if (zombie != null && zombie.gameObject != null &&zombie is { Alive: true, gameObject.activeInHierarchy: true })
+                if (zombie != null && zombie.gameObject != null &&
+                    zombie is { Alive: true, gameObject.activeInHierarchy: true })
                 {
-                    int isMindControlled = zombie.isMindControlled ? 1 : 0;
+                    var isMindControlled = zombie.isMindControlled ? 1 : 0;
                     var zombieData =
                         $"{zombie.theZombieRow},{zombie.gameObject.transform.position.x},{(int)zombie.theZombieType},{isMindControlled}";
                     zombieDataList.Add(zombieData);
@@ -1012,14 +977,12 @@ public static class Utils
             List<string> lineupData = [];
             var allPlants = Lawnf.GetAllPlants();
             if (allPlants != null)
-            {
                 foreach (var plant in allPlants)
                 {
                     if (plant == null) continue;
                     var plantData = $"{plant.thePlantColumn},{plant.thePlantRow},{(int)plant.thePlantType}";
                     lineupData.Add(plantData);
                 }
-            }
 
             var plantCode = string.Join(";", lineupData);
             var plantString = CompressString(plantCode);
@@ -1103,7 +1066,7 @@ public static class Utils
             try
             {
                 var cards = Object.FindObjectsOfTypeAll(Il2CppType.Of<CardUI>());
-                for (int i = 0; i < cards.Count; i++)
+                for (var i = 0; i < cards.Count; i++)
                 {
                     var c = cards[i]?.Cast<CardUI>();
                     if (c == null) continue;
@@ -1119,7 +1082,7 @@ public static class Utils
             try
             {
                 var drops = Object.FindObjectsOfTypeAll(Il2CppType.Of<DroppedCard>());
-                for (int i = 0; i < drops.Count; i++)
+                for (var i = 0; i < drops.Count; i++)
                 {
                     var d = drops[i]?.Cast<DroppedCard>();
                     if (d == null) continue;
@@ -1135,7 +1098,6 @@ public static class Utils
             try
             {
                 if (InGameUI.Instance != null && InGameUI.Instance.cards != null)
-                {
                     foreach (var card in InGameUI.Instance.cards)
                     {
                         if (card == null) continue;
@@ -1147,7 +1109,6 @@ public static class Utils
                             SeedCost = card.theSeedCost
                         });
                     }
-                }
             }
             catch
             {
@@ -1158,7 +1119,6 @@ public static class Utils
             {
                 var plantsNow = Lawnf.GetAllPlants();
                 if (plantsNow != null)
-                {
                     foreach (var pl in plantsNow)
                     {
                         if (pl == null) continue;
@@ -1170,7 +1130,6 @@ public static class Utils
                             Health = pl.thePlantHealth
                         });
                     }
-                }
             }
             catch
             {
@@ -1214,7 +1173,7 @@ public static class Utils
                     IncludeFields = true,
                     WriteIndented = false
                 });
-            File.WriteAllText(Paths.LatestSnapshotPath, json);
+            File.WriteAllText(ToolData.Paths.LatestSnapshotPath, json);
         }
         catch
         {
@@ -1225,10 +1184,10 @@ public static class Utils
     {
         try
         {
-            if (!File.Exists(Paths.LatestSnapshotPath))
+            if (!File.Exists(ToolData.Paths.LatestSnapshotPath))
                 return null;
 
-            var json = File.ReadAllText(Paths.LatestSnapshotPath);
+            var json = File.ReadAllText(ToolData.Paths.LatestSnapshotPath);
             if (string.IsNullOrWhiteSpace(json))
                 return null;
 
@@ -1266,10 +1225,7 @@ public static class Utils
         try
         {
             GameLevel.LevelData levelData;
-            if (GameLevel.LevelManager.TryGetLevelData(out levelData) && levelData != null)
-            {
-                return levelData.LevelNumber;
-            }
+            if (LevelManager.TryGetLevelData(out levelData) && levelData != null) return levelData.LevelNumber;
         }
         catch
         {
@@ -1349,7 +1305,6 @@ public static class Utils
             // 清场
             var allPlants = Lawnf.GetAllPlants();
             if (allPlants != null)
-            {
                 for (var i = allPlants.Count - 1; i >= 0; i--)
                     try
                     {
@@ -1358,7 +1313,6 @@ public static class Utils
                     catch
                     {
                     }
-            }
 
             Il2CppReferenceArray<Object> zombies = Object.FindObjectsOfTypeAll(Il2CppType.Of<Zombie>());
             for (var i = zombies.Count - 1; i >= 0; i--)
@@ -1425,9 +1379,9 @@ public static class Utils
                         float.TryParse(zombieData[1], out var x) &&
                         int.TryParse(zombieData[2], out var zombieType))
                     {
-                        bool isMindControlled = zombieData.Length >= 4 &&
-                                                int.TryParse(zombieData[3], out var mindFlag) &&
-                                                mindFlag == 1;
+                        var isMindControlled = zombieData.Length >= 4 &&
+                                               int.TryParse(zombieData[3], out var mindFlag) &&
+                                               mindFlag == 1;
                         if (isMindControlled)
                             CreateZombie.Instance.SetZombieWithMindControl(row, (ZombieType)zombieType, x);
                         else
@@ -1442,29 +1396,25 @@ public static class Utils
                 {
                     var plantsRestored = Lawnf.GetAllPlants();
                     if (plantsRestored != null)
-                    {
                         foreach (var ph in snap.PlantHealths)
+                        foreach (var pl in plantsRestored)
                         {
-                            foreach (var pl in plantsRestored)
+                            if (pl == null) continue;
+                            if (pl.thePlantRow == ph.Row && pl.thePlantColumn == ph.Col &&
+                                (int)pl.thePlantType == ph.PlantType)
                             {
-                                if (pl == null) continue;
-                                if (pl.thePlantRow == ph.Row && pl.thePlantColumn == ph.Col &&
-                                    (int)pl.thePlantType == ph.PlantType)
+                                try
                                 {
-                                    try
-                                    {
-                                        pl.thePlantHealth = Math.Min(ph.Health, pl.thePlantMaxHealth);
-                                        pl.UpdateText();
-                                    }
-                                    catch
-                                    {
-                                    }
-
-                                    break;
+                                    pl.thePlantHealth = Math.Min(ph.Health, pl.thePlantMaxHealth);
+                                    pl.UpdateText();
                                 }
+                                catch
+                                {
+                                }
+
+                                break;
                             }
                         }
-                    }
                 }
             }
             catch
@@ -1474,28 +1424,24 @@ public static class Utils
             try
             {
                 if (snap.ZombieHealths is { Count: > 0 })
-                {
                     foreach (var zh in snap.ZombieHealths)
+                    foreach (var z in Board.Instance.zombieArray)
                     {
-                        foreach (var z in Board.Instance.zombieArray)
+                        if (z == null) continue;
+                        if (z.theZombieRow == zh.Row && (int)z.theZombieType == zh.ZombieType)
                         {
-                            if (z == null) continue;
-                            if (z.theZombieRow == zh.Row && (int)z.theZombieType == zh.ZombieType)
+                            try
                             {
-                                try
-                                {
-                                    z.theHealth = Math.Min(zh.Health, z.theMaxHealth);
-                                    z.UpdateHealthText();
-                                }
-                                catch
-                                {
-                                }
-
-                                break;
+                                z.theHealth = Math.Min(zh.Health, z.theMaxHealth);
+                                z.UpdateHealthText();
                             }
+                            catch
+                            {
+                            }
+
+                            break;
                         }
                     }
-                }
             }
             catch
             {
@@ -1536,8 +1482,8 @@ public static class Utils
                 if (InGameUI.Instance != null && InGameUI.Instance.cards != null && snap.CardBank != null &&
                     snap.CardBank.Count > 0)
                 {
-                    int k = Math.Min(InGameUI.Instance.cards.Count, snap.CardBank.Count);
-                    for (int i = 0; i < k; i++)
+                    var k = Math.Min(InGameUI.Instance.cards.Count, snap.CardBank.Count);
+                    for (var i = 0; i < k; i++)
                     {
                         var card = GetInGameCards(InGameUI.Instance)[i];
                         var cs = snap.CardBank[i];
@@ -1556,8 +1502,8 @@ public static class Utils
                 }
 
                 var cards = Object.FindObjectsOfTypeAll(Il2CppType.Of<CardUI>());
-                int n = Math.Min(cards.Count, snap.CardCDs?.Count ?? 0);
-                for (int i = 0; i < n; i++)
+                var n = Math.Min(cards.Count, snap.CardCDs?.Count ?? 0);
+                for (var i = 0; i < n; i++)
                 {
                     var c = cards[i]?.Cast<CardUI>();
                     if (c == null) continue;
@@ -1565,7 +1511,7 @@ public static class Utils
                     {
                         // 先还原 fullCD，再还原 CD
                         if (snap.CardFullCDs != null && i < snap.CardFullCDs.Count) c.fullCD = snap.CardFullCDs[i];
-                        c.CD = (snap.CardCDs != null && i < snap.CardCDs.Count) ? snap.CardCDs[i] : c.CD;
+                        c.CD = snap.CardCDs != null && i < snap.CardCDs.Count ? snap.CardCDs[i] : c.CD;
                     }
                     catch
                     {
@@ -1585,7 +1531,7 @@ public static class Utils
                     var d = drops[i]?.Cast<DroppedCard>();
                     if (d == null) continue;
                     if (snap.DroppedFullCDs != null && i < snap.DroppedFullCDs.Count) d.fullCD = snap.DroppedFullCDs[i];
-                    d.CD = (snap.DroppedCDs != null && i < snap.DroppedCDs.Count) ? snap.DroppedCDs[i] : d.CD;
+                    d.CD = snap.DroppedCDs != null && i < snap.DroppedCDs.Count ? snap.DroppedCDs[i] : d.CD;
                 }
             }
             catch
@@ -1600,9 +1546,7 @@ public static class Utils
             try
             {
                 if (snap.TimeUntilNextWave >= -10f && snap.TimeUntilNextWave <= 120f)
-                {
                     Board.Instance.timeUntilNextWave = snap.TimeUntilNextWave;
-                }
             }
             catch
             {
@@ -1651,7 +1595,6 @@ public static class Utils
             if (travelMgr == null) return;
             // 高级词条
             foreach (var id in snap.AdvOn)
-            {
                 try
                 {
                     travelMgr.GetNormalBuff((AdvBuff)id);
@@ -1659,11 +1602,9 @@ public static class Utils
                 catch
                 {
                 }
-            }
 
             // 究极词条
             foreach (var id in snap.UltiOn)
-            {
                 try
                 {
                     travelMgr.GetUltiBuff((UltiBuff)id, true);
@@ -1671,11 +1612,9 @@ public static class Utils
                 catch
                 {
                 }
-            }
 
             // 负面词条
             foreach (var id in snap.DebuffOn)
-            {
                 try
                 {
                     travelMgr.GetDebuff((TravelDebuff)id);
@@ -1683,11 +1622,9 @@ public static class Utils
                 catch
                 {
                 }
-            }
 
             // 投资词条
             foreach (var id in snap.InvestOn)
-            {
                 try
                 {
                     travelMgr.GetInvestBuff((InvestBuff)id);
@@ -1695,7 +1632,6 @@ public static class Utils
                 catch
                 {
                 }
-            }
         }
         catch
         {
@@ -1709,10 +1645,8 @@ public static class Utils
             return list;
 
         foreach (var card in ui.cards)
-        {
             if (card != null)
                 list.Add(card);
-        }
 
         return list;
     }
@@ -1723,13 +1657,11 @@ public static class Utils
         {
             var field = typeof(Zombie).GetField(
                 "cursedPlants",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic);
+                BindingFlags.Instance | BindingFlags.Public |
+                BindingFlags.NonPublic);
             if (field?.GetValue(zombie) is Il2CppSystem.Collections.Generic.List<Plant> cursedPlants &&
                 cursedPlants.Count > 0)
-            {
                 cursedPlants.Clear();
-            }
         }
         catch
         {
@@ -1743,7 +1675,7 @@ public static class Utils
         if (GodEvolutionRefreshOverrideActive) return GodEvolutionRefreshCount;
         return 0;
     }
-    
+
 
     public static string GetInvestBuffChineseName(int id)
     {
@@ -1794,17 +1726,4 @@ public static class Utils
             _ => ""
         };
     }
-
-    public static List<GameObject> Items =>
-    [
-        Resources.Load<GameObject>("Items/Fertilize/Ferilize"),
-        Resources.Load<GameObject>("Items/Bucket"),
-        Resources.Load<GameObject>("Items/Helmet"),
-        Resources.Load<GameObject>("Items/Jackbox"),
-        Resources.Load<GameObject>("Items/Pickaxe"),
-        Resources.Load<GameObject>("Items/Machine"),
-        Resources.Load<GameObject>("Items/SuperMachine"),
-        Resources.Load<GameObject>("Items/SproutPotPrize/SproutPotPrize"),
-        Resources.Load<GameObject>("Items/PortalHeart")
-    ];
 }
